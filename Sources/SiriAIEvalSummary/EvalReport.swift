@@ -7,13 +7,19 @@ public struct EvalRun: Sendable, Equatable, Codable {
     public let replyPassed: Bool
     /// The harness scored the run before its results arrived; the tool may well have run.
     public let incomplete: Bool
+    /// What the app's tool did in this run ("refreshed after 401 at …"), when the harness recorded it.
+    public var outcome: String?
 
-    public init(toolCalls: [String: Bool], reply: String?, intentsPassed: Bool, replyPassed: Bool, incomplete: Bool) {
+    public init(
+        toolCalls: [String: Bool], reply: String?, intentsPassed: Bool, replyPassed: Bool, incomplete: Bool,
+        outcome: String? = nil
+    ) {
         self.toolCalls = toolCalls
         self.reply = reply
         self.intentsPassed = intentsPassed
         self.replyPassed = replyPassed
         self.incomplete = incomplete
+        self.outcome = outcome
     }
 
     public var passed: Bool { intentsPassed && replyPassed }
@@ -21,11 +27,14 @@ public struct EvalRun: Sendable, Equatable, Codable {
 
 public struct EvalReport: Sendable, Equatable, Codable {
     public let name: String
-    public let runs: [EvalRun]
+    public var runs: [EvalRun]
+    /// Outcomes recorded during this evaluation that couldn't be matched one-to-one with its runs.
+    public var unmatchedOutcomes: [String]
 
-    public init(name: String, runs: [EvalRun]) {
+    public init(name: String, runs: [EvalRun], unmatchedOutcomes: [String] = []) {
         self.name = name
         self.runs = runs
+        self.unmatchedOutcomes = unmatchedOutcomes
     }
 
     /// Passing runs over all runs, as Xcode reports it.
