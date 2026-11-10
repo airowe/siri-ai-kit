@@ -14,7 +14,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "SiriAIKit"),
-        .target(name: "SiriAIEvalKit", dependencies: ["SiriAIKit"], linkerSettings: evaluationFrameworks),
+        .target(name: "SiriAIEvalKit", dependencies: ["SiriAIKit", "SiriAIEvalSummary"], linkerSettings: evaluationFrameworks),
         .target(name: "SiriAIEvalSummary"),
         .executableTarget(name: "siri-ai-eval", dependencies: ["SiriAIEvalSummary"]),
         .testTarget(name: "SiriAIKitTests", dependencies: ["SiriAIKit"]),

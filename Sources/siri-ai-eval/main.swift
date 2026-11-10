@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import SiriAIEvalSummary
 
@@ -84,3 +85,6 @@ do {
 }
 try? FileManager.default.removeItem(at: folder)
 exit(status)
+#else
+fatalError("siri-ai-eval runs on macOS")
+#endif
