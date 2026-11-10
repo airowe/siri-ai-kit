@@ -153,6 +153,43 @@ struct SiriToolTests {
         #expect(log.last.hasPrefix("succeeded at "))
     }
 
+    @Test func lateNoteDoesNotLeakIntoOverlappingRun() async throws {
+        let log = log
+        let gate = Flag()
+        let noted = Flag()
+        let t = tool(timeout: .milliseconds(100))
+        _ = try? await t.run { () async throws -> Int in
+            while !(await gate.isSet) { try await Task.sleep(for: .milliseconds(10)) }
+            log.note("from run A")
+            await noted.set()
+            return 1
+        }
+        _ = try await tool().run { () async throws -> Int in
+            await gate.set()
+            #expect(await waitUntil(noted))
+            log.note("from run B")
+            return 2
+        }
+        #expect(log.last.hasPrefix("succeeded (from run B) at "))
+    }
+
+    @Test func concurrentNotesAreAllKept() async throws {
+        let log = log
+        _ = try await tool().run { () async throws -> Int in
+            await withTaskGroup(of: Void.self) { group in
+                for index in 0..<200 { group.addTask { log.note("n\(index)") } }
+            }
+            return 1
+        }
+        #expect(log.last.components(separatedBy: "; ").count == 200)
+    }
+
+    @Test func noteOutsideARunIsIgnored() async throws {
+        log.note("stray")
+        _ = try await tool().run { 1 }
+        #expect(log.last.hasPrefix("succeeded at "))
+    }
+
     @Test(arguments: [
         (ToolFailure.signedOut, "Open Siri Spike to sign in again."),
         (.timedOut, "Couldn't reach Siri Spike right now."),

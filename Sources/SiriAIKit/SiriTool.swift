@@ -29,15 +29,15 @@ public struct SiriTool: Sendable {
     /// At the deadline, or if Siri cancels the call, this stops waiting but doesn't cancel the operation,
     /// so work like saving refreshed tokens still finishes.
     public func run<T: Sendable>(_ operation: @escaping @Sendable () async throws -> T) async throws(ToolFailure) -> T {
-        outcomes.beginRun()
-        let task = Task { try await operation() }
+        let notes = RunNotes()
+        let task = RunNotes.$current.withValue(notes) { Task { try await operation() } }
         switch await Self.result(of: task, within: timeout) {
         case .success(let value):
-            outcomes.record("succeeded")
+            outcomes.record("succeeded", notes: notes.close())
             return value
         case .failure(let error):
             let failure = error is DeadlinePassed ? .timedOut : Self.classify(error, using: classify)
-            outcomes.record(failure.outcome)
+            outcomes.record(failure.outcome, notes: notes.close())
             throw failure
         }
     }

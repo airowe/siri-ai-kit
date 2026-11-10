@@ -27,21 +27,37 @@ public struct ToolOutcomeLog: @unchecked Sendable {
 
     public var last: String { defaults.string(forKey: key) ?? "none" }
 
-    private var notesKey: String { key + ".notes" }
-
-    /// Adds a detail to the current tool call's outcome, for example "refreshed after 401".
+    /// Adds a detail to the outcome of the `SiriTool` run this code is part of, for example "refreshed after 401".
+    ///
+    /// Notes belong to the run whose operation made them, whichever log you call this on. Notes made outside
+    /// a run, or after its outcome was recorded (a late finish after a timeout), are dropped.
     public func note(_ detail: String) {
-        defaults.set((defaults.stringArray(forKey: notesKey) ?? []) + [detail], forKey: notesKey)
+        RunNotes.current?.add(detail)
     }
 
-    func beginRun() {
-        defaults.removeObject(forKey: notesKey)
-    }
-
-    func record(_ outcome: String) {
-        let notes = defaults.stringArray(forKey: notesKey) ?? []
+    func record(_ outcome: String, notes: [String] = []) {
         let detail = notes.isEmpty ? "" : " (\(notes.joined(separator: "; ")))"
         defaults.set("\(outcome)\(detail) at \(Date.now.formatted(date: .omitted, time: .standard))", forKey: key)
-        beginRun()
+    }
+}
+
+/// The notes of one `SiriTool` run, reached from its operation through a task-local.
+final class RunNotes: @unchecked Sendable {
+    @TaskLocal static var current: RunNotes?
+
+    private let lock = NSLock()
+    private var notes: [String] = []
+    private var closed = false
+
+    func add(_ detail: String) {
+        lock.withLock { if !closed { notes.append(detail) } }
+    }
+
+    /// The notes so far; later notes are dropped.
+    func close() -> [String] {
+        lock.withLock {
+            closed = true
+            return notes
+        }
     }
 }
