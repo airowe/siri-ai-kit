@@ -5,17 +5,21 @@ public struct ToolHTTPClient: Sendable {
     public let baseURL: URL
     public let timeout: Duration
     let session: URLSession
+    let auth: TokenAuthenticator?
     let outcomes: ToolOutcomeLog
 
+    /// With `auth`, each request carries a bearer token, refreshed once if the API says it expired.
     public init(
         baseURL: URL,
         timeout: Duration = .seconds(10),
         session: URLSession = .shared,
+        auth: TokenAuthenticator? = nil,
         outcomes: ToolOutcomeLog = .standard
     ) {
         self.baseURL = baseURL
         self.timeout = timeout
         self.session = session
+        self.auth = auth
         self.outcomes = outcomes
     }
 
@@ -45,12 +49,38 @@ public struct ToolHTTPClient: Sendable {
     }
 
     func perform<R: Decodable>(_ request: URLRequest, as: R.Type) async throws(ToolError) -> R {
-        let (data, status) = try await load(request)
+        let (data, status) = if let auth {
+            try await loadAuthorized(request, auth: auth)
+        } else {
+            try await load(request)
+        }
         guard (200..<300).contains(status) else { throw .rejected(status: status) }
         do {
             return try JSONDecoder().decode(R.self, from: data)
         } catch {
             throw .invalidResponse
+        }
+    }
+
+    func loadAuthorized(_ request: URLRequest, auth: TokenAuthenticator) async throws(ToolError) -> (Data, Int) {
+        do throws(ToolError) {
+            let saved = try await auth.currentTokens()
+            let first = try await load(request.authorized(with: saved))
+            guard auth.expiredStatuses.contains(first.1) else {
+                outcomes.record("used saved token")
+                return first
+            }
+            let fresh = try await auth.refreshed(after: saved)
+            let retry = try await load(request.authorized(with: fresh))
+            guard !auth.expiredStatuses.contains(retry.1) else { throw .signedOut }
+            outcomes.record("refreshed after \(first.1)")
+            return retry
+        } catch .signedOut {
+            outcomes.record("signed out")
+            throw .signedOut
+        } catch .keychain(let status) {
+            outcomes.record("signed out (keychain \(status))")
+            throw .signedOut
         }
     }
 
@@ -71,6 +101,14 @@ public struct ToolHTTPClient: Sendable {
         } catch {
             throw .unreachable
         }
+    }
+}
+
+extension URLRequest {
+    func authorized(with tokens: Tokens) -> URLRequest {
+        var copy = self
+        copy.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
+        return copy
     }
 }
 
