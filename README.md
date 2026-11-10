@@ -15,11 +15,13 @@ SiriAIKit is not affiliated with or endorsed by Apple.
 - `SiriAIEvalKit`: iOS 27.3 on a device. Apple's evaluation frameworks don't ship for the Simulator.
 - `siri-ai-eval`: macOS 15 or later.
 
-Add the package in Xcode, or in `Package.swift`:
+Add `https://github.com/airowe/siri-ai-kit` in Xcode (File > Add Package Dependencies), or in `Package.swift`:
 
 ```swift
-.package(path: "../siri-ai-kit")
+.package(url: "https://github.com/airowe/siri-ai-kit", from: "0.1.0")
 ```
+
+Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are still in beta. Pin with `.upToNextMinor(from: "0.1.0")` if you need stability.
 
 Link `SiriAIKit` to your app target and `SiriAIEvalKit` to your UI test target.
 
