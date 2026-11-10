@@ -28,20 +28,39 @@ enum DemoAPI {
 
     /// The signed-in person's cart. Refreshes the access token once if the API says it expired, and never loops.
     static func cart() async throws -> Cart {
-        guard let tokens = TokenKeychain.load() else { throw DemoAPIError.signedOut }
+        guard let tokens = try TokenKeychain.load() else { throw DemoAPIError.signedOut }
         let (data, status) = try await get("auth/carts/1", token: tokens.accessToken)
         guard status == 401 else { return try decode(data, status: status) }
 
-        let fresh = try await refreshed(tokens)
+        let fresh = try await refresher.refreshed(after: tokens)
         ToolOutcomeLog.standard.note("refreshed after 401")
         let (retryData, retryStatus) = try await get("auth/carts/1", token: fresh.accessToken)
         guard retryStatus != 401 else { throw DemoAPIError.signedOut }
         return try decode(retryData, status: retryStatus)
     }
 
-    /// New tokens, saved before they're used. A rejected refresh means signed out; a network failure stays one,
-    /// so Siri says "couldn't reach" rather than asking the person to sign in.
-    private static func refreshed(_ tokens: Tokens) async throws -> Tokens {
+    /// One refresh at a time for the whole app. A Siri call that timed out may still be refreshing when the next
+    /// one starts, and APIs that issue a new refresh token on every refresh reject the second use of the old one.
+    private static let refresher = Refresher()
+
+    private actor Refresher {
+        private var inFlight: Task<Tokens, any Error>?
+
+        func refreshed(after stale: Tokens) async throws -> Tokens {
+            if let inFlight { return try await inFlight.value }
+            if let current = try TokenKeychain.load(), current.refreshToken != stale.refreshToken {
+                return current
+            }
+            let task = Task { try await DemoAPI.refresh(stale) }
+            inFlight = task
+            defer { inFlight = nil }
+            return try await task.value
+        }
+    }
+
+    /// New tokens, saved before they're used. Only a rejected refresh means signed out: a server error stays a
+    /// failure and a network error stays "couldn't reach", so Siri doesn't ask the person to sign in for nothing.
+    private static func refresh(_ tokens: Tokens) async throws -> Tokens {
         guard refreshEnabled else { throw DemoAPIError.signedOut }
         let fresh: Tokens
         do {
@@ -49,7 +68,7 @@ enum DemoAPI {
                 "auth/refresh",
                 RefreshBody(refreshToken: tokens.refreshToken, expiresInMins: accessTokenLifetimeMinutes)
             )
-        } catch DemoAPIError.badStatus {
+        } catch DemoAPIError.badStatus(let status) where [400, 401, 403].contains(status) {
             throw DemoAPIError.signedOut
         }
         try TokenKeychain.save(fresh)
@@ -110,14 +129,16 @@ private enum TokenKeychain {
         [kSecClass: kSecClassGenericPassword, kSecAttrService: DemoAPI.keychainService, kSecAttrAccount: "tokens"]
     }
 
-    static func load() -> Tokens? {
+    /// The saved tokens, or nil if there are none. Other Keychain failures throw, so a locked-phone read error
+    /// isn't mistaken for being signed out.
+    static func load() throws -> Tokens? {
         var lookup = query
         lookup[kSecReturnData] = true
         lookup[kSecMatchLimit] = kSecMatchLimitOne
         var result: CFTypeRef?
-        guard SecItemCopyMatching(lookup as CFDictionary, &result) == errSecSuccess, let data = result as? Data else {
-            return nil
-        }
+        let status = SecItemCopyMatching(lookup as CFDictionary, &result)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let data = result as? Data else { throw DemoAPIError.keychain(status) }
         return try? JSONDecoder().decode(Tokens.self, from: data)
     }
 
