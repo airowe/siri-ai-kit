@@ -22,6 +22,7 @@ struct AuthenticatedClientTests {
     struct RefreshFailed: Error {}
 
     func makeClient(
+        timeout: Duration = .seconds(10),
         expiredStatuses: Set<Int> = [401],
         refreshDelay: Duration = .zero,
         refreshFails: Bool = false
@@ -33,7 +34,7 @@ struct AuthenticatedClientTests {
             if refreshFails { throw RefreshFailed() }
             return Self.refreshed
         }
-        return ToolHTTPClient(baseURL: Self.base, session: stub.session, auth: auth, outcomes: outcomes)
+        return ToolHTTPClient(baseURL: Self.base, timeout: timeout, session: stub.session, auth: auth, outcomes: outcomes)
     }
 
     /// 200 for the given access token, `expiredStatus` for any other.
@@ -122,6 +123,37 @@ struct AuthenticatedClientTests {
         async let second = client.get("cart", as: Item.self)
         #expect(try await [first, second] == [Item(name: "cart"), Item(name: "cart")])
         #expect(refreshCount.value == 1)
+    }
+
+    @Test func cancelDuringRefreshReleasesTheCaller() async throws {
+        acceptOnly("a2")
+        let client = makeClient(refreshDelay: .seconds(2))
+        let call = Task { try await client.get("cart", as: Item.self) }
+        try await Task.sleep(for: .milliseconds(300))
+        let cancelled = ContinuousClock.now
+        call.cancel()
+        await #expect(throws: ToolError.timedOut) { try await call.value }
+        #expect(ContinuousClock.now - cancelled < .milliseconds(500))
+        #expect(!sentTokens.contains("Bearer a2"))
+    }
+
+    @Test func refreshKeepsRunningAfterTheCallerLeaves() async throws {
+        acceptOnly("a2")
+        let client = makeClient(refreshDelay: .milliseconds(300))
+        let call = Task { try await client.get("cart", as: Item.self) }
+        try await Task.sleep(for: .milliseconds(100))
+        call.cancel()
+        _ = await call.result
+        try await Task.sleep(for: .milliseconds(600))
+        #expect(try store.load() == Self.refreshed)
+    }
+
+    @Test func refreshSlowerThanTheTimeoutGivesTimedOut() async {
+        acceptOnly("a2")
+        let client = makeClient(timeout: .milliseconds(400), refreshDelay: .seconds(2))
+        let started = ContinuousClock.now
+        await #expect(throws: ToolError.timedOut) { try await client.get("cart", as: Item.self) }
+        #expect(ContinuousClock.now - started < .seconds(1))
     }
 
     @Test func concurrentCallsWhenRefreshFails() async {

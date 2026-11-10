@@ -18,10 +18,16 @@ struct SummaryFormatterTests {
         #expect(negative.contains("  Real pass rate: 0% (0 of 4 complete runs)"))
     }
 
+    @Test func intentsCheckIsShown() throws {
+        let lines = SummaryFormatter.text([try Fixture.cartNegativeControl.report()]).split(separator: "\n")
+        #expect(lines.contains { $0.hasPrefix("  Run 1:") && $0.contains("intents check: fail | reply check: fail") })
+        #expect(lines.contains { $0.hasPrefix("  Run 2:") && $0.contains("intents check: pass | reply check: fail") })
+    }
+
     @Test func noToolCallsAndNoCompleteRunsAreStated() {
         let report = EvalReport(name: "Empty", runs: [EvalRun(toolCalls: [:], reply: nil, intentsPassed: false, replyPassed: false, incomplete: true)])
         let text = SummaryFormatter.text([report])
-        #expect(text.contains("  Run 1: no tool calls | no reply | reply check: fail | incomplete"))
+        #expect(text.contains("  Run 1: no tool calls | no reply | intents check: fail | reply check: fail | incomplete"))
         #expect(text.contains("  Real pass rate: n/a (no complete runs)"))
     }
 

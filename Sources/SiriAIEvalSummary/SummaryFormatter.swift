@@ -36,6 +36,7 @@ public enum SummaryFormatter {
         var fields = [
             calls,
             run.reply.map { "reply: \"\($0)\"" } ?? "no reply",
+            "intents check: \(run.intentsPassed ? "pass" : "fail")",
             "reply check: \(run.replyPassed ? "pass" : "fail")",
         ]
         if let outcome = run.outcome { fields.append("outcome: \(outcome)") }

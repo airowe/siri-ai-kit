@@ -57,7 +57,8 @@ What the client does:
 - **Sends the saved access token.** With no tokens saved, it sends no request and throws `.signedOut`.
 - **Refreshes when the API says the token expired** (401 by default; set `expiredStatuses` for APIs that use 403). It refreshes at most once, saves the new tokens and retries. If several calls fail at the same moment, they share that one refresh.
 - **Never loops.** If the refresh fails, saving fails, or the retry is rejected again, the call throws `.signedOut`.
-- **Times out after 10 seconds**, because Siri waits for `perform()`. A cancelled call counts as timed out.
+- **Times out after 10 seconds**, because Siri waits for `perform()`. A cancelled call counts as timed out, and so does a refresh that takes longer than the timeout. The refresh keeps running in the background, so its new tokens are still saved.
+- **Keeps query strings:** `get("orders?status=open")` works.
 
 `error.reply(appName:)` turns each failure into a sentence Siri says:
 

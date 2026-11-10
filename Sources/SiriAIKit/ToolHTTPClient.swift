@@ -42,7 +42,13 @@ public struct ToolHTTPClient: Sendable {
 
     func makeRequest(_ method: HTTPMethod, _ path: String) -> URLRequest {
         let relative = path.hasPrefix("/") ? String(path.dropFirst()) : path
-        var request = URLRequest(url: baseURL.appending(path: relative))
+        let parts = relative.split(separator: "?", maxSplits: 1)
+        var url = baseURL.appending(path: String(parts.first ?? ""))
+        if parts.count == 2, var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            components.percentEncodedQuery = String(parts[1])
+            url = components.url ?? url
+        }
+        var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.timeoutInterval = timeout.seconds
         return request
@@ -70,7 +76,7 @@ public struct ToolHTTPClient: Sendable {
                 outcomes.record("used saved token")
                 return first
             }
-            let fresh = try await auth.refreshed(after: saved)
+            let fresh = try await auth.refreshed(after: saved, within: timeout)
             let retry = try await load(request.authorized(with: fresh))
             guard !auth.expiredStatuses.contains(retry.1) else { throw .signedOut }
             outcomes.record("refreshed after \(first.1)")

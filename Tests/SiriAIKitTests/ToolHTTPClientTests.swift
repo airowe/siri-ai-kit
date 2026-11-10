@@ -62,6 +62,13 @@ struct ToolHTTPClientTests {
         #expect(stub.requests.map(\.url?.absoluteString) == ["https://api.example.com/v2/carts/1"])
     }
 
+    @Test(arguments: ["carts?page=2&q=red%20shoes", "/carts?page=2&q=red%20shoes"])
+    func keepsQueryStrings(path: String) async throws {
+        stub.respond { StubURLProtocol.reply(200, #"{"name":"cart"}"#, for: $0) }
+        _ = try await makeClient().get(path, as: Item.self)
+        #expect(stub.requests.map(\.url?.absoluteString) == ["https://api.example.com/v2/carts?page=2&q=red%20shoes"])
+    }
+
     @Test func sendEncodesJSONBody() async throws {
         stub.respond { StubURLProtocol.reply(201, #"{"name":"saved"}"#, for: $0) }
         let saved = try await makeClient().send(.post, "items", body: Item(name: "lamp"), as: Item.self)

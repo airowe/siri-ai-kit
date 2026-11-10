@@ -58,8 +58,11 @@ public struct KeychainTokenStore: TokenStore {
         } catch {
             throw .invalidResponse
         }
-        SecItemDelete(itemQuery as CFDictionary)
-        let status = SecItemAdd(addAttributes(for: data) as CFDictionary, nil)
+        let update: [CFString: Any] = [kSecValueData: data, kSecAttrAccessible: accessibility.attribute]
+        var status = SecItemUpdate(itemQuery as CFDictionary, update as CFDictionary)
+        if status == errSecItemNotFound {
+            status = SecItemAdd(addAttributes(for: data) as CFDictionary, nil)
+        }
         guard status == errSecSuccess else { throw .keychain(status) }
     }
 
