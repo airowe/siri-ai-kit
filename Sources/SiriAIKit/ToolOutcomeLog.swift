@@ -1,7 +1,7 @@
 import Foundation
 
-/// Records what the last tool call did ("used saved token", "refreshed after 401", "signed out"),
-/// so an evaluation can tell a real refresh from a token that hadn't expired yet.
+/// Records what the last tool call did ("succeeded (refreshed after 401)", "signed out", "timed out"),
+/// so an evaluation can check what the tool did as well as what Siri said.
 public struct ToolOutcomeLog: @unchecked Sendable {
     private let defaults: UserDefaults
     private let key: String
@@ -27,7 +27,21 @@ public struct ToolOutcomeLog: @unchecked Sendable {
 
     public var last: String { defaults.string(forKey: key) ?? "none" }
 
+    private var notesKey: String { key + ".notes" }
+
+    /// Adds a detail to the current tool call's outcome, for example "refreshed after 401".
+    public func note(_ detail: String) {
+        defaults.set((defaults.stringArray(forKey: notesKey) ?? []) + [detail], forKey: notesKey)
+    }
+
+    func beginRun() {
+        defaults.removeObject(forKey: notesKey)
+    }
+
     func record(_ outcome: String) {
-        defaults.set("\(outcome) at \(Date.now.formatted(date: .omitted, time: .standard))", forKey: key)
+        let notes = defaults.stringArray(forKey: notesKey) ?? []
+        let detail = notes.isEmpty ? "" : " (\(notes.joined(separator: "; ")))"
+        defaults.set("\(outcome)\(detail) at \(Date.now.formatted(date: .omitted, time: .standard))", forKey: key)
+        beginRun()
     }
 }

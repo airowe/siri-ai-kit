@@ -16,3 +16,28 @@ struct ToolOutcomeLogTests {
         #expect(log.last.count > "used saved token at ".count)
     }
 }
+
+struct ToolOutcomeNotesTests {
+    let log = ToolOutcomeLog(defaults: UserDefaults(suiteName: UUID().uuidString)!)
+
+    @Test func notesAppearInRecord() {
+        log.note("refreshed after 401")
+        log.note("retried once")
+        log.record("succeeded")
+        #expect(log.last.hasPrefix("succeeded (refreshed after 401; retried once) at "))
+    }
+
+    @Test func recordClearsNotes() {
+        log.note("x")
+        log.record("succeeded")
+        log.record("failed")
+        #expect(log.last.hasPrefix("failed at "))
+    }
+
+    @Test func beginRunClearsNotes() {
+        log.note("stale")
+        log.beginRun()
+        log.record("succeeded")
+        #expect(log.last.hasPrefix("succeeded at "))
+    }
+}
