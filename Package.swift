@@ -18,7 +18,7 @@ let package = Package(
         .target(name: "SiriAIEvalSummary"),
         .executableTarget(name: "siri-ai-eval", dependencies: ["SiriAIEvalSummary"]),
         .testTarget(name: "SiriAIKitTests", dependencies: ["SiriAIKit"]),
-        .testTarget(name: "SiriAIEvalSummaryTests", dependencies: ["SiriAIEvalSummary"]),
+        .testTarget(name: "SiriAIEvalSummaryTests", dependencies: ["SiriAIEvalSummary"], resources: [.copy("Fixtures")]),
     ],
     swiftLanguageModes: [.v6]
 )

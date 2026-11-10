@@ -1,0 +1,103 @@
+{
+  "durationInMilliseconds" : 10835,
+  "endTime" : "2026-11-10T15:00:34.095Z",
+  "evaluationID" : "Package question without the app name",
+  "evaluationInfo" : {
+
+  },
+  "reportMetadata" : {
+    "ColumnOrdering" : [
+      "Input",
+      "Response",
+      "Expected",
+      "Correct Intents",
+      "Intents",
+      "Correct Found Entities",
+      "Found Entities",
+      "Correct Onscreen Entities",
+      "Onscreen Entities",
+      "Correct Siri Responses",
+      "Siri Response",
+      "Skills Loaded"
+    ],
+    "MetricDescriptions" : {
+      "Found Entities" : "Share of scenarios where every `Finds` expectation held.",
+      "Intents" : "Share of scenarios where every intent `Calls` expectation held (ordered, unordered and disallowed).",
+      "Onscreen Entities" : "Share of scenarios where every `OnScreen` expectation held.",
+      "Siri Response" : "Share of scenarios where every `SiriResponse` expectation held.",
+      "Skills Loaded" : "Share of scenarios where every `Loads(.required)` expectation held."
+    },
+    "SummaryColumnOrdering" : [
+      "Mean of Intents"
+    ]
+  },
+  "resultID" : "EEAFF6F1-84A4-4C3D-A501-DE552FCBFC29",
+  "results" : [
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "2 of 2 checks held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Disallowed Call\" : {\n      \"· GetOrderStatusIntent\" : \"Not called\"\n    },\n    \"3 · Disallowed Call\" : {\n      \"· SearchOrdersIntent\" : \"Not called\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"Where's my package?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetOrderStatusIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                },\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"SearchOrdersIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"disallowed\"\n            }\n          }\n        }\n      ],\n      \"id\" : \"CAEBC6BB-71EA-49F1-B42F-CD5464CE063F\",\n      \"utterance\" : \"Where's my package?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 2 checks held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"Where's my package?\\\"\",\n    \"2 · Disallowed Call\" : {\n      \"· GetOrderStatusIntent\" : \"Not called\"\n    },\n    \"3 · Disallowed Call\" : {\n      \"· SearchOrdersIntent\" : \"Not called\"\n    },\n    \"4 · Siri Response\" : \"\\\"Which package? The trail running shoes, the brass desk lamp, or the Ethiopian coffee beans?\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    }
+  ],
+  "startTime" : "2026-11-10T15:00:23.260Z",
+  "summary" : [
+    {
+      "Mean of Intents" : {
+        "group" : "Overview",
+        "operation" : {
+          "metric" : "Intents",
+          "type" : "mean"
+        },
+        "value" : 1
+      }
+    }
+  ]
+}

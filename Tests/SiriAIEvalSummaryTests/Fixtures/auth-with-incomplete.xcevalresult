@@ -1,0 +1,324 @@
+{
+  "durationInMilliseconds" : 459726,
+  "endTime" : "2026-11-10T16:40:27.622Z",
+  "evaluationID" : "Cart after the access token expires, repeated",
+  "evaluationInfo" : {
+
+  },
+  "reportMetadata" : {
+    "ColumnOrdering" : [
+      "Input",
+      "Response",
+      "Expected",
+      "Correct Intents",
+      "Intents",
+      "Correct Found Entities",
+      "Found Entities",
+      "Correct Onscreen Entities",
+      "Onscreen Entities",
+      "Correct Siri Responses",
+      "Siri Response",
+      "Skills Loaded"
+    ],
+    "MetricDescriptions" : {
+      "Found Entities" : "Share of scenarios where every `Finds` expectation held.",
+      "Intents" : "Share of scenarios where every intent `Calls` expectation held (ordered, unordered and disallowed).",
+      "Onscreen Entities" : "Share of scenarios where every `OnScreen` expectation held.",
+      "Siri Response" : "Share of scenarios where every `SiriResponse` expectation held.",
+      "Skills Loaded" : "Share of scenarios where every `Loads(.required)` expectation held."
+    },
+    "SummaryColumnOrdering" : [
+      "Mean of Intents",
+      "Mean of Siri Response"
+    ]
+  },
+  "resultID" : "52481F27-2B27-45CC-9140-0A491B48F905",
+  "results" : [
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"D781AA7E-F8B8-40E7-959E-F6FA6F097038\",\n      \"utterance\" : \"In Siri Spike, what's in my cart?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"47F0892E-80AF-4A73-8312-20EA0B2CD1FA\",\n      \"utterance\" : \"In Siri Spike, what's in my cart?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"0 of 1 turn completed · the run ended before all of its results arrived; run the scenario again\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — the run ended before all of its results arrived\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"—\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"FE6560F7-07DF-465C-BDC5-228566A934B0\",\n      \"utterance\" : \"In Siri Spike, what's in my cart?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"7D3508A0-2C59-4DA7-9B15-F1AA37A44F73\",\n      \"utterance\" : \"In Siri Spike, what's in my cart?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"040A57B6-CDF0-4375-95CF-41DC686C1D43\",\n      \"utterance\" : \"In Siri Spike, what's in my cart?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"0 of 1 turn completed · the run ended before all of its results arrived; run the scenario again\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, what's in my cart?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — the run ended before all of its results arrived\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"—\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    }
+  ],
+  "startTime" : "2026-11-10T16:32:47.896Z",
+  "summary" : [
+    {
+      "Mean of Intents" : {
+        "group" : "Overview",
+        "operation" : {
+          "metric" : "Intents",
+          "type" : "mean"
+        },
+        "value" : 0.59999999999999998
+      },
+      "Mean of Siri Response" : {
+        "group" : "Siri Response",
+        "operation" : {
+          "metric" : "Siri Response",
+          "type" : "mean"
+        },
+        "value" : 0.59999999999999998
+      }
+    }
+  ]
+}

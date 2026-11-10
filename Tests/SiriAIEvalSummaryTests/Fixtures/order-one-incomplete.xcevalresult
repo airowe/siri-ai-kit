@@ -1,0 +1,324 @@
+{
+  "durationInMilliseconds" : 108607,
+  "endTime" : "2026-11-10T14:59:22.123Z",
+  "evaluationID" : "Trail running shoes status, repeated",
+  "evaluationInfo" : {
+
+  },
+  "reportMetadata" : {
+    "ColumnOrdering" : [
+      "Input",
+      "Response",
+      "Expected",
+      "Correct Intents",
+      "Intents",
+      "Correct Found Entities",
+      "Found Entities",
+      "Correct Onscreen Entities",
+      "Onscreen Entities",
+      "Correct Siri Responses",
+      "Siri Response",
+      "Skills Loaded"
+    ],
+    "MetricDescriptions" : {
+      "Found Entities" : "Share of scenarios where every `Finds` expectation held.",
+      "Intents" : "Share of scenarios where every intent `Calls` expectation held (ordered, unordered and disallowed).",
+      "Onscreen Entities" : "Share of scenarios where every `OnScreen` expectation held.",
+      "Siri Response" : "Share of scenarios where every `SiriResponse` expectation held.",
+      "Skills Loaded" : "Share of scenarios where every `Loads(.required)` expectation held."
+    },
+    "SummaryColumnOrdering" : [
+      "Mean of Intents",
+      "Mean of Siri Response"
+    ]
+  },
+  "resultID" : "185A5911-36EF-4139-9481-52A2339BE194",
+  "results" : [
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetOrderStatusIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)out for delivery\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"BF27F1E3-E470-4B7D-9F3F-D544887C6D50\",\n      \"utterance\" : \"In Siri Spike, where are my trail running shoes?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Trail running shoes is out for delivery, arriving today by 6 PM.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetOrderStatusIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)out for delivery\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"B9F26430-C09F-4E94-9FFF-0B79D7131EC8\",\n      \"utterance\" : \"In Siri Spike, where are my trail running shoes?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Trail running shoes is out for delivery, arriving today by 6 PM.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetOrderStatusIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)out for delivery\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"C39106A2-1CD2-4F42-B79D-89F8360595BB\",\n      \"utterance\" : \"In Siri Spike, where are my trail running shoes?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"0 of 1 turn completed · the run ended before all of its results arrived; run the scenario again\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"No — the run ended before all of its results arrived\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"—\"\n    },\n    \"4 · Siri Response\" : \"\\\"Your trail running shoes are out for delivery today by 6 PM.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetOrderStatusIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)out for delivery\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"6FE52732-F1B4-4545-B3F7-6C1E8D5EF5A5\",\n      \"utterance\" : \"In Siri Spike, where are my trail running shoes?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Trail running shoes is out for delivery, arriving today by 6 PM.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "1 of 1 check held",
+        "value" : 1
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.sirispike\",\n                    \"identifier\" : \"GetOrderStatusIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)out for delivery\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"4E76F14B-14CA-49EC-88FC-122F23B7CBF4\",\n      \"utterance\" : \"In Siri Spike, where are my trail running shoes?\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.sirispike\" : \"3 App Entities\\nOrderEntity × 3\"\n    },\n    \"Turns\" : \"1 of 1 turn completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"In Siri Spike, where are my trail running shoes?\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetOrderStatusIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)out for delivery'\"\n    },\n    \"4 · Siri Response\" : \"\\\"From Siri Spike: Trail running shoes is out for delivery, arriving today by 6 PM.\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "pass",
+        "rationale" : "All 1 check held",
+        "value" : true
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    }
+  ],
+  "startTime" : "2026-11-10T14:57:33.516Z",
+  "summary" : [
+    {
+      "Mean of Intents" : {
+        "group" : "Overview",
+        "operation" : {
+          "metric" : "Intents",
+          "type" : "mean"
+        },
+        "value" : 0.80000000000000004
+      },
+      "Mean of Siri Response" : {
+        "group" : "Siri Response",
+        "operation" : {
+          "metric" : "Siri Response",
+          "type" : "mean"
+        },
+        "value" : 0.80000000000000004
+      }
+    }
+  ]
+}
