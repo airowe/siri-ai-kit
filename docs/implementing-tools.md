@@ -15,6 +15,25 @@ This guide is for the people who own an app's code, and for the coding agents wo
 
 Keep the interface the same whichever way you answer, because evaluations and Siri's choice depend on it. Changing a `name` breaks the evaluations; changing a `description` changes when Siri calls the tool.
 
+## Where the code goes
+
+Each tool has one handler file, named after the declaration's `javascript` value. When Siri calls a tool, its name leads straight to its file:
+
+```
+siri-tools.json                                the interface
+src/siri-tools/
+  unread-notifications.ts                      handler: turns your function into one sentence
+  unread-notifications.test.ts                 what the sentence must be
+  index.ts                                     registers every handler (once `defineSiriTool` ships)
+src/features/notifications/api.ts              your existing code: getUnreadCount()
+app-intents/GetUnreadNotificationsIntent.swift the Swift tool, until the `javascript` kind ships
+```
+
+- **The handler is thin.** It calls your existing function and words the result. Sign-in, servers and tokens stay where they are.
+- **It calls plain functions, never hooks.** Siri can launch the app in the background, where no component renders, so `useNotifications()` isn't available. If the logic only exists inside a hook or a screen, move it into an exported function first; discovery's report marks those tools "needs extraction" and names the function.
+- **Put `siri-tools/` in the source root,** never in `app/`, where Expo Router makes every file a route.
+- **Discovery writes each handler as a stub that throws, with a failing test.** Implement it until the test passes.
+
 ## Three ways to answer
 
 | Way | Status | Your answer runs in | Use when |
@@ -73,17 +92,30 @@ The plan is in the [JS bridge spec](https://github.com/airowe/siri-ai-expo/pull/
   "parameters": [], "javascript": "unread-notifications" }
 ```
 
-The handler is defined at the top level of a module your entry file imports:
+The handler lives in its own file and calls your existing code:
 
 ```ts
-import { defineSiriTool, ToolFailure } from 'expo-siri-ai-kit';
+// src/siri-tools/unread-notifications.ts
+import { ToolFailure } from 'expo-siri-ai-kit';
+import { restoreSession } from '../features/session';       // your existing session code
+import { getUnreadCount } from '../features/notifications/api'; // your existing query
 
-defineSiriTool('unread-notifications', async ({ params, note }) => {
-  const agent = await restoreSession();            // your existing session code
+export async function unreadNotifications(): Promise<string> {
+  const agent = await restoreSession();
   if (!agent) throw new ToolFailure('signedOut');
-  const { count, latest } = await getUnread(agent); // your existing query
-  return count === 0 ? 'No unread notifications.' : `${count} unread, the latest from ${latest.join(', ')}.`;
-});
+  const { count, latestFrom } = await getUnreadCount(agent);
+  return count === 0 ? 'No unread notifications.' : `${count} unread, the latest from ${latestFrom.join(', ')}.`;
+}
+```
+
+`index.ts` registers every handler, and your entry file imports it at the top level, so the handlers exist when Siri launches the app in the background:
+
+```ts
+// src/siri-tools/index.ts
+import { defineSiriTool } from 'expo-siri-ai-kit';
+import { unreadNotifications } from './unread-notifications';
+
+defineSiriTool('unread-notifications', unreadNotifications);
 ```
 
 That works because the answer runs in your app's JavaScript, which already handles auth, hosts and storage. What it waits on:

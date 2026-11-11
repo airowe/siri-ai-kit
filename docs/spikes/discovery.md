@@ -55,6 +55,17 @@ What changed when discovery stopped judging implementation:
 - **On thin apps, agents fill the list with weak tools.** The Ignite demo has one real candidate. The rule against
   mock and demo features was added after this run, and hasn't been rerun.
 
+## v4: owner review and one handler file per tool
+
+The skill now stops after the shortlist to ask the owner, and then writes one handler stub and one failing test per tool under `src/siri-tools/`. Each stub is named after its `javascript` value and imports the app function it should call. I reran it on Bluesky and answered as the owner.
+
+- **It stopped and asked,** and wrote no files first. Its four candidates were unread notifications, unread messages, post, and follower count. It said it would drop follower count first.
+- **It followed the owner's answers:** it dropped follower count and added "follow @handle" as a confirmed action.
+- **Every tool says where its code goes:** a handler, a test, the function to call, and its status. Two tools are callable (`fetchUnreadCheckPage`, `post`). Two need extraction: `fetchUnreadCounts` from `useUnreadCountsQuery`, and `resolveDid` from `useFetchDid`.
+- **It didn't change any existing app file.**
+- **Gap found:** all four functions take a signed-in client, and nothing said where a handler gets one outside React. The skill now asks for the app's session-restore function. That fix hasn't been rerun.
+- **Tests not run:** the clone has no `node_modules`, and the app needs Node 24.
+
 ## What's not proven
 
 - No tool from these apps ran on a device. Discovery is a proposal until an evaluation passes.
