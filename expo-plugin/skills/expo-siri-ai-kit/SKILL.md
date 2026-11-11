@@ -66,6 +66,17 @@ struct GetOrderStatusIntent: AppIntent {
 
 The Swift tool can't call your JavaScript API client, and can't read tokens from JS memory. It needs its own Swift request code and the token from the Keychain. If the app stores tokens with `expo-secure-store`, its default `keychainAccessible` is `WHEN_UNLOCKED`, which Siri can't read on a locked phone. Save with `keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK` and an explicit `keychainService`, then read that generic-password item from Swift with the same service. Check the installed expo-secure-store iOS source for the account attribute it uses before writing the Swift query.
 
+## Implementing tools from `siri-tools.json`
+
+A `siri-tools.json` from the siri-ai-discover skill is the tools' interface. Each entry has `name`, `title`, `description` and `parameters`, and usually `"javascript": "<handler>"`. Implement every entry with that interface unchanged: evaluations check `name`, and Siri chooses tools by `description`.
+
+| The entry has | Do this today |
+|---|---|
+| `javascript` | Not supported yet: the plugin rejects it as an unknown field. Write a Swift tool in `app-intents/` named `<name>Intent`, copy `title` and `description` word for word, and add one `@Parameter` per declared parameter. Keep the entry as the tool's spec, but leave it out of the `tools` file until the `javascript` kind ships. |
+| `request` and `reply` | Generated at prebuild by the `tools` option (experimental). Use it only when the host is fixed and `https`, the token is in a Keychain item, there's no refresh, and every reply field is always present. Otherwise write Swift. |
+
+Whatever the kind, the answer is one sentence (the count and at most three names for a list). Failures go through `SiriTool`'s `ToolFailure` cases, and write actions ask Siri to confirm. The full guide for humans is `docs/implementing-tools.md` in the siri-ai-kit repository.
+
 ## Show the tool's outcome for evaluations
 
 The screen is React Native, so use a JS `<Text>` instead of SiriAIKit's SwiftUI `ToolOutcomeView`. Expose the outcome from the `AppIntentsSetup` inline module that expo-app-intents uses (`app-intents/AppIntentsSetup.swift`; keep the class name):

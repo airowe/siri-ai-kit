@@ -16,6 +16,8 @@ Running prebuild again doesn't add anything twice.
 
 ## Install
 
+The full setup, including the Mac, the iPhone and a checklist for coding agents, is in [INSTALL.md](https://github.com/airowe/siri-ai-kit/blob/main/INSTALL.md).
+
 ```bash
 npx expo install expo-siri-ai-kit expo-app-intents
 ```
@@ -129,6 +131,14 @@ Instead of writing Swift, list tools that call your HTTP API in a JSON file and 
 
 At prebuild the plugin writes one Swift tool per entry, plus a shared `SiriToolsGenerated.swift`, to `ios/<App>/SiriTools/` and compiles that folder into the app target. A bad declaration stops prebuild with every problem listed. The format, what it supports and what's still open are in [docs/spikes/tool-codegen.md](../docs/spikes/tool-codegen.md).
 
+## Implementing the tools discovery proposes
+
+The `siri-ai-discover` skill writes each tool's interface to `siri-tools.json`, and leaves how the tool gets its answer to your code. [docs/implementing-tools.md](../docs/implementing-tools.md) covers:
+
+- the three ways to answer: a Swift tool (works today), `request` + `reply` (experimental), or `javascript` (planned);
+- what every tool must do, whichever way it answers;
+- how to prove each tool on a phone.
+
 ## Showing the tool's outcome in your app
 
 Siri Evaluations read the last outcome from the screen. Expose it from your `AppIntentsSetup` inline module:
@@ -141,9 +151,14 @@ Function("siriToolOutcome") { () -> String in
 
 Then render it from JavaScript with `testID="siri-ai-tool-outcome"`.
 
-## Agent skill
+## Agent skills
 
-This package includes an agent skill at `skills/expo-siri-ai-kit/SKILL.md` covering setup, the outcome bridge and known prebuild problems. Claude Code users can install it with the other SiriAIKit skills: `/plugin marketplace add airowe/siri-ai-kit`, then `/plugin install siri-ai-kit@siri-ai-kit`.
+This package includes two agent skills:
+
+- `skills/expo-siri-ai-kit/SKILL.md` covers setup, the outcome bridge and known prebuild problems.
+- `skills/siri-ai-discover/SKILL.md` finds which Siri AI tools an app should have and writes their interfaces (name, description, parameters) to `siri-tools.json`, with an evaluation prompt for each. How each tool gets its answer is left to the app's own code.
+
+Claude Code users can install them with the other SiriAIKit skills: `/plugin marketplace add airowe/siri-ai-kit`, then `/plugin install siri-ai-kit@siri-ai-kit`.
 
 ## Requirements
 
