@@ -60,7 +60,58 @@ Rules:
 
 ## Prove the checks can fail (negative control)
 
-Break the tool, not the expectation. Make a temporary, uncommitted change so the tool can't produce the answer (turn off token refresh, point it at a bad host, or sign out before the run), run the same test once, and confirm the reply check fails and the recorded outcome shows the failure ("signed out", "unreachable"). An expectation for an impossible string only proves string matching works. Revert the change afterwards.
+Break the tool, not the expectation, and do it with a launch switch, never a temporary code edit someone must remember to revert.
+
+1. Define the switch in a file compiled into both the app and the UI test target:
+   ```swift
+   import SiriAIKit
+   extension EvalSwitch { static let refreshOff: EvalSwitch = "refresh-off" }   // lowercase, digits, hyphens
+   ```
+2. Read it in the app's own code, debug builds only, where it breaks the tool (refresh off, bad host, signed out):
+   ```swift
+   #if DEBUG
+   guard !EvalSwitch.refreshOff.isOn() else { throw APIError.signedOut }
+   #endif
+   ```
+3. Run the same scenario as the required evaluation with the switch on, and assert the reply check failed:
+   ```swift
+   @Test(.evaluates(ToolEvaluation.negativeControl(
+       name: "Order status, refresh off",
+       harness: harness,
+       turningOn: .refreshOff,
+       before: .waitFor(.seconds(70)),
+       dataset: .repeating(times: 2, orderScenario)
+   )))
+   func replyCheckFailsWithRefreshOff() async throws {
+       try expectAllFail(.siriResponse)
+   }
+   ```
+
+Confirm in the summary that the recorded outcome shows the break ("signed out"). An expectation for an impossible string only proves string matching works. `expectAllFail` also passes on runs the harness cut short, so read the summary with `--fail-on real`: the control's line must say "as expected", with at least one complete run.
+
+## Measure without the app's name (informational)
+
+People often don't name the app. Ask the same question without it, as a separate evaluation:
+
+```swift
+private let orderQuestion = ToolQuestion("Where's my order?", appName: "ParcelPal")   // must not contain the app name
+private func orderScenario(_ prompt: String) -> SiriScenario { /* UserTurn(prompt) { … } */ }
+
+// Required: orderQuestion.namingApp is "In ParcelPal, where's my order?"
+dataset: .repeating(times: 5) { orderScenario(orderQuestion.namingApp) }
+
+// Informational: asks orderQuestion.withoutAppName, "Where's my order?"
+@Test(.evaluates(ToolEvaluation.appNotNamed(
+    name: "Order status without the app's name",
+    harness: harness,
+    question: orderQuestion,
+    times: 5,
+    scenario: orderScenario
+)))
+func orderToolWithoutTheAppName() async throws {}   // don't assert: Siri may fairly ask which app
+```
+
+Report its rate as a finding, never as a failure. Don't put unnamed runs in the required evaluation: they'd drag down its pass rate.
 
 ## Run on the device
 
@@ -83,9 +134,11 @@ Find the device UDID with `xcrun devicectl list devices`. A result bundle path t
 | Apple pass rate | Xcode's number; counts cut-short runs as failures. |
 | Real pass rate | Leaves cut-short runs out. Report this one, with the run count ("4 of 4"). |
 | "answered without calling the tool" | Reply passed but the tool wasn't called: Siri answered from the Spotlight index. Remove the answer from the index. |
+| "Informational: not counted toward the exit status." | An `appNotNamed` evaluation. Its pass rate is a finding only. |
+| "Negative control: … as expected." | Every complete run's reply check failed, so the checks can fail. "the checks can't be trusted" means the broken app still passed: fix the checks before believing any pass rate. |
 | Outcome "succeeded (refreshed after 401)" | What the tool recorded via `ToolOutcomeLog`. "tool outcome missing" means no `ToolOutcomeView` on screen. |
 
-Exit codes: 0 all passed; 1 a run failed (`--fail-on real` ignores cut-short runs); 2 no evaluations or unreadable bundle, which is never a pass; 64 bad usage. Add `--json` for machine-readable output.
+Exit codes: 0 all passed; 1 a required run failed or a negative control's reply check passed (`--fail-on real` ignores cut-short runs); 2 no evaluations or unreadable bundle, which is never a pass; 64 bad usage. Add `--json` for machine-readable output.
 
 ## Common mistakes
 
@@ -93,6 +146,9 @@ Exit codes: 0 all passed; 1 a run failed (`--fail-on real` ignores cut-short run
 |---|---|
 | Two `SiriScenario`s inside one `.repeating` closure | One scenario per closure; one `@Test` per phrasing |
 | Reply check on text the app also indexes | Check text only the live API returns |
-| Negative control that expects an impossible string | Break the tool temporarily and watch the reply check fail |
+| Negative control that expects an impossible string | Break the tool with an `EvalSwitch` and assert `expectAllFail(.siriResponse)` |
+| Negative control by editing code and reverting it | `ToolEvaluation.negativeControl(turningOn:)`, so it runs every time |
+| Unnamed-app prompts mixed into the required evaluation | A separate `ToolEvaluation.appNotNamed` evaluation |
+| Reading `EvalSwitch` in release builds | Wrap the check in `#if DEBUG` |
 | Reporting Xcode's pass rate alone | Report the real pass rate and how many runs were cut short |
 | Running on the Simulator | Physical device only |
