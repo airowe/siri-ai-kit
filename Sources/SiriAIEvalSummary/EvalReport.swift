@@ -54,9 +54,38 @@ public struct EvalReport: Sendable, Equatable, Codable {
         return complete.isEmpty ? nil : Double(complete.count(where: \.passed)) / Double(complete.count)
     }
 
+    public var kind: EvaluationKind { EvaluationKind(evaluationName: name) }
+
     public var completeRunCount: Int { runs.count { !$0.incomplete } }
 
     public var answeredWithoutToolCount: Int { runs.count(where: \.answeredWithoutTool) }
+
+    /// Complete runs whose reply check failed: in a negative control, every complete run should be one.
+    public var replyFailedCompleteCount: Int { runs.count { !$0.incomplete && !$0.replyPassed } }
+}
+
+extension EvalReport {
+    enum CodingKeys: String, CodingKey {
+        case name, kind, runs, unmatchedOutcomes
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            name: try container.decode(String.self, forKey: .name),
+            runs: try container.decode([EvalRun].self, forKey: .runs),
+            unmatchedOutcomes: try container.decode([String].self, forKey: .unmatchedOutcomes)
+        )
+    }
+
+    /// Writes `kind` too, derived from the name, so JSON readers needn't parse the tag.
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(kind, forKey: .kind)
+        try container.encode(runs, forKey: .runs)
+        try container.encode(unmatchedOutcomes, forKey: .unmatchedOutcomes)
+    }
 }
 
 public enum EvalSummaryError: Error, Equatable {

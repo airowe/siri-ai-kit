@@ -132,6 +132,61 @@ func callsCartToolEveryTime() async throws {
 
 Before each run, `ToolEvaluation` launches the app and waits for the ready signal, up to 90 seconds. It then applies `before:` (for example, `.waitFor(.seconds(70))` so a token expires), runs the scenario, and saves the tool's outcome as an attachment named `siri-ai-eval-outcome`.
 
+### Prove the checks can fail, and measure without the app's name
+
+A pass rate is only worth trusting when the same checks fail once the tool is broken. Break the app at launch with an `EvalSwitch`, never with a code edit you have to remember to revert:
+
+```swift
+// Shared by the app and the UI test target.
+extension EvalSwitch {
+  static let refreshOff: EvalSwitch = "refresh-off"
+}
+
+// In the app's own code. Release builds ignore it.
+static var refreshEnabled: Bool {
+  #if DEBUG
+  !EvalSwitch.refreshOff.isOn()
+  #else
+  true
+  #endif
+}
+
+// In the UI test target: same scenario, app launched with the switch on.
+@Test(.evaluates(ToolEvaluation.negativeControl(
+  name: "Cart, refresh off",
+  harness: harness,
+  turningOn: .refreshOff,
+  before: .waitFor(.seconds(70)),
+  dataset: .repeating(times: 2, cartScenario)
+)))
+func replyCheckFailsWithRefreshOff() async throws {
+  try expectAllFail(.siriResponse)
+}
+```
+
+`expectAllFail` passes only when the metric failed in every run. The harness launches the app with `--siri-ai-eval-switch=refresh-off`, and relaunches it before every run, so the switch never leaks into other evaluations.
+
+To measure whether Siri picks your tool when the person doesn't name your app, ask the same question both ways with `ToolQuestion`:
+
+```swift
+private let cartQuestion = ToolQuestion("What's in my cart?", appName: "My App")
+// cartQuestion.namingApp      == "In My App, what's in my cart?"
+// cartQuestion.withoutAppName == "What's in my cart?"
+
+@Test(.evaluates(ToolEvaluation.appNotNamed(
+  name: "Cart without the app's name",
+  harness: harness,
+  question: cartQuestion,
+  times: 5,
+  scenario: cartScenario  // (String) -> SiriScenario
+)))
+func cartToolWithoutTheAppName() async throws {}
+```
+
+It's a separate, informational evaluation, not runs mixed into the required one. Siri may fairly ask which app you mean, so a low rate here is a finding, not a regression, and mixing it in would drag down the required pass rate. Don't assert it.
+
+Both helpers tag the evaluation's name (`[negative control]`, `[informational]`), so the tag reaches the result bundle and Xcode's report too.
+
 Summarize the results:
 
 ```bash
@@ -141,6 +196,8 @@ swift run siri-ai-eval summarize cart.xcresult [--json] [--fail-on any|real]
 It prints each run's tool calls, reply, intents check, reply check, recorded outcome, and whether the run was cut short ("the run ended before all of its results arrived").
 
 It also flags complete runs where the reply check passed but an expected tool wasn't called: "answered without calling the tool". Siri most likely answered from what your app indexed in Spotlight, so your tool's code never ran. Index only what identifies a record.
+
+Under a tagged evaluation's name it adds a line. An informational evaluation is never counted toward the exit status. A negative control passes only when the reply check failed in every run it counts. Under `--fail-on real`, that means every complete run, and at least one run must be complete. The JSON output has a `kind` field: `required`, `informational` or `negative control`.
 
 It prints two pass rates:
 
@@ -167,7 +224,7 @@ Run on Nov 11, 2026 on an iPhone 16 Pro on iOS 27.3 beta, with Xcode 27.3 beta (
 
 In the expired-token evaluation, the harness cut run 5 short before its results arrived. Siri still gave the right answer, and the tool recorded a refresh. Xcode counts that run as a failure; `siri-ai-eval` leaves it out of the real pass rate.
 
-The negative control is a temporary edit (`DemoAPI.refreshEnabled = false`) and isn't committed. It shows the reply check can fail.
+The negative control in this run was a temporary edit to `DemoAPI.refreshEnabled`. The example now runs it as `replyCheckFailsWithRefreshOff()`, which launches the app with `EvalSwitch.refreshOff` instead.
 
 ## Upgrading from 0.1.0
 
@@ -194,7 +251,7 @@ For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/ski
 ## Development
 
 ```bash
-swift test                     # SiriAIKit and summary tests, on the Mac
+swift test                     # SiriAIKit, SiriAIEvalKit and summary tests, on the Mac
 xcodebuild build -scheme SiriAIEvalKit -destination 'generic/platform=iOS'
 ```
 
