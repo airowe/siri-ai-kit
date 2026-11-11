@@ -32,7 +32,7 @@ app-intents/GetUnreadNotificationsIntent.swift the Swift tool, until the `javasc
 - **The handler is thin.** It calls your existing function and words the result. Sign-in, servers and tokens stay where they are.
 - **It calls plain functions, never hooks.** Siri can launch the app in the background, where no component renders, so `useNotifications()` isn't available. If the logic only exists inside a hook or a screen, move it into an exported function first; discovery's report marks those tools "needs extraction" and names the function.
 - **Put `siri-tools/` in the source root,** never in `app/`, where Expo Router makes every file a route.
-- **Discovery writes each handler as a stub that throws, with a failing test.** Implement it until the test passes.
+- **Discovery writes each handler as a stub that throws, with a failing test,** then offers to do the work: extract the functions, implement each handler until its test passes, and write the Swift tool that answers Siri today. Each job changes your code, so it asks first, and you can take any of them or none.
 
 ## Three ways to answer
 
@@ -96,14 +96,10 @@ The handler lives in its own file and calls your existing code:
 
 ```ts
 // src/siri-tools/unread-notifications.ts
-import { ToolFailure } from 'expo-siri-ai-kit';
-import { restoreSession } from '../features/session';       // your existing session code
-import { getUnreadCount } from '../features/notifications/api'; // your existing query
+import { getUnreadCount } from '../features/notifications/api'; // your existing code
 
 export async function unreadNotifications(): Promise<string> {
-  const agent = await restoreSession();
-  if (!agent) throw new ToolFailure('signedOut');
-  const { count, latestFrom } = await getUnreadCount(agent);
+  const { count, latestFrom } = await getUnreadCount();
   return count === 0 ? 'No unread notifications.' : `${count} unread, the latest from ${latestFrom.join(', ')}.`;
 }
 ```
