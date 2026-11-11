@@ -25,6 +25,8 @@ Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are sti
 
 Link `SiriAIKit` to your app target and `SiriAIEvalKit` to your UI test target.
 
+**Expo apps:** the [`expo-siri-ai-kit`](expo-plugin/) config plugin adds SiriAIKit to your app target during prebuild, so Swift tools in `app-intents/` can import it.
+
 ## Wrapping your API code in a tool
 
 ```swift

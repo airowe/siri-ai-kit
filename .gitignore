@@ -3,3 +3,6 @@
 *.xcresult
 DerivedData/
 .superpowers/
+expo-plugin/node_modules/
+expo-plugin/plugin/build/
+*.tgz

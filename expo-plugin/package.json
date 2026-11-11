@@ -1,0 +1,47 @@
+{
+  "name": "expo-siri-ai-kit",
+  "version": "0.2.0",
+  "description": "Expo config plugin that adds SiriAIKit to your app and turns on Apple's Siri AI Developer Preview code.",
+  "main": "app.plugin.js",
+  "types": "plugin/build/index.d.ts",
+  "files": [
+    "app.plugin.js",
+    "plugin/build",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p plugin",
+    "clean": "node -e \"require('fs').rmSync('plugin/build',{recursive:true,force:true})\"",
+    "test": "jest --config plugin/jest.config.js --rootDir plugin",
+    "prepublishOnly": "npm run clean && npm run build && npm test"
+  },
+  "keywords": [
+    "expo",
+    "react-native",
+    "siri",
+    "app-intents",
+    "config-plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/airowe/siri-ai-kit.git",
+    "directory": "expo-plugin"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "expo": ">=58.0.0"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "expo": "^58.0.24",
+    "expo-module-scripts": "^56.0.3",
+    "xcode": "^4.0.0"
+  }
+}
