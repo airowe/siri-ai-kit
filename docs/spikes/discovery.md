@@ -63,8 +63,20 @@ The skill now stops after the shortlist to ask the owner, and then writes one ha
 - **It followed the owner's answers:** it dropped follower count and added "follow @handle" as a confirmed action.
 - **Every tool says where its code goes:** a handler, a test, the function to call, and its status. Two tools are callable (`fetchUnreadCheckPage`, `post`). Two need extraction: `fetchUnreadCounts` from `useUnreadCountsQuery`, and `resolveDid` from `useFetchDid`.
 - **It didn't change any existing app file.**
-- **Gap found:** all four functions take a signed-in client, and nothing said where a handler gets one outside React. The skill now asks for the app's session-restore function. That fix hasn't been rerun.
-- **Tests not run:** the clone has no `node_modules`, and the app needs Node 24.
+- **Gap found:** all four functions take a signed-in client, and nothing said where a handler gets one outside React. The skill now asks for the app's session-restore function; v5 reran it.
+- **Tests not run:** the clone has no `node_modules`, and the app needs Node 24. See v5.
+
+## v5: the tests run
+
+I ran v4's stubs on Node 24 with the app's own Jest setup. One suite failed as intended. The other three never loaded: a bare `jest.mock(path)` loads the real module, and its imports reached a React Native native module (Worklets). The app's own tests mock with a factory and pass. The skill now requires factory mocks and the app's import style, and it runs the new tests before handing over.
+
+Rerun on Bluesky, answering as the owner with the same choices as v4:
+
+- **It named the session restore:** `createSessionBundleAndResume` from the stored account in persisted storage. The owner confirmed it.
+- **All six tests fail on the stubs' "not implemented" error,** not on loading.
+- **The typecheck flags both extractions** (`fetchUnreadCounts`, `fetchProfile`) as missing exports, as intended.
+- **Positive control:** I implemented `unread-notifications` the way an owner would. Its test needed one change: it mocked `persisted.get` but not `persisted.init`, which has to run first. After that, both tests passed. The skill now records every call in the session restore, in order, so tests mock all of them.
+- **Left to owners:** the stored account's type doesn't match what `createSessionBundleAndResume` takes, and posting needs its own `QueryClient` outside React.
 
 ## What's not proven
 
