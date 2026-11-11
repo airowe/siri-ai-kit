@@ -82,6 +82,30 @@ Rerun on Bluesky, answering as the owner with the same choices as v4:
 
 The v4 and v5 session rules asked discovery to find how the app restores a signed-in session and to mock it in each test. That pulled authentication back into discovery, which the owner decided it shouldn't handle. The rules are removed. A stub now imports and mocks only the app function it calls. If that function needs something the handler doesn't have, such as a client, the agent asks the owner instead of working it out.
 
+## v6: sweeping the data layer
+
+Step 1 used to start from the screens and reach the data layer only by tracing back from them. Now it also lists every read and write the app's data libraries define, merges that with the screens, and notes where each candidate came from. `data-layers.md` says where each library keeps its definitions and when one can run without React.
+
+The test app is Enatega's customer app (`enatega/food-delivery-multivendor`, Expo 53). It uses Apollo, axios and Zustand, and React Navigation rather than Expo Router. Both versions of the skill ran to the owner review, at the same time.
+
+| | Baseline (`main` skill) | With the sweep |
+|---|---|---|
+| Candidates considered | About 25, most from screens | About 100, every query, mutation and subscription |
+| Shortlist | Active order status, last order, cart summary, cancel order | The same four, plus "is this restaurant open?" |
+| Held back for the owner | Reorder, cost of the last order, rider's name | Wallet credit and free deliveries, which only exist in the single-vendor mode |
+| Dead code found | None | `restaurantList`, `myOrders`, `GET_ESTIMATED_DELIVERY_TIME` |
+| Plain helpers it reused | None | `calulateRemainingTime`, `isOpen` |
+| Callable or extraction | All needs extraction: the Apollo client is only built inside `App.js` | The same, citing `data-layers.md`'s rule "client only created inside a provider" |
+| Asked about credentials | **Yes:** where the token comes from in the background | No: it asked only where the shared client comes from, and said it wouldn't design it |
+
+What it shows:
+
+- The top of the list didn't change: on this app, screens already reach the most-asked reads.
+- The sweep found more possible tools, rejected most data-layer definitions quickly, and flagged dead code that a screen-only read can't see.
+- The baseline asked the owner about tokens. The skill now says every owner question is about what Siri should do, and that credentials are already in the code the tool calls.
+- "Is this restaurant open?" depends on matching a restaurant by name on a query with no name filter. The agent flagged that for the owner, which is right.
+- Not run: steps 4 and 5. The credentials wording hasn't been rerun either.
+
 ## What's not proven
 
 - No tool from these apps ran on a device. Discovery is a proposal until an evaluation passes.
