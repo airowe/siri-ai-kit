@@ -9,7 +9,7 @@ public struct SiriTool: Sendable {
     let outcomes: ToolOutcomeLog
     let classify: @Sendable (any Error) -> ToolFailure?
 
-    /// `classify` maps your own errors (for example "unauthorized") to a `ToolFailure`; return `nil` to use the defaults.
+    /// `classify` maps your own errors (for example "server down") to a `ToolFailure`; return `nil` to use the defaults.
     public init(
         appName: String,
         timeout: Duration = .seconds(10),
@@ -27,7 +27,7 @@ public struct SiriTool: Sendable {
     /// The operation's value, or a `ToolFailure` if it threw or ran past `timeout`.
     ///
     /// At the deadline, or if Siri cancels the call, this stops waiting but doesn't cancel the operation,
-    /// so work like saving refreshed tokens still finishes.
+    /// so work like writing to a cache still finishes.
     public func run<T: Sendable>(_ operation: @escaping @Sendable () async throws -> T) async throws(ToolFailure) -> T {
         let notes = RunNotes()
         let task = RunNotes.$current.withValue(notes) { Task { try await operation() } }
@@ -91,7 +91,6 @@ private struct DeadlinePassed: Error {}
 extension ToolFailure {
     var outcome: String {
         switch self {
-        case .signedOut: "signed out"
         case .timedOut: "timed out"
         case .unreachable: "unreachable"
         case .failed: "failed"

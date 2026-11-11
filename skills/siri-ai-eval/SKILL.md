@@ -12,7 +12,7 @@ A Siri evaluation speaks a prompt to Siri on a real device and checks two things
 
 Requirements: iOS 27.3 on a physical iPhone (the frameworks don't ship for the Simulator), a UI test target linking `SiriAIEvalKit`, and the app showing `ToolOutcomeView()` in debug builds (see the siri-ai-tool skill). Without that view every run records "tool outcome missing".
 
-Setup: add a UI Testing Bundle target (for example `ParcelPalEvals`) that targets the app, link `SiriAIEvalKit` to it, and give it a shared scheme. Sign the device in to a test account whose data you control, so the expected reply text is known.
+Setup: add a UI Testing Bundle target (for example `ParcelPalEvals`) that targets the app, link `SiriAIEvalKit` to it, and give it a shared scheme. Use test data you control, so the expected reply text is known.
 
 ## Write the test
 
@@ -28,7 +28,7 @@ private let getOrderStatus = IntentDefinitions(bundleIdentifier: bundleIdentifie
 private let textOnlyTheAPIKnows = "Blue Kettle"
 private let harness = SiriAppHarness(
     bundleIdentifier: bundleIdentifier,
-    readyWhen: .labelBegins("auth-status", with: "Signed in")   // an element the app shows once it can call the API
+    readyWhen: .labelBegins("app-status", with: "Ready")   // an element the app shows once it can call the API
 )
 
 private func orderScenario() -> SiriScenario {
@@ -55,8 +55,8 @@ Rules:
 - **Check both metrics.** `.intents` proves the tool was called; `.siriResponse` proves its answer reached the person.
 - **Check for text only the API returns**, and confirm the app doesn't index it (`CSSearchableItem`, `IndexedEntity`). If it does, a passing reply proves nothing.
 - **Repeat each scenario at least 5 times.** `.repeating(times:_:)` takes a closure that returns one `SiriScenario`. For another phrasing, write another scenario function and another `@Test`.
-- **The ready signal must exist.** `readyWhen` waits up to 90 seconds for an accessibility element. Add one to the app (for example `Text("Signed in at …").accessibilityIdentifier("auth-status")`) if there isn't one.
-- `before: .waitFor(.seconds(70))` delays each run, for example until an access token expires, to exercise refresh.
+- **The ready signal must exist.** `readyWhen` waits up to 90 seconds for an accessibility element. Add one to the app (for example `Text("Ready").accessibilityIdentifier("app-status")`) if there isn't one.
+- `before: .waitFor(.seconds(70))` delays each run, for example until a cache expires.
 
 ## Prove the checks can fail (negative control)
 
@@ -65,29 +65,28 @@ Break the tool, not the expectation, and do it with a launch switch, never a tem
 1. Define the switch in a file compiled into both the app and the UI test target:
    ```swift
    import SiriAIKit
-   extension EvalSwitch { static let refreshOff: EvalSwitch = "refresh-off" }   // lowercase, digits, hyphens
+   extension EvalSwitch { static let badHost: EvalSwitch = "bad-host" }   // lowercase, digits, hyphens
    ```
-2. Read it in the app's own code, debug builds only, where it breaks the tool (refresh off, bad host, signed out):
+2. Read it in the app's own code, debug builds only, where it breaks the tool (here, an API host that can't be reached):
    ```swift
    #if DEBUG
-   guard !EvalSwitch.refreshOff.isOn() else { throw APIError.signedOut }
+   if EvalSwitch.badHost.isOn() { baseURL = URL(string: "https://unreachable.invalid")! }
    #endif
    ```
 3. Run the same scenario as the required evaluation with the switch on, and assert the reply check failed:
    ```swift
    @Test(.evaluates(ToolEvaluation.negativeControl(
-       name: "Order status, refresh off",
+       name: "Order status, bad host",
        harness: harness,
-       turningOn: .refreshOff,
-       before: .waitFor(.seconds(70)),
+       turningOn: .badHost,
        dataset: .repeating(times: 2, orderScenario)
    )))
-   func replyCheckFailsWithRefreshOff() async throws {
+   func replyCheckFailsWithBadHost() async throws {
        try expectAllFail(.siriResponse)
    }
    ```
 
-Confirm in the summary that the recorded outcome shows the break ("signed out"). An expectation for an impossible string only proves string matching works. `expectAllFail` also passes on runs the harness cut short, so read the summary with `--fail-on real`: the control's line must say "as expected", with at least one complete run.
+Confirm in the summary that the recorded outcome shows the break ("unreachable"). An expectation for an impossible string only proves string matching works. `expectAllFail` also passes on runs the harness cut short, so read the summary with `--fail-on real`: the control's line must say "as expected", with at least one complete run.
 
 ## Measure without the app's name (informational)
 
@@ -136,7 +135,7 @@ Find the device UDID with `xcrun devicectl list devices`. A result bundle path t
 | "answered without calling the tool" | Reply passed but the tool wasn't called: Siri answered from the Spotlight index. Remove the answer from the index. |
 | "Informational: not counted toward the exit status." | An `appNotNamed` evaluation. Its pass rate is a finding only. |
 | "Negative control: … as expected." | Every complete run's reply check failed, so the checks can fail. "the checks can't be trusted" means the broken app still passed: fix the checks before believing any pass rate. |
-| Outcome "succeeded (refreshed after 401)" | What the tool recorded via `ToolOutcomeLog`. "tool outcome missing" means no `ToolOutcomeView` on screen. |
+| Outcome "succeeded (served from cache)" | What the tool recorded via `ToolOutcomeLog`. "tool outcome missing" means no `ToolOutcomeView` on screen. |
 
 Exit codes: 0 all passed; 1 a required run failed or a negative control's reply check passed (`--fail-on real` ignores cut-short runs); 2 no evaluations or unreadable bundle, which is never a pass; 64 bad usage. Add `--json` for machine-readable output.
 

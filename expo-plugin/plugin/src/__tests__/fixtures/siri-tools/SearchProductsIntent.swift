@@ -23,8 +23,7 @@ struct SearchProductsIntent: AppIntent {
                 "query": .string(query),
                 "limit": .int(limit),
             ],
-            body: [],
-            auth: nil
+            body: []
         )
         let answer = await SiriToolsGenerated.tool.answer {
             try SiriToolsGenerated.reply("Found {total} products. The first ones are {products.title}.", from: try await request.send())

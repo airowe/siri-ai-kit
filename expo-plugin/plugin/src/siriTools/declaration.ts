@@ -9,9 +9,7 @@ export type ToolParameter =
   | { name: string; type: ScalarType; title: string }
   | { name: string; type: 'enum'; title: string; cases: Record<string, string> };
 
-export type ToolAuth = { service: string; account: string; header: string; value: string };
-
-export type ToolRequest = { method: HttpMethod; url: string; body: string[]; auth?: ToolAuth };
+export type ToolRequest = { method: HttpMethod; url: string; body: string[] };
 
 export type ToolDeclaration = {
   name: string;
@@ -23,10 +21,6 @@ export type ToolDeclaration = {
 };
 
 export type SiriToolsDeclaration = { appName?: string; tools: ToolDeclaration[] };
-
-const DEFAULT_AUTH_HEADER = 'Authorization';
-const DEFAULT_AUTH_VALUE = 'Bearer {token}';
-const TOKEN_PLACEHOLDER = '{token}';
 
 const TYPE_NAME = /^[A-Z][A-Za-z0-9]*$/;
 const PROPERTY_NAME = /^[a-z][A-Za-z0-9]*$/;
@@ -45,8 +39,7 @@ const RESERVED = new Set(
 
 const TOOL_FIELDS = ['name', 'title', 'description', 'parameters', 'request', 'reply'];
 const PARAMETER_FIELDS = ['name', 'type', 'title', 'cases'];
-const REQUEST_FIELDS = ['method', 'url', 'body', 'auth'];
-const AUTH_FIELDS = ['service', 'account', 'header', 'value'];
+const REQUEST_FIELDS = ['method', 'url', 'body'];
 
 type Json = Record<string, unknown>;
 
@@ -104,20 +97,6 @@ export function urlPlaceholders(url: string): string[] {
   return [...url.matchAll(URL_PLACEHOLDER)].flatMap(([, name]) => (name === undefined ? [] : [name]));
 }
 
-function authProblems(auth: unknown, path: string): string[] {
-  if (auth === undefined) return [];
-  if (!isObject(auth)) return [`${path}: must be an object`];
-  return [
-    ...unknownFields(auth, AUTH_FIELDS, path),
-    ...textProblem(auth.service, `${path}.service`),
-    ...textProblem(auth.account, `${path}.account`),
-    ...(auth.header === undefined ? [] : textProblem(auth.header, `${path}.header`)),
-    ...(auth.value === undefined || (typeof auth.value === 'string' && auth.value.includes(TOKEN_PLACEHOLDER))
-      ? []
-      : [`${path}.value: must contain ${TOKEN_PLACEHOLDER}`]),
-  ];
-}
-
 function requestProblems(request: unknown, parameterNames: string[], path: string): string[] {
   if (!isObject(request)) return [`${path}: must be an object`];
   const problems = unknownFields(request, REQUEST_FIELDS, path);
@@ -143,7 +122,7 @@ function requestProblems(request: unknown, parameterNames: string[], path: strin
       }
     }
   }
-  return [...problems, ...authProblems(request.auth, `${path}.auth`)];
+  return problems;
 }
 
 /** Placeholders in a reply, or `undefined` if a `{` is never closed. */
@@ -223,7 +202,6 @@ export function declarationProblems(input: unknown): string[] {
 
 function withDefaults(tool: Json): ToolDeclaration {
   const request = tool.request as Json;
-  const auth = request.auth as Json | undefined;
   return {
     name: tool.name as string,
     title: tool.title as string,
@@ -233,14 +211,6 @@ function withDefaults(tool: Json): ToolDeclaration {
       method: request.method as HttpMethod,
       url: request.url as string,
       body: (request.body ?? []) as string[],
-      ...(auth && {
-        auth: {
-          service: auth.service as string,
-          account: auth.account as string,
-          header: (auth.header ?? DEFAULT_AUTH_HEADER) as string,
-          value: (auth.value ?? DEFAULT_AUTH_VALUE) as string,
-        },
-      }),
     },
     reply: tool.reply as string,
   };

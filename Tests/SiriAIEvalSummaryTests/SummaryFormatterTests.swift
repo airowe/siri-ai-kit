@@ -4,9 +4,9 @@ import Testing
 
 struct SummaryFormatterTests {
     @Test func textShowsEveryField() throws {
-        let text = SummaryFormatter.text([try Fixture.authWithIncomplete.report()])
+        let text = SummaryFormatter.text([try Fixture.cartWithIncomplete.report()])
         let lines = text.split(separator: "\n").map(String.init)
-        #expect(lines.first == "Cart after the access token expires, repeated")
+        #expect(lines.first == "Cart answer with incomplete runs, repeated")
         #expect(lines.filter { $0.contains("Run ") }.count == 5)
         #expect(lines.contains { $0.hasPrefix("  Run 1: GetCartIntent: yes") && $0.contains("reply check: pass") && !$0.contains("incomplete") })
         #expect(lines.contains { $0.hasPrefix("  Run 2: GetCartIntent: no") && $0.hasSuffix("incomplete") })
@@ -43,8 +43,8 @@ struct ExitPolicyTests {
     @Test(arguments: [
         (Fixture.cartAllPass, FailOn.any, Int32(0)),
         (.cartAllPass, .real, 0),
-        (.authWithIncomplete, .any, 1),
-        (.authWithIncomplete, .real, 0),
+        (.cartWithIncomplete, .any, 1),
+        (.cartWithIncomplete, .real, 0),
         (.cartNegativeControl, .real, 1),
         (.cartNegativeControl, .any, 1),
     ])

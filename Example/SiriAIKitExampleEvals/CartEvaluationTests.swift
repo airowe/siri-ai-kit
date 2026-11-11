@@ -12,11 +12,9 @@ private let productOnlyTheAPIKnows = "motorcycle"
 private let reliabilityRuns = 5
 /// More than one, so a single run the harness cuts short can't leave the control with nothing to show.
 private let negativeControlRuns = 2
-/// Longer than the app's one-minute access token, so the tool must refresh it.
-private let tokenExpiryWait: Duration = .seconds(70)
 private let harness = SiriAppHarness(
     bundleIdentifier: bundleIdentifier,
-    readyWhen: .labelBegins("auth-status", with: "Signed in")
+    readyWhen: .labelBegins("app-status", with: "Ready")
 )
 
 private func cartScenario(_ prompt: String) -> SiriScenario {
@@ -41,25 +39,15 @@ func callsCartToolEveryTime() async throws {
     try expectAllPass(.intents, .siriResponse)
 }
 
-@Test(.evaluates(ToolEvaluation(
-    name: "Cart after the access token expires, repeated",
-    harness: harness,
-    before: .waitFor(tokenExpiryWait),
-    dataset: .repeating(times: reliabilityRuns, cartScenarioNamingApp)
-)))
-func refreshesExpiredTokenEveryTime() async throws {
-    try expectAllPass(.intents, .siriResponse)
-}
-
-/// The same scenario with token refresh switched off: the reply check must fail, or it can't be trusted.
+/// The same scenario with the API pointed at a host that can't be reached: the reply check must fail, or it can't be
+/// trusted.
 @Test(.evaluates(ToolEvaluation.negativeControl(
-    name: "Cart after the access token expires, refresh off",
+    name: "Cart contents with a bad host",
     harness: harness,
-    turningOn: .refreshOff,
-    before: .waitFor(tokenExpiryWait),
+    turningOn: .badHost,
     dataset: .repeating(times: negativeControlRuns, cartScenarioNamingApp)
 )))
-func replyCheckFailsWithRefreshOff() async throws {
+func replyCheckFailsWithBadHost() async throws {
     try expectAllFail(.siriResponse)
 }
 

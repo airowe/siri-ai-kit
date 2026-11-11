@@ -77,7 +77,7 @@ The skills teach a coding agent the parts that are easy to get wrong:
 
 | Skill | What it covers |
 |---|---|
-| `siri-ai-tool` | Writing a tool: Keychain items readable on a locked phone, the Spotlight index, token refresh |
+| `siri-ai-tool` | Writing a tool: the time budget, failure replies, the Spotlight index |
 | `siri-ai-eval` | Writing and reading Siri evaluations |
 | `expo-siri-ai-kit` | Using SiriAIKit in an Expo app |
 | `siri-ai-discover` | Choosing which tools an app should have |
@@ -135,6 +135,6 @@ Never:
 
 - use Expo Go;
 - edit `ios/` by hand;
-- enter the person's Apple ID, password or tokens;
+- enter the person's Apple ID or passwords;
 - commit device identifiers or team IDs;
 - report the kit as installed before the step 5 checks pass.

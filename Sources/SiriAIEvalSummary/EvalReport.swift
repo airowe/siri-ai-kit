@@ -7,7 +7,7 @@ public struct EvalRun: Sendable, Equatable, Codable {
     public let replyPassed: Bool
     /// The harness scored the run before its results arrived; the tool may well have run.
     public let incomplete: Bool
-    /// What the app's tool did in this run ("refreshed after 401 at …"), when the harness recorded it.
+    /// What the app's tool did in this run ("succeeded (served from cache) at …"), when the harness recorded it.
     public var outcome: String?
 
     public init(

@@ -7,7 +7,7 @@ public struct EvalSwitch: Hashable, Sendable, ExpressibleByStringLiteral {
 
     public let name: String
 
-    /// `name` uses lowercase letters, digits and hyphens, for example "refresh-off".
+    /// `name` uses lowercase letters, digits and hyphens, for example "bad-host".
     public init(_ name: String) {
         precondition(Self.isValidName(name), "EvalSwitch names use lowercase letters, digits and hyphens: \(name)")
         self.name = name

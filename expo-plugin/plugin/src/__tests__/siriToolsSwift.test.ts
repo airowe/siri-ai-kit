@@ -54,8 +54,7 @@ struct GetOrderStatusIntent: AppIntent {
             values: [
                 "orderNumber": .string(orderNumber),
             ],
-            body: [],
-            auth: nil
+            body: []
         )
         let answer = await SiriToolsGenerated.tool.answer {
             try SiriToolsGenerated.reply("Order {id} is {status}.", from: try await request.send())

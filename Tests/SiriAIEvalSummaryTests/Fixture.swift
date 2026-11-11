@@ -4,7 +4,7 @@ import Foundation
 enum Fixture: String, CaseIterable {
     case cartAllPass = "cart-all-pass"
     case cartNegativeControl = "cart-negative-control"
-    case authWithIncomplete = "auth-with-incomplete"
+    case cartWithIncomplete = "cart-with-incomplete"
     case orderOneIncomplete = "order-one-incomplete"
     case noToolExpected = "no-tool-expected"
 

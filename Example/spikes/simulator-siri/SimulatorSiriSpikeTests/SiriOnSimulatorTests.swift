@@ -5,16 +5,16 @@ import XCTest
 final class SiriOnSimulatorTests: XCTestCase {
     private let bundleIdentifier = "com.example.siriaikit"
     private let request = "In SiriAIKit Example, what's in my cart?"
-    private let signInTimeout: TimeInterval = 60
+    private let readyTimeout: TimeInterval = 60
     private let siriTimeout: TimeInterval = 60
 
     @MainActor
     func testSiriRequestRunsCartTool() throws {
         let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
         app.launch()
-        let status = app.staticTexts["auth-status"]
-        let signedIn = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label BEGINSWITH 'Signed in'"), object: status)
-        XCTAssertEqual(XCTWaiter().wait(for: [signedIn], timeout: signInTimeout), .completed, "auth-status: \(status.label)")
+        let status = app.staticTexts["app-status"]
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label BEGINSWITH 'Ready'"), object: status)
+        XCTAssertEqual(XCTWaiter().wait(for: [ready], timeout: readyTimeout), .completed, "app-status: \(status.label)")
         let before = app.staticTexts[ToolOutcomeLog.accessibilityIdentifier].label
         print("SPIKE outcome before Siri: \(before)")
 

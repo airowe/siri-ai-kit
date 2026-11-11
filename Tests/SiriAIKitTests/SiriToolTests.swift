@@ -37,7 +37,7 @@ struct SiriToolTests {
 
     @Test(arguments: [
         (StubError.any as any Error, ToolFailure.failed, "failed"),
-        (ToolFailure.signedOut, .signedOut, "signed out"),
+        (ToolFailure.unreachable, .unreachable, "unreachable"),
         (CancellationError(), .timedOut, "timed out"),
         (URLError(.timedOut), .timedOut, "timed out"),
         (URLError(.cancelled), .timedOut, "timed out"),
@@ -52,8 +52,8 @@ struct SiriToolTests {
     }
 
     @Test func classifyWinsOverDefaults() async {
-        let t = tool { $0 is URLError ? .signedOut : nil }
-        await #expect(throws: ToolFailure.signedOut) {
+        let t = tool { $0 is URLError ? .failed : nil }
+        await #expect(throws: ToolFailure.failed) {
             try await t.run { () async throws -> Int in throw URLError(.notConnectedToInternet) }
         }
     }
@@ -132,10 +132,10 @@ struct SiriToolTests {
     @Test func notesAppearInOutcome() async throws {
         let log = log
         _ = try await tool().run { () async throws -> Int in
-            log.note("refreshed after 401")
+            log.note("served from cache")
             return 1
         }
-        #expect(log.last.hasPrefix("succeeded (refreshed after 401) at "))
+        #expect(log.last.hasPrefix("succeeded (served from cache) at "))
     }
 
     @Test func notesClearedBetweenRuns() async throws {
@@ -191,8 +191,8 @@ struct SiriToolTests {
     }
 
     @Test(arguments: [
-        (ToolFailure.signedOut, "Open Siri Spike to sign in again."),
-        (.timedOut, "Couldn't reach Siri Spike right now."),
+        (ToolFailure.timedOut, "Couldn't reach Siri Spike right now."),
+        (.unreachable, "Couldn't reach Siri Spike right now."),
         (.failed, "Siri Spike couldn't do that right now."),
     ])
     func answerReturnsReply(failure: ToolFailure, expected: String) async {

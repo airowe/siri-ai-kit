@@ -7,7 +7,7 @@ import SiriAIKit
 @AppIntent(.tool)
 struct BookTripIntent: AppIntent {
     static let title: LocalizedStringResource = "Book Trip"
-    static let description = IntentDescription("Books a hotel stay for the signed-in person and says the booking number and total \"price\".")
+    static let description = IntentDescription("Books a hotel stay for the person and says the booking number and total \"price\".")
 
     @Parameter(title: "City")
     var city: String
@@ -39,13 +39,7 @@ struct BookTripIntent: AppIntent {
                 "checkIn": .date(checkIn),
                 "room": .string(room.rawValue),
             ],
-            body: ["nights", "budget", "refundable", "checkIn", "room"],
-            auth: SiriToolsGenerated.Auth(
-                service: "com.example.auth",
-                account: "accessToken",
-                header: "Authorization",
-                value: "Bearer {token}"
-            )
+            body: ["nights", "budget", "refundable", "checkIn", "room"]
         )
         let answer = await SiriToolsGenerated.tool.answer {
             try SiriToolsGenerated.reply("Booked {booking.id} for {booking.total} dollars. Refundable: {booking.refundable}.", from: try await request.send())

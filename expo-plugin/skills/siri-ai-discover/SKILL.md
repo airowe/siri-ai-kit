@@ -10,7 +10,7 @@ license: MIT
 
 A Siri AI tool is something a person can ask Siri to do with the app: answer a question ("what's next up?") or do one action ("post this"). Discovery decides **which tools the app should have, what each one's interface is, and where each one's code goes**. Siri reads the interface: the name, the description, the parameters and what the answer says.
 
-How a tool gets its answer is the app owners' decision. Their own code already knows how to sign in, which server to call, where tokens live and what is stored on the device. So never drop, demote or reshape a tool because of auth, hosts, tokens, storage or which endpoint it would call.
+How a tool gets its answer is the app owners' decision. Their own code already knows which server to call and what is stored on the device. So never drop, demote or reshape a tool because of hosts, storage or which endpoint it would call.
 
 ## The steps
 
@@ -82,7 +82,7 @@ Show the owner the shortlist as one table: tool name, what a person says, what S
 2. **For each action: is a spoken confirmation enough** before it runs, with the app closed? Drop any action they say no to.
 3. **What do people ask for that isn't on a screen?** Add anything they name that the code supports, with the same checks.
 
-You may add questions about what a tool should cover, such as which of the app's modes or accounts it answers for. Every question is about what Siri should do. How the app reaches its server, and with which credentials, is already in the code the tool calls.
+You may add questions about what a tool should cover, such as which of the app's modes or accounts it answers for. Every question is about what Siri should do. How the app reaches its server is already in the code the tool calls.
 
 If no owner can answer (you're running unattended), write the report with "Owner review: not done" at the top, and stop there: no `siri-tools.json`, no handler files.
 
@@ -118,7 +118,7 @@ src/siri-tools/
   unread-notifications.test.ts    its test (use the app's own test file pattern)
 ```
 
-The handler turns the app's own function into one sentence. Sign-in, servers and tokens stay in the function it calls:
+The handler just calls the app's own function and turns the result into one sentence:
 
 ```ts
 // src/siri-tools/unread-notifications.ts
@@ -187,7 +187,7 @@ These hold at the end of step 4, before you offer step 5.
 |---|---|
 | Writing files before the owner answers | Show the shortlist and wait |
 | Ranking by which endpoint is public or easy to call | Rank by what people would ask |
-| Rejecting a tool because its token or host is hard to reach | Keep it; the handler calls the app's own code |
+| Rejecting a tool because its host is hard to reach | Keep it; the handler calls the app's own code |
 | Handler calls a hook (`useNotifications()`) | Call a plain function; if there isn't one, mark it needs extraction |
 | `jest.mock(path)` without a factory | List the mocked functions in a factory, so the test doesn't load native modules |
 | Extracting functions or writing handlers without asking | Offer each job in step 5 and wait for a yes |

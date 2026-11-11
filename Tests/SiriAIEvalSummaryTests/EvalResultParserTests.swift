@@ -6,7 +6,7 @@ struct EvalResultParserTests {
     @Test(arguments: [
         (Fixture.cartAllPass, 5, 5, 1.0, 1.0),
         (.cartNegativeControl, 5, 4, 0.0, 0.0),
-        (.authWithIncomplete, 5, 3, 0.6, 1.0),
+        (.cartWithIncomplete, 5, 3, 0.6, 1.0),
         (.orderOneIncomplete, 5, 4, 0.8, 1.0),
         (.noToolExpected, 1, 1, 1.0, 1.0),
     ])
@@ -19,11 +19,11 @@ struct EvalResultParserTests {
     }
 
     @Test func nameIsTheEvaluationID() throws {
-        #expect(try Fixture.authWithIncomplete.report().name == "Cart after the access token expires, repeated")
+        #expect(try Fixture.cartWithIncomplete.report().name == "Cart answer with incomplete runs, repeated")
     }
 
     @Test func incompleteRunsAreDetected() throws {
-        let runs = try Fixture.authWithIncomplete.report().runs
+        let runs = try Fixture.cartWithIncomplete.report().runs
         #expect(runs.map(\.incomplete) == [false, true, false, false, true])
         #expect(runs[1].toolCalls == ["GetCartIntent": false])
         #expect(runs[0].toolCalls == ["GetCartIntent": true])
@@ -76,8 +76,8 @@ struct EvalResultParserTests {
         let nested = directory.appending(path: "a/b")
         try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: true)
         try FileManager.default.copyItem(at: Fixture.cartAllPass.url, to: nested.appending(path: "one.xcevalresult"))
-        try FileManager.default.copyItem(at: Fixture.authWithIncomplete.url, to: directory.appending(path: "two.xcevalresult"))
+        try FileManager.default.copyItem(at: Fixture.cartWithIncomplete.url, to: directory.appending(path: "two.xcevalresult"))
         let names = try EvalResultParser.parseDirectory(directory).map(\.name).sorted()
-        #expect(names == ["Cart after the access token expires, repeated", "Cart contents from the demo API, repeated"])
+        #expect(names == ["Cart answer with incomplete runs, repeated", "Cart contents from the demo API, repeated"])
     }
 }
