@@ -136,7 +136,11 @@ Summarize the results:
 swift run siri-ai-eval summarize cart.xcresult [--json] [--fail-on any|real]
 ```
 
-It prints each run's tool calls, reply, intents check, reply check, recorded outcome, and whether the run was cut short ("the run ended before all of its results arrived"). It prints two pass rates:
+It prints each run's tool calls, reply, intents check, reply check, recorded outcome, and whether the run was cut short ("the run ended before all of its results arrived").
+
+It also flags complete runs where the reply check passed but an expected tool wasn't called: "answered without calling the tool". Siri most likely answered from what your app indexed in Spotlight, so your tool's code never ran. Index only what identifies a record.
+
+It prints two pass rates:
 
 - **Apple pass rate:** Xcode's number, which counts runs that were cut short as failures.
 - **Real pass rate:** runs that were cut short are left out.

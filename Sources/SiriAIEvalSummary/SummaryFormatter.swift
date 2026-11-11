@@ -19,6 +19,12 @@ public enum SummaryFormatter {
         if !report.unmatchedOutcomes.isEmpty {
             lines.append("  Outcomes not matched to runs: " + report.unmatchedOutcomes.joined(separator: "; "))
         }
+        if report.answeredWithoutToolCount > 0 {
+            lines.append(
+                "  Answered without calling the tool: \(report.answeredWithoutToolCount) of \(report.completeRunCount) complete runs."
+                    + " Siri likely answered from the Spotlight index; index only what identifies a record."
+            )
+        }
         lines.append("  Apple pass rate: \(percent(report.applePassRate))")
         let passedComplete = report.runs.count { !$0.incomplete && $0.passed }
         lines.append(
@@ -41,6 +47,7 @@ public enum SummaryFormatter {
         ]
         if let outcome = run.outcome { fields.append("outcome: \(outcome)") }
         if run.incomplete { fields.append("incomplete") }
+        if run.answeredWithoutTool { fields.append("answered without calling the tool") }
         return fields
     }
 

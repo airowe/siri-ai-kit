@@ -23,6 +23,12 @@ public struct EvalRun: Sendable, Equatable, Codable {
     }
 
     public var passed: Bool { intentsPassed && replyPassed }
+
+    /// A complete run whose reply was right although an expected tool wasn't called: Siri most likely
+    /// answered from what the app indexed in Spotlight, so the tool's code never ran.
+    public var answeredWithoutTool: Bool {
+        !incomplete && replyPassed && !intentsPassed && toolCalls.values.contains(false)
+    }
 }
 
 public struct EvalReport: Sendable, Equatable, Codable {
@@ -49,6 +55,8 @@ public struct EvalReport: Sendable, Equatable, Codable {
     }
 
     public var completeRunCount: Int { runs.count { !$0.incomplete } }
+
+    public var answeredWithoutToolCount: Int { runs.count(where: \.answeredWithoutTool) }
 }
 
 public enum EvalSummaryError: Error, Equatable {
