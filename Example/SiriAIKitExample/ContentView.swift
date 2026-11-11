@@ -8,7 +8,9 @@ struct ContentView: View {
         VStack(spacing: 16) {
             Text("Ready")
                 .accessibilityIdentifier("app-status")
+#if DEBUG
             ToolOutcomeView()
+#endif
             Text(orderProbe)
                 .font(.caption)
                 .accessibilityIdentifier(OrderProbe.accessibilityIdentifier)
