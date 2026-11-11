@@ -2,6 +2,7 @@ import { type ConfigPlugin, createRunOncePlugin } from 'expo/config-plugins';
 
 import { type PackageRequirement, withSiriAIKitPackage } from './withSiriAIKitPackage';
 import { PREVIEW_FLAG, withSiriAIPreview } from './withSiriAIPreview';
+import { type SiriToolsOptions, withSiriTools } from './withSiriTools';
 
 const pkg = require('../../package.json');
 
@@ -15,6 +16,8 @@ export type SiriAIKitPluginProps = {
   branch?: string;
   /** Turn on the Siri AI Developer Preview code. Defaults to `SIRI_AI_PREVIEW=1` in the environment. */
   preview?: boolean;
+  /** Path to a Siri tools declaration, relative to the project root. Generates a Swift tool for each entry. */
+  tools?: string;
 };
 
 export function requirementFrom(props: SiriAIKitPluginProps): PackageRequirement {
@@ -30,11 +33,19 @@ export function previewEnabled(props: SiriAIKitPluginProps, env: NodeJS.ProcessE
   return props.preview ?? env[PREVIEW_FLAG] === '1';
 }
 
+export function siriToolsOptionsFrom(props: SiriAIKitPluginProps, expoName: string): SiriToolsOptions | undefined {
+  return props.tools ? { declarationPath: props.tools, appName: expoName } : undefined;
+}
+
 const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props) => {
   const options = props ?? {};
   config = withSiriAIKitPackage(config, requirementFrom(options));
   if (previewEnabled(options, process.env)) {
     config = withSiriAIPreview(config);
+  }
+  const tools = siriToolsOptionsFrom(options, config.name);
+  if (tools) {
+    config = withSiriTools(config, tools);
   }
   return config;
 };

@@ -27,7 +27,7 @@ function packageRequirement(requirement: PackageRequirement) {
     : { kind: 'upToNextMinorVersion', minimumVersion: requirement.version };
 }
 
-function appTarget(project: XcodeProject): any {
+export function appTarget(project: XcodeProject): any {
   const target = entries(project.pbxNativeTargetSection())
     .map(([, value]) => value)
     .find((value) => value.productType === quote('com.apple.product-type.application'));
