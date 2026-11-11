@@ -2,6 +2,13 @@
 
 These are two separate bugs, written to paste into Feedback Assistant (feedbackassistant.apple.com). Both were seen on 2026-11-11. See `simulator-siri.md` for how they were found.
 
+**Filed on 2026-11-11:**
+
+| Report | Filed (with sysdiagnose and simctl diagnose) | Earlier filing of the same bug |
+|---|---|---|
+| 1. Siri `LostMyriadElection` | FB25534613 | FB25532615 |
+| 2. `identityservicesd` crash-loop | FB25534616 | FB25532666 |
+
 Attach a Simulator diagnose to each report: `xcrun simctl diagnose`, run right after reproducing the bug. It collects logs for every booted device, so boot only the Simulator you are reporting on.
 
 ---

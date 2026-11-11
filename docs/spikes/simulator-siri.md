@@ -102,7 +102,7 @@ What the SDK ships: `iPhoneSimulator.platform/Developer/Library/Frameworks` has 
 
 ## Follow-up: root cause and workarounds tried
 
-I compared against the iOS 27.2 runtime (24B8117) with the same Xcode, and both problems turned out to be Apple bugs, unrelated to each other. Draft reports for Feedback Assistant are in `simulator-siri-feedback.md`.
+I compared against the iOS 27.2 runtime (24B8117) with the same Xcode, and both problems turned out to be Apple bugs, unrelated to each other. Both are filed with Apple: FB25534613 (Siri) and FB25534616 (`identityservicesd`). The report text is in `simulator-siri-feedback.md`.
 
 **Siri (27.2 and 27.3).** Siri fails the same way on 27.2, where `identityservicesd` is healthy, so the crash isn't the cause. The full SpringBoard sequence shows what happens:
 
@@ -128,4 +128,4 @@ I didn't try anything more invasive, such as patching or injecting into SpringBo
 
 **Worth building instead:** a Simulator command that runs a tool directly through `AppIntentsTesting` and then reads `siri-ai-tool-outcome`. It skips Siri's choice of tool and Siri's reply, but it does check the tool's own behaviour (auth, refresh, the API call, the recorded outcome) without a phone. It works today.
 
-**Check again when:** a new Xcode beta or Simulator runtime ships, Apple's release notes say Siri works on the Simulator, or someone has signed a Simulator in to an Apple Account. The fast check is to long-press the Simulator's Siri button: if no Siri UI appears, the rest won't work.
+**Check again when:** FB25534613 gets a response, a new Xcode beta or Simulator runtime ships, Apple's release notes say Siri works on the Simulator, or someone has signed a Simulator in to an Apple Account. The fast check is to long-press the Simulator's Siri button: if no Siri UI appears, the rest won't work.
