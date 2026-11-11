@@ -78,6 +78,10 @@ Rerun on Bluesky, answering as the owner with the same choices as v4:
 - **Positive control:** I implemented `unread-notifications` the way an owner would. Its test needed one change: it mocked `persisted.get` but not `persisted.init`, which has to run first. After that, both tests passed. The skill now records every call in the session restore, in order, so tests mock all of them.
 - **Left to owners:** the stored account's type doesn't match what `createSessionBundleAndResume` takes, and posting needs its own `QueryClient` outside React.
 
+## After v5: auth taken back out
+
+The v4 and v5 session rules asked discovery to find how the app restores a signed-in session and to mock it in each test. That pulled authentication back into discovery, which the owner decided it shouldn't handle. The rules are removed. A stub now imports and mocks only the app function it calls. If that function needs something the handler doesn't have, such as a client, the agent asks the owner instead of working it out.
+
 ## What's not proven
 
 - No tool from these apps ran on a device. Discovery is a proposal until an evaluation passes.
