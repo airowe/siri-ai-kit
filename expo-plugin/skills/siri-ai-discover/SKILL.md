@@ -58,7 +58,7 @@ Siri can launch the app in the background, where no component renders. The tool'
 
 A candidate whose data is only in memory was already rejected above.
 
-**The signed-in session.** If the function takes a client, an agent or a token, the handler has to get one without React too. Find the app's own function that restores the session from storage (for example a `resumeSession` or `createSessionFromStoredAccount`), and record it with its `file:line`. If the session only exists in a React provider, mark the tool **needs extraction** and name that function too. Either way, how the session is restored stays the owners' code; you only point at it.
+**The signed-in session.** If the function takes a client, an agent or a token, the handler has to get one without React too. Find the app's own function that restores the session from storage (for example a `resumeSession` or `createSessionFromStoredAccount`), and record it with its `file:line`. Restoring a session is often several calls (load storage, read the stored account, resume it); record each call in order, because the handler makes all of them and its test mocks all of them. If the session only exists in a React provider, mark the tool **needs extraction** and name that function too. Either way, how the session is restored stays the owners' code; you only point at it.
 
 ## 3. Review it with the owner
 
@@ -120,7 +120,7 @@ The test describes the answer, and fails until the owners write the handler:
 import { getUnreadCount } from '../features/notifications/api';
 import { unreadNotifications } from './unread-notifications';
 
-jest.mock('../features/notifications/api');
+jest.mock('../features/notifications/api', () => ({ getUnreadCount: jest.fn() }));
 
 it('says the unread count', async () => {
   jest.mocked(getUnreadCount).mockResolvedValue({ count: 3, latestFrom: ['Ana', 'Ben'] });
@@ -128,7 +128,9 @@ it('says the unread count', async () => {
 });
 ```
 
-- The stub imports the function the report names, and the session function if there is one. The test mocks both. For **needs extraction**, import the name the report says to extract; the import failing is how the owners see the extraction is the first job.
+- The stub imports the function the report names, and the session function if there is one. The test mocks both.
+- **Mock with a factory** that lists the functions, as above, never a bare `jest.mock(path)`. A bare mock loads the real module and everything it imports, which in a React Native app reaches native modules and fails before any test runs. Use the import style (relative or the app's alias, such as `#/`) and mocking style of the app's own tests.
+- For **needs extraction**, import the name the report says to extract. The typecheck failing on that import is how the owners see the extraction is the first job.
 - A handler with parameters takes one object: `({ query }: { query: string })`.
 - Don't edit the app's existing code. Extraction is the owners' change.
 
@@ -145,7 +147,7 @@ These parts, in this order:
    - What Siri answers, in one sentence. For an action, add that Siri confirms first.
    - Handler: the file under `siri-tools/`.
    - Calls: the function and its `file:line`.
-   - Session: the function that restores the signed-in session outside React, with its `file:line`, or "none needed".
+   - Session: each call that restores the signed-in session outside React, in order, with its `file:line`, or "none needed".
    - Status: callable, or needs extraction with the hook's `file:line` and the function to extract.
 3. **Rejected.** Every candidate dropped, with its reason, including the owner's drops.
 4. **Evaluations.** For each tool: a prompt that names the app, and what the reply must contain to prove the app answered (a value only the person's own data has, never generic text). The siri-ai-eval skill runs these.
@@ -159,6 +161,7 @@ These parts, in this order:
 - Every parameter appears in the spoken prompt, and nothing the prompt needs is missing.
 - Two descriptions aren't easy to confuse.
 - No existing app file changed.
+- You ran the new tests with the app's own test command. Each test fails on the stub's "not implemented" error, not on loading the test. If the tests can't run (no `node_modules`, wrong Node version), say so in the report; never install anything to make them run.
 
 ## Common mistakes
 
@@ -169,6 +172,7 @@ These parts, in this order:
 | Rejecting a tool because its token or host is hard to reach | Keep it; the handler calls the app's own code |
 | Handler calls a hook (`useNotifications()`) | Call a plain function; if there isn't one, mark it needs extraction |
 | Handler takes a client but nothing says where it comes from | Name the app's session-restore function; the stub imports it |
+| `jest.mock(path)` without a factory | List the mocked functions in a factory, so the test doesn't load native modules |
 | Writing the handler's logic into the stub | The stub throws; the test says what the answer must be |
 | Proposing features the app doesn't have | Every tool needs a function with a `file:line` |
 | A tool that reads out a feed or a long list | The count and at most three names |
