@@ -34,15 +34,29 @@ public struct SiriAppHarness: Sendable {
     public let bundleIdentifier: String
     public let readyWhen: ReadySignal
     public let timeout: Duration
+    /// Switches the app is launched with, read in the app with `EvalSwitch.isOn()`.
+    public let switches: [EvalSwitch]
 
-    public init(bundleIdentifier: String, readyWhen: ReadySignal, timeout: Duration = .seconds(90)) {
+    public init(
+        bundleIdentifier: String, readyWhen: ReadySignal, timeout: Duration = .seconds(90), switches: [EvalSwitch] = []
+    ) {
         self.bundleIdentifier = bundleIdentifier
         self.readyWhen = readyWhen
         self.timeout = timeout
+        self.switches = switches
     }
 
+    /// The same harness, launching the app with `switches` turned on as well.
+    public func turningOn(_ switches: [EvalSwitch]) -> SiriAppHarness {
+        SiriAppHarness(
+            bundleIdentifier: bundleIdentifier, readyWhen: readyWhen, timeout: timeout, switches: self.switches + switches
+        )
+    }
+
+    /// Relaunches the app, so switches from an earlier evaluation never carry over.
     @MainActor public func launchAndWaitUntilReady() throws {
         let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
+        app.launchArguments = switches.map(\.launchArgument)
         app.launch()
         let element = app.staticTexts[readyWhen.identifier]
         let expectation = XCTNSPredicateExpectation(predicate: readyWhen.predicate, object: element)
