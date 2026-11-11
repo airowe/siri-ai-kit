@@ -1,0 +1,51 @@
+{
+  "appName": "Siri Spike",
+  "tools": [
+    {
+      "name": "SearchProducts",
+      "title": "Search Products",
+      "description": "Searches the store's catalog and says how many products match and what they are called.",
+      "parameters": [
+        { "name": "query", "type": "string", "title": "Search Text" },
+        { "name": "limit", "type": "int", "title": "Number of Results" }
+      ],
+      "request": { "method": "GET", "url": "https://dummyjson.com/products/search?q={query}&limit={limit}" },
+      "reply": "Found {total} products. The first ones are {products.title}."
+    },
+    {
+      "name": "GetRecipes",
+      "title": "Get Recipes for a Meal",
+      "description": "Lists the recipes saved for a meal, such as breakfast or dinner.",
+      "parameters": [
+        {
+          "name": "mealType",
+          "type": "enum",
+          "title": "Meal",
+          "cases": { "breakfast": "Breakfast", "lunch": "Lunch", "dinner": "Dinner", "snack": "Snack" }
+        }
+      ],
+      "request": { "method": "GET", "url": "https://dummyjson.com/recipes/meal-type/{mealType}" },
+      "reply": "There are {total} recipes: {recipes.name}."
+    },
+    {
+      "name": "BookTrip",
+      "title": "Book Trip",
+      "description": "Books a hotel stay for the signed-in person and says the booking number and total \"price\".",
+      "parameters": [
+        { "name": "city", "type": "string", "title": "City" },
+        { "name": "nights", "type": "int", "title": "Nights" },
+        { "name": "budget", "type": "double", "title": "Nightly Budget" },
+        { "name": "refundable", "type": "bool", "title": "Refundable Only" },
+        { "name": "checkIn", "type": "date", "title": "Check-in Date" },
+        { "name": "room", "type": "enum", "title": "Room", "cases": { "standard": "Standard", "suite": "Suite" } }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "https://api.example.com/cities/{city}/bookings",
+        "body": ["nights", "budget", "refundable", "checkIn", "room"],
+        "auth": { "service": "com.example.auth", "account": "accessToken" }
+      },
+      "reply": "Booked {booking.id} for {booking.total} dollars. Refundable: {booking.refundable}."
+    }
+  ]
+}
