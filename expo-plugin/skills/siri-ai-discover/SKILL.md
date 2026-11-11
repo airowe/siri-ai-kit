@@ -28,7 +28,7 @@ Check three things and put them at the top of the report. None of them stops dis
 |---|---|---|
 | The app ships on iOS | `app.json` / `app.config.*` has an `ios` section, and nothing says the app is Android-only | Say so: Siri tools are iOS-only, so the owner should decide whether to continue. |
 | Expo SDK 58 or later | the `expo` version in `package.json` | Swift tools need `expo-app-intents`, which needs SDK 58. Don't offer step 5C; say upgrading is the owner's call. |
-| A test runner | `jest` or `jest-expo` in `package.json`, or the app's own test files | The stubs' tests can't run. Say so in the report and in the step 5B offer. Adding a test runner is a dependency change: offer it, never install it yourself. |
+| A test runner | `jest`, `jest-expo` or `vitest` in `package.json`, or the app's own test files. Write the stubs' tests for the runner the app uses: `vi.mock` and `vi.mocked` under vitest. | The stubs' tests can't run. Say so in the report and in the step 5B offer. Adding a test runner is a dependency change: offer it, never install it yourself. |
 
 ## 1. Find candidates
 
@@ -147,6 +147,7 @@ it('says the unread count', async () => {
 - The stub imports the function the report names. The test mocks it.
 - **Mock with a factory** that lists the functions, as above, never a bare `jest.mock(path)`. A bare mock loads the real module and everything it imports, which in a React Native app reaches native modules and fails before any test runs. Use the import style (relative or the app's alias, such as `#/`) and mocking style of the app's own tests.
 - For **needs extraction**, import the name the report says to extract. The typecheck failing on that import is how the owners see the extraction is the first job.
+- **Dates in a test:** freeze the clock (`jest.useFakeTimers().setSystemTime(...)`) and build every date in local time (`new Date(2025, 2, 4, 12)`), never as a UTC string. An answer that says a weekday or a time is read in the phone's timezone, so a UTC fixture names a different day east or west of UTC. Setting `process.env.TZ` inside a test file is too late to fix this.
 - A handler with parameters takes one object: `({ query }: { query: string })`.
 - Don't edit the app's existing code. Extraction is the owners' change.
 
@@ -190,7 +191,8 @@ These hold at the end of step 4, before you offer step 5.
 | Handler calls a hook (`useNotifications()`) | Call a plain function; if there isn't one, mark it needs extraction |
 | `jest.mock(path)` without a factory | List the mocked functions in a factory, so the test doesn't load native modules |
 | Extracting functions or writing handlers without asking | Offer each job in step 5 and wait for a yes |
-| Changing a test's expected answer to make it pass | Fix the handler; only add mocks the stub didn't list |
+| Changing a test's expected answer to make it pass | Fix the handler; only add mocks the stub didn't list. Change the answer only to follow an owner's decision, and say so |
+| A test that passes in one timezone only | Freeze the clock and build dates in local time |
 | Writing the handler's logic into the stub | The stub throws; the test says what the answer must be |
 | Only reading screens, so calls no screen reaches are never seen | Sweep the data layer too, and merge the lists |
 | Keeping every query and mutation the sweep finds | They go through the same shortlist rules; most are feeds, ids or plumbing |
@@ -210,7 +212,7 @@ For each tool marked **needs extraction**, move the logic out of the hook into t
 
 ### B. Implement the handlers
 
-The stub's test is already failing. Write the handler until it passes: call the app's function and word the answer as one sentence. If that function needs an argument the handler doesn't have, ask the owner where it comes from; don't design it. Change the test only to mock a call the handler needs that the stub didn't list, and say so in your summary. Never change what the answer must be. Then run the app's lint and typecheck.
+The stub's test is already failing. Write the handler until it passes: call the app's function and word the answer as one sentence. If that function needs an argument the handler doesn't have, ask the owner where it comes from; don't design it. Change the test only to mock a call the handler needs that the stub didn't list, and say so in your summary. Never change what the answer must be to make a test pass. The one exception is when the owner, during this job, decides how something is said, such as a currency symbol or a date format: update the expected answer to match their decision, and say so in your summary. Then run the app's lint and typecheck.
 
 If the tests can't run (no test runner, no `node_modules`), say so when you offer this job: the handler will be written but not verified. Report what you did check, such as `node --check`, and don't call the handler done.
 
