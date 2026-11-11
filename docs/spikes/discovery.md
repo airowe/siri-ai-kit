@@ -132,6 +132,29 @@ What it shows:
 
 These fixes haven't been rerun.
 
+## v8: the owner's own apps, and Enatega's tests running
+
+Three of the owner's apps ran steps 1 to 3 in parallel, read-only, each through a separate agent. A `git status` afterwards showed every repo unchanged.
+
+**The "Before you start" checks worked on all three.** Each ships on iOS, each is on Expo 54, so none was offered step 5C, and each has a test runner.
+
+- **lazy-shopper** (Jest): five callable tools over plain functions in `lib/`. It flagged the catalog data as stale, with offers dated 2026-05-17. It asked no credential questions.
+- **clearcost** (Vitest, tRPC): four tools: procedure price, nearby care, saved procedure prices, and hospital in network. All four need extraction, because the app only has `createTRPCReact` hooks and its `QueryClient` is created inside a component. The report named the vanilla client to add, which is what `data-layers.md` says for tRPC. 30 tRPC procedures were rejected as dead code, each with its `file:line`. One gap: the stub template uses `jest.mock`, and Vitest needs `vi.mock`.
+- **heathen** (Jest, no server): five callable tools over AsyncStorage functions, including two write actions marked for confirmation. It rejected the React Query client as dead code, since nothing calls it, and rejected "log a session" because a logged session inflates streaks the app only grants after real playback.
+
+**Enatega's tests ran** after installing its dependencies: 9 of 10 passed. The one failure was a stale expectation, not a handler bug:
+
+- The stub's test expected `for 24.50`. In step 5B the owner chose to show the currency symbol, and the handler correctly said `$24.50`. The rule "never change what the answer must be" kept the old text.
+- The test also depended on the timezone. Its dates were UTC strings, so in Auckland the answer said Wednesday. Setting `process.env.TZ` in the test file did not help, because Node has already read the timezone by then.
+
+After the expected answer followed the owner's decision and the fixtures were built in local time, all 10 tests passed in UTC, Los Angeles, Auckland, Kiritimati (UTC+14) and Pago Pago (UTC−11).
+
+**Fixes:**
+
+- The test-runner check includes Vitest, and stubs use that runner's mocking.
+- Tests that involve dates freeze the clock and build their dates in local time.
+- In step 5B, an expected answer may change only to follow an owner's decision about how something is said, and the summary must say so.
+
 ## What's not proven
 
 - No tool from these apps ran on a device. Discovery is a proposal until an evaluation passes.
