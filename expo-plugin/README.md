@@ -10,6 +10,7 @@ Not affiliated with or endorsed by Apple.
 - **With the preview on, it also:**
   - adds the `SIRI_AI_PREVIEW` Swift compilation condition, so `#if SIRI_AI_PREVIEW` code builds only with the 27.3 SDK;
   - sets the app target's deployment target to iOS 27.3, which `@Property(title:description:)` requires. Pods keep their own targets.
+- **With `evals` set, adds a UI test target for Siri Evaluations** (see [Evaluation target](#evaluation-target)), so it survives `prebuild --clean`.
 
 Running prebuild again doesn't add anything twice.
 
@@ -44,6 +45,30 @@ SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
 | `version` | The SiriAIKit release this plugin was tested with | Uses SiriAIKit up to the next minor version. |
 | `branch` | None | Follows a SiriAIKit branch instead. Use it only to try unreleased changes. Can't be combined with `version`. |
 | `preview` | `true` when `SIRI_AI_PREVIEW=1` is set | Turns on the Siri AI Developer Preview code. |
+| `evals` | None | `{ "sourceDir": "siri-evals", "targetName": "MyAppEvals" }`. Adds a UI test target for Siri Evaluations. `targetName` defaults to `<AppName>Evals`. |
+
+## Evaluation target
+
+`prebuild --clean` regenerates `ios/`, so a test target added in Xcode disappears. Keep the evaluation tests in a folder outside `ios/` and let the plugin add the target:
+
+```json
+["expo-siri-ai-kit", { "preview": true, "evals": { "sourceDir": "siri-evals" } }]
+```
+
+On every prebuild the plugin adds a `<AppName>Evals` UI test target that:
+
+- compiles every `.swift` file under `sourceDir` (subfolders included), referenced in place rather than copied;
+- tests the app target (`TEST_TARGET_NAME`), depends on it, and builds for iOS 27.3;
+- links `SiriAIEvalKit` from the same SiriAIKit package, and copies the app's development team for signing;
+- gets a shared scheme of the same name.
+
+Run the evaluations on an iPhone on iOS 27.3 with Siri AI on:
+
+```bash
+xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -destination 'platform=iOS,name=My iPhone'
+```
+
+Prebuild fails with a clear message if `sourceDir` doesn't exist or has no `.swift` files. The file list is read at prebuild, so prebuild again after adding or removing a test file.
 
 ## A first tool
 
