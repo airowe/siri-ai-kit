@@ -2,7 +2,7 @@
 
 **Question.** Can an agent ask Siri to run one of our tools, and then confirm the tool ran, on the iOS 27.3 beta Simulator without a physical iPhone? If it can, an agent-device `siri` command (callstack/agent-device) could drive Siri tool tests on the Simulator.
 
-**Answer: no, not on this beta.** Siri accepts the text request, then fails to show its UI, and the tool never runs. Two parts of the setup do work on the Simulator, though. `AppIntentsTesting` runs the tool directly, without Siri, and the `Evaluations` types work. So the useful Simulator command today is "run this tool", not "ask Siri".
+**Answer: no, not on this beta.** Siri accepts the text request, then fails to show its UI, and the tool never runs. The root cause is an Apple bug: on the Simulator, Siri's Myriad device arbitration loses an election with 0 replies, and Siri then dismisses itself (see "Follow-up" below and `simulator-siri-feedback.md`). Two parts of the setup do work on the Simulator, though. `AppIntentsTesting` runs the tool directly, without Siri, and the `Evaluations` types work. So the useful Simulator command today is "run this tool", not "ask Siri".
 
 Run on 2026-11-11.
 
@@ -99,6 +99,28 @@ What the SDK ships: `iPhoneSimulator.platform/Developer/Library/Frameworks` has 
 | `AppIntentsTesting` | yes | **Yes, fully.** It ran the real tool against the live API. | `IntentDefinitions(bundleIdentifier: "com.example.siriaikit").intents["GetCartIntent"].makeIntent().run()` returned `Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.` It also updated the app's `siri-ai-tool-outcome` label to `succeeded at …`. Test passed in 12.4 s. |
 | `Evaluations` | yes | **Yes, for the types.** I didn't run a model-backed evaluation. | `TrajectoryExpectation(expected: "GetCartIntent")` encoded to `{"disallowed":[],"allowsAdditionalCalls":true,"unordered":[{"name":"GetCartIntent","arguments":[]}],"ordered":[]}`. Test passed. |
 | `SiriEvaluations` | **no** | No. It isn't in the Simulator SDK, so `SiriAIEvalKit`'s `#if canImport(SiriEvaluations)` code compiles out. | `SPIKE imports: ["AppIntentsTesting", "Evaluations"]` |
+
+## Follow-up: root cause and workarounds tried
+
+I compared against the iOS 27.2 runtime (24B8117) with the same Xcode, and both problems turned out to be Apple bugs, unrelated to each other. Draft reports for Feedback Assistant are in `simulator-siri-feedback.md`.
+
+**Siri (27.2 and 27.3).** Siri fails the same way on 27.2, where `identityservicesd` is healthy, so the crash isn't the cause. The full SpringBoard sequence shows what happens:
+
+1. A button press or `XCUISiriService` text request starts Myriad, the arbitration that decides which nearby device answers Siri. It starts with a nil context: `startAdvertisingFromDirectTriggerWithContext: (null)`.
+2. `SCDACoordinator` sees a nil trigger record, assumes "Siri UI was already dismissed", and calls `_loseElection`; the log says "Myriad decision is based on 0 replies".
+3. Siri aborts with `dismissal reason: LostMyriadElection`.
+4. The view controller finishes presenting after the request state is already Off, which gives `SASPresentationManagerErrorInvalidStateTransition`.
+
+In short, the Simulator loses a Bluetooth election against no other device.
+
+**Workarounds tried, none of which fixed it:**
+- Setting `Allow Myriad Coordination = NO` and `Disable Myriad BLE Activity = YES` in `com.apple.assistant.support`, `com.apple.assistant.myriad` and `com.apple.assistant.backedup`, then rebooting. I found these preference names in the runtime's shared cache, but SpringBoard still logs "BTLE Myriad direct trigger advertising needed" and loses.
+- Launching the new Siri app (`com.apple.siri`) directly. It opens to a black screen.
+- Not tried: signing in to an Apple Account, because it needs real credentials. It wouldn't change the Myriad path anyway: the election is lost locally before any server call.
+
+I didn't try anything more invasive, such as patching or injecting into SpringBoard or overriding unknown feature flags. That would stop the Simulator from behaving like stock iOS, and it wouldn't be a sound base for tests.
+
+**`identityservicesd` (27.3 only).** It traps in the 27.3 runtime's own `libswiftXPC` (`XPC_swiftoverlay_Sim/PeerRequirement.swift`): `XPCPeerRequirement.hasEntitlement(_:)` → `__XPC_API_MISUSE__`. The 27.2 runtime doesn't have this crash.
 
 ## Recommendation
 
