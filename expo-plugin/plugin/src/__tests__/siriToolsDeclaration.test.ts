@@ -24,7 +24,7 @@ describe('declarationProblems', () => {
     expect(declarationProblems({ tools: [validTool()] })).toEqual([]);
   });
 
-  it('accepts every parameter type, a body and auth', () => {
+  it('accepts every parameter type and a body', () => {
     const declaration = withTool((tool) => {
       tool.parameters = [
         { name: 'city', type: 'string', title: 'City' },
@@ -38,7 +38,6 @@ describe('declarationProblems', () => {
         method: 'POST',
         url: 'https://api.example.com/trips/{city}?nights={nights}',
         body: ['budget', 'refundable', 'departure', 'cabin'],
-        auth: { service: 'com.example.auth', account: 'token', header: 'X-API-Key', value: '{token}' },
       };
     });
     expect(declarationProblems(declaration)).toEqual([]);
@@ -150,14 +149,9 @@ describe('declarationProblems', () => {
       ['tools[0].request.body: "note" is not a parameter']
     ],
     [
-      'auth without a Keychain account',
-      withTool((tool) => (tool.request.auth = { service: 'com.example.auth' })),
-      ['tools[0].request.auth.account: must be a non-empty string']
-    ],
-    [
-      'an auth value without the token',
-      withTool((tool) => (tool.request.auth = { service: 's', account: 'a', value: 'Bearer' })),
-      ['tools[0].request.auth.value: must contain {token}']
+      'an auth field, which the generated tools do not support',
+      withTool((tool) => (tool.request.auth = { service: 'com.example.app', account: 'token' })),
+      ['tools[0].request: unknown field "auth"']
     ],
     ['an empty reply', withTool((tool) => (tool.reply = '')), ['tools[0].reply: must be a non-empty string']],
     [
@@ -193,16 +187,12 @@ describe('declarationProblems', () => {
 
 describe('parseSiriTools', () => {
   it('fills in the defaults', () => {
-    const declaration = parseSiriTools(
-      withTool((tool) => (tool.request.auth = { service: 'com.example.auth', account: 'token' })),
-      SOURCE
-    );
+    const declaration = parseSiriTools({ tools: [validTool()] }, SOURCE);
     expect(declaration.tools[0].parameters).toEqual([{ name: 'orderNumber', type: 'string', title: 'Order Number' }]);
     expect(declaration.tools[0].request).toEqual({
       method: 'GET',
       url: 'https://api.example.com/orders/{orderNumber}',
       body: [],
-      auth: { service: 'com.example.auth', account: 'token', header: 'Authorization', value: 'Bearer {token}' },
     });
   });
 

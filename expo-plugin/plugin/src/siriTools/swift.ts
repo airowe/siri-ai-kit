@@ -51,18 +51,6 @@ function valuesSwift(parameters: ToolParameter[]): string {
   return `[\n${entries.join('')}            ]`;
 }
 
-function authSwift(tool: ToolDeclaration): string {
-  const { auth } = tool.request;
-  if (!auth) return 'nil';
-  const fields = [
-    `service: ${swiftString(auth.service)}`,
-    `account: ${swiftString(auth.account)}`,
-    `header: ${swiftString(auth.header)}`,
-    `value: ${swiftString(auth.value)}`,
-  ];
-  return `SiriToolsGenerated.Auth(\n                ${fields.join(',\n                ')}\n            )`;
-}
-
 function enumSwift(tool: ToolDeclaration, parameter: Extract<ToolParameter, { type: 'enum' }>): string {
   const name = enumName(tool, parameter);
   const cases = Object.keys(parameter.cases);
@@ -96,8 +84,7 @@ ${tool.parameters.map((parameter) => parameterSwift(tool, parameter)).join('')}
             method: ${swiftString(tool.request.method)},
             url: ${swiftString(tool.request.url)},
             values: ${valuesSwift(tool.parameters)},
-            body: [${tool.request.body.map(swiftString).join(', ')}],
-            auth: ${authSwift(tool)}
+            body: [${tool.request.body.map(swiftString).join(', ')}]
         )
         let answer = await SiriToolsGenerated.tool.answer {
             try SiriToolsGenerated.reply(${swiftString(tool.reply)}, from: try await request.send())
@@ -109,12 +96,11 @@ ${enums.join('')}#endif
 `;
 }
 
-/** Code every generated tool shares: the `SiriTool`, the HTTP request, the Keychain read and the reply template. */
+/** Code every generated tool shares: the `SiriTool`, the HTTP request and the reply template. */
 export function supportSwift(appName: string): string {
   return `${HEADER}
 #if SIRI_AI_PREVIEW
 import Foundation
-import Security
 import SiriAIKit
 
 enum SiriToolsGenerated {
@@ -151,22 +137,13 @@ enum SiriToolsGenerated {
         }
     }
 
-    /// A token saved in the Keychain, sent as a header.
-    struct Auth: Sendable {
-        let service: String
-        let account: String
-        let header: String
-        let value: String
-    }
-
     struct Request: Sendable {
         let method: String
         let url: String
         let values: [String: Value]
         let body: [String]
-        let auth: Auth?
 
-        /// The decoded JSON response. A missing token or a 401 or 403 means signed out; any other non-2xx fails.
+        /// The decoded JSON response. Any non-2xx status fails.
         func send() async throws -> Any {
             var request = URLRequest(url: try resolvedURL())
             request.httpMethod = method
@@ -175,13 +152,8 @@ enum SiriToolsGenerated {
                 request.httpBody = try JSONSerialization.data(withJSONObject: Dictionary(uniqueKeysWithValues: fields))
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
-            if let auth {
-                let token = try Keychain.token(service: auth.service, account: auth.account)
-                request.setValue(auth.value.replacingOccurrences(of: "{token}", with: token), forHTTPHeaderField: auth.header)
-            }
             let (data, response) = try await URLSession.shared.data(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-            if auth != nil, [401, 403].contains(status) { throw ToolFailure.signedOut }
             guard (200..<300).contains(status) else { throw ToolFailure.failed }
             return try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
         }
@@ -234,24 +206,6 @@ enum SiriToolsGenerated {
         }
     }
 
-    enum Keychain {
-        /// The saved token. No item means signed out; save it readable after first unlock so Siri can use it locked.
-        static func token(service: String, account: String) throws -> String {
-            let query: [CFString: Any] = [
-                kSecClass: kSecClassGenericPassword,
-                kSecAttrService: service,
-                kSecAttrAccount: account,
-                kSecReturnData: true,
-                kSecMatchLimit: kSecMatchLimitOne,
-            ]
-            var result: CFTypeRef?
-            let status = SecItemCopyMatching(query as CFDictionary, &result)
-            if status == errSecItemNotFound { throw ToolFailure.signedOut }
-            guard status == errSecSuccess, let data = result as? Data, let token = String(data: data, encoding: .utf8)
-            else { throw ToolFailure.failed }
-            return token
-        }
-    }
 }
 
 private extension CharacterSet {

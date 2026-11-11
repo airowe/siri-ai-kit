@@ -10,7 +10,7 @@ license: MIT
 
 Expo apps answer Siri from Swift. `expo-app-intents` compiles the Swift files in `app-intents/` into the app target, and the `expo-siri-ai-kit` config plugin links SiriAIKit there during prebuild. JavaScript can't answer a Siri intent in a released Expo SDK yet, so don't try to route the tool through JS.
 
-For the tool itself (`SiriTool`, Keychain, Spotlight indexing, token refresh) use the siri-ai-tool skill; for testing use the siri-ai-eval skill. This skill covers only what's different in Expo.
+For the tool itself (`SiriTool`, failure replies, Spotlight indexing) use the siri-ai-tool skill; for testing use the siri-ai-eval skill. This skill covers only what's different in Expo.
 
 ## Setup
 
@@ -64,7 +64,7 @@ struct GetOrderStatusIntent: AppIntent {
 }
 ```
 
-The Swift tool can't call your JavaScript API client, and can't read tokens from JS memory. It needs its own Swift request code and the token from the Keychain. If the app stores tokens with `expo-secure-store`, its default `keychainAccessible` is `WHEN_UNLOCKED`, which Siri can't read on a locked phone. Save with `keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK` and an explicit `keychainService`, then read that generic-password item from Swift with the same service. Check the installed expo-secure-store iOS source for the account attribute it uses before writing the Swift query.
+The Swift tool can't call your JavaScript API client or read JS memory. It needs its own Swift request code.
 
 ## Implementing tools from `siri-tools.json`
 
@@ -73,7 +73,7 @@ A `siri-tools.json` from the siri-ai-discover skill is the tools' interface. Eac
 | The entry has | Do this today |
 |---|---|
 | `javascript` | Not supported yet: the plugin rejects it as an unknown field. Write a Swift tool in `app-intents/` named `<name>Intent`, copy `title` and `description` word for word, and add one `@Parameter` per declared parameter. Keep the entry as the tool's spec, but leave it out of the `tools` file until the `javascript` kind ships. |
-| `request` and `reply` | Generated at prebuild by the `tools` option (experimental). Use it only when the host is fixed and `https`, the token is in a Keychain item, there's no refresh, and every reply field is always present. Otherwise write Swift. |
+| `request` and `reply` | Generated at prebuild by the `tools` option (experimental). Use it only when the host is fixed and `https`, the API needs no credentials, and every reply field is always present. Generated tools send plain requests, and any non-2xx response is a failure. Otherwise write Swift. |
 
 Discovery also writes a handler stub and a failing test per tool in `src/siri-tools/<handler>.ts` (or `siri-tools/` without `src/`). Discovery offers to implement it, and to write the Swift tool; if the owner declined, implement the handler against the test now: it's plain TypeScript that calls the app's own functions, never hooks. It answers Siri once the `javascript` kind ships; until then the Swift tool is what answers.
 

@@ -30,7 +30,7 @@
     {
       "name": "BookTrip",
       "title": "Book Trip",
-      "description": "Books a hotel stay for the signed-in person and says the booking number and total \"price\".",
+      "description": "Books a hotel stay for the person and says the booking number and total \"price\".",
       "parameters": [
         { "name": "city", "type": "string", "title": "City" },
         { "name": "nights", "type": "int", "title": "Nights" },
@@ -42,8 +42,7 @@
       "request": {
         "method": "POST",
         "url": "https://api.example.com/cities/{city}/bookings",
-        "body": ["nights", "budget", "refundable", "checkIn", "room"],
-        "auth": { "service": "com.example.auth", "account": "accessToken" }
+        "body": ["nights", "budget", "refundable", "checkIn", "room"]
       },
       "reply": "Booked {booking.id} for {booking.total} dollars. Refundable: {booking.refundable}."
     }

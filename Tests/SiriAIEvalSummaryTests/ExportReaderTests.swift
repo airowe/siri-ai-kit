@@ -8,7 +8,7 @@ struct ExportFolder {
     private var entries: [[String: Any]] = []
     private var testIdentifier: String
 
-    init(testIdentifier: String = "refreshesExpiredTokenEveryTime()") throws {
+    init(testIdentifier: String = "callsCartToolEveryTime()") throws {
         url = try makeTemporaryDirectory()
         self.testIdentifier = testIdentifier
     }
@@ -34,7 +34,7 @@ struct ExportFolder {
 }
 
 struct ExportReaderTests {
-    static let outcomes = (1...5).map { "refreshed after 401 at 11:3\($0):00 AM" }
+    static let outcomes = (1...5).map { "served from cache at 11:3\($0):00 AM" }
 
     @Test func pairsOutcomesWithRunsInTimeOrder() throws {
         var folder = try ExportFolder()
@@ -42,7 +42,7 @@ struct ExportReaderTests {
         for (index, outcome) in Self.outcomes.enumerated().reversed() {
             try folder.addOutcome(outcome, at: Double(100 + index))
         }
-        try folder.add(.authWithIncomplete, at: 200)
+        try folder.add(.cartWithIncomplete, at: 200)
         try folder.writeManifest()
 
         let reports = try ExportReader.reports(in: folder.url)
@@ -54,7 +54,7 @@ struct ExportReaderTests {
         var folder = try ExportFolder()
         defer { folder.remove() }
         try folder.addOutcome(Self.outcomes[0], at: 100)
-        try folder.add(.authWithIncomplete, at: 200)
+        try folder.add(.cartWithIncomplete, at: 200)
         try folder.writeManifest()
 
         let report = try #require(try ExportReader.reports(in: folder.url).first)
@@ -77,11 +77,11 @@ struct ExportReaderTests {
         for (index, outcome) in Self.outcomes.enumerated() {
             try folder.addOutcome(outcome, at: Double(100 + index))
         }
-        try folder.add(.authWithIncomplete, at: 200)
+        try folder.add(.cartWithIncomplete, at: 200)
         try folder.writeManifest()
 
         let text = SummaryFormatter.text(try ExportReader.reports(in: folder.url))
-        #expect(text.contains("reply check: pass | outcome: refreshed after 401 at 11:31:00 AM"))
-        #expect(text.contains("outcome: refreshed after 401 at 11:32:00 AM | incomplete"))
+        #expect(text.contains("reply check: pass | outcome: served from cache at 11:31:00 AM"))
+        #expect(text.contains("outcome: served from cache at 11:32:00 AM | incomplete"))
     }
 }

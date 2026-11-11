@@ -2,9 +2,9 @@ import AppIntents
 import Foundation
 import SiriAIKit
 
-private let tool = SiriTool(appName: DemoAPI.appName) { ($0 as? DemoAPIError) == .signedOut ? .signedOut : nil }
+private let tool = SiriTool(appName: DemoAPI.appName)
 
-/// Answers from a live, authenticated API call, so nothing about the cart is indexed for Siri to answer from instead.
+/// Answers from a live API call, so nothing about the cart is indexed for Siri to answer from instead.
 @AppIntent(.tool)
 struct GetCartIntent: AppIntent {
     static let title: LocalizedStringResource = "Get Cart"

@@ -8,7 +8,7 @@ import Testing
 
 public enum BeforeRun: Sendable {
     case none
-    /// Wait after launch, for example for an access token to expire.
+    /// Wait after launch, for example for a cache to expire.
     case waitFor(Duration)
 }
 
@@ -47,7 +47,7 @@ public struct ToolEvaluation: Evaluation {
         )
     }
 
-    /// The app launched with `switches` that break the tool (refresh off, signed out), so the reply check must
+    /// The app launched with `switches` that break the tool (a bad host, a failing server), so the reply check must
     /// fail. Use the same scenario as the required evaluation and assert it with `expectAllFail(.siriResponse)`.
     public static func negativeControl(
         name: String, harness: SiriAppHarness, turningOn switches: EvalSwitch..., before: BeforeRun = .none,

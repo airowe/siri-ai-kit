@@ -19,8 +19,7 @@ struct GetRecipesIntent: AppIntent {
             values: [
                 "mealType": .string(mealType.rawValue),
             ],
-            body: [],
-            auth: nil
+            body: []
         )
         let answer = await SiriToolsGenerated.tool.answer {
             try SiriToolsGenerated.reply("There are {total} recipes: {recipes.name}.", from: try await request.send())

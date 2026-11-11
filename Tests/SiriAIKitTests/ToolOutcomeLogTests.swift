@@ -11,9 +11,9 @@ struct ToolOutcomeLogTests {
 
     @Test func recordAppendsTime() {
         let log = ToolOutcomeLog(defaults: defaults)
-        log.record("used saved token")
-        #expect(log.last.hasPrefix("used saved token at "))
-        #expect(log.last.count > "used saved token at ".count)
+        log.record("read from disk")
+        #expect(log.last.hasPrefix("read from disk at "))
+        #expect(log.last.count > "read from disk at ".count)
     }
 }
 
@@ -21,8 +21,8 @@ struct ToolOutcomeNotesTests {
     let log = ToolOutcomeLog(defaults: UserDefaults(suiteName: UUID().uuidString)!)
 
     @Test func notesAppearInRecord() {
-        log.record("succeeded", notes: ["refreshed after 401", "retried once"])
-        #expect(log.last.hasPrefix("succeeded (refreshed after 401; retried once) at "))
+        log.record("succeeded", notes: ["served from cache", "retried once"])
+        #expect(log.last.hasPrefix("succeeded (served from cache; retried once) at "))
     }
 
     @Test func recordWithoutNotes() {

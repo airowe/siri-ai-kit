@@ -1,6 +1,6 @@
 import Foundation
 
-/// Records what the last tool call did ("succeeded (refreshed after 401)", "signed out", "timed out"),
+/// Records what the last tool call did ("succeeded (served from cache)", "unreachable", "timed out"),
 /// so an evaluation can check what the tool did as well as what Siri said.
 public struct ToolOutcomeLog: @unchecked Sendable {
     private let defaults: UserDefaults
@@ -27,7 +27,7 @@ public struct ToolOutcomeLog: @unchecked Sendable {
 
     public var last: String { defaults.string(forKey: key) ?? "none" }
 
-    /// Adds a detail to the outcome of the `SiriTool` run this code is part of, for example "refreshed after 401".
+    /// Adds a detail to the outcome of the `SiriTool` run this code is part of, for example "served from cache".
     ///
     /// Notes belong to the run whose operation made them, whichever log you call this on. Notes made outside
     /// a run, or after its outcome was recorded (a late finish after a timeout), are dropped.
