@@ -2,7 +2,7 @@ import path from 'path';
 import xcode from 'xcode';
 import type { XcodeProject } from 'expo/config-plugins';
 
-import { previewEnabled, requirementFrom } from '../index';
+import { previewEnabled, requirementFrom, siriToolsOptionsFrom } from '../index';
 import { enableSiriAIPreview } from '../withSiriAIPreview';
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'project.pbxproj');
@@ -63,5 +63,16 @@ describe('requirementFrom', () => {
     expect(() => requirementFrom({ version: '0.2.0', branch: 'main' })).toThrow(
       'expo-siri-ai-kit: pass either `version` or `branch`, not both'
     );
+  });
+});
+
+describe('siriToolsOptionsFrom', () => {
+  const EXPO_NAME = 'My App';
+
+  it.each([
+    [{}, undefined],
+    [{ tools: './siri-tools.json' }, { declarationPath: './siri-tools.json', appName: EXPO_NAME }],
+  ])('props %j give %j', (props, expected) => {
+    expect(siriToolsOptionsFrom(props, EXPO_NAME)).toEqual(expected);
   });
 });

@@ -3,6 +3,7 @@ import { type ConfigPlugin, createRunOncePlugin, withXcodeProject } from 'expo/c
 import { type EvalsOptions, addSiriAIEvals } from './withSiriAIEvals';
 import { type PackageRequirement, addSiriAIKitPackage } from './withSiriAIKitPackage';
 import { PREVIEW_FLAG, enableSiriAIPreview } from './withSiriAIPreview';
+import { type SiriToolsOptions, addSiriToolsGroup, siriToolsFolder, withSiriToolFiles } from './withSiriTools';
 
 const pkg = require('../../package.json');
 
@@ -18,6 +19,8 @@ export type SiriAIKitPluginProps = {
   preview?: boolean;
   /** Add a UI test target for Siri Evaluations, built from Swift files kept outside `ios/`. */
   evals?: EvalsOptions;
+  /** Path to a Siri tools declaration, relative to the project root. Generates a Swift tool for each entry. */
+  tools?: string;
 };
 
 export function requirementFrom(props: SiriAIKitPluginProps): PackageRequirement {
@@ -33,6 +36,10 @@ export function previewEnabled(props: SiriAIKitPluginProps, env: NodeJS.ProcessE
   return props.preview ?? env[PREVIEW_FLAG] === '1';
 }
 
+export function siriToolsOptionsFrom(props: SiriAIKitPluginProps, expoName: string): SiriToolsOptions | undefined {
+  return props.tools ? { declarationPath: props.tools, appName: expoName } : undefined;
+}
+
 /**
  * One Xcode project mod, so the steps run in this order: the evals target links a product from the package
  * reference, and the preview settings then cover the evals target as well as the app.
@@ -41,8 +48,11 @@ const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props)
   const options = props ?? {};
   const requirement = requirementFrom(options);
   const preview = previewEnabled(options, process.env);
+  const tools = siriToolsOptionsFrom(options, config.name);
+  if (tools) config = withSiriToolFiles(config, tools);
   return withXcodeProject(config, (next) => {
     addSiriAIKitPackage(next.modResults, requirement);
+    if (tools) addSiriToolsGroup(next.modResults, siriToolsFolder(next.modRequest.projectName!));
     if (options.evals) addSiriAIEvals(next.modResults, options.evals, next.modRequest);
     if (preview) enableSiriAIPreview(next.modResults);
     return next;
