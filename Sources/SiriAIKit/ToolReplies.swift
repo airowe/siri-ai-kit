@@ -21,13 +21,13 @@ public struct ToolReplies: Sendable {
     )
 }
 
-extension ToolError {
+extension ToolFailure {
     /// A sentence for the tool's dialog, so the person hears what went wrong instead of a generic failure.
     public func reply(appName: String, overrides: ToolReplies = .default) -> String {
         switch self {
-        case .signedOut, .keychain: overrides.signedOut(appName)
+        case .signedOut: overrides.signedOut(appName)
         case .timedOut, .unreachable: overrides.unreachable(appName)
-        case .rejected, .invalidResponse: overrides.failed(appName)
+        case .failed: overrides.failed(appName)
         }
     }
 }
