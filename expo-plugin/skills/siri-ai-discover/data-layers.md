@@ -32,6 +32,8 @@ List every definition, whether or not a screen uses it. A definition no screen r
 | Hand-written API modules | Exported functions. | Logic inside a component or hook. |
 | Zustand / Redux | The store is exported: `useStore.getState()`, `store.getState()`, `store.dispatch(action)`. | The store is created inside a provider. |
 
+**Apollo, urql and Relay hooks can't call a plain function**, because `useQuery` runs the document itself. Extraction there means exporting a function that runs the same document with the same variables through the shared client, and sharing the variables and any filtering with the hook, so both give the same answer. Say in the report that the hook and the function are two paths over one document.
+
 Record the function, or the exact call (`store.dispatch(api.endpoints.getOrders.initiate())`), with its `file:line`. What a call needs to reach the server is already in it; don't trace it further.
 
 ## Merging with what the screens show

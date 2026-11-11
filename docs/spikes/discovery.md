@@ -106,6 +106,32 @@ What it shows:
 - "Is this restaurant open?" depends on matching a restaurant by name on a query with no name filter. The agent flagged that for the owner, which is right.
 - Not run: steps 4 and 5. The credentials wording hasn't been rerun either.
 
+## v7: the full flow, and a React Query app
+
+**Enatega, steps 1 to 5,** with me answering as the owner. Enatega is plain JavaScript on Expo 53, with no test runner.
+
+- **Owner questions stayed on Siri's behaviour,** such as which of the app's modes a tool covers. There were no credential questions in steps 1 to 3.
+- **Step 4** wrote three stubs and tests for order status, last order and cancel order. It couldn't run the tests, and it said so.
+- **Step 5A (extract)** moved the Apollo client out of `App.js` into an exported registry, and added `fetchActiveOrders`, `fetchPastOrders`, `abortOrder` and `fetchConfiguration`. The hooks keep their own `useQuery` but share the variables and filters, and the agent said so.
+- **Step 5B (handlers)** kept every expected answer, added only mocks plus two cases for the owner's cancel rule, and asked the owner for the cancel rule and the currency format rather than choosing them.
+- **Nothing ran:** no test runner, no `node_modules`, so no lint either. The agent checked the new files parse with `node --check`. I tried to install dependencies only to verify. Auto mode blocked it, because with no lockfile the install pulls unpinned packages.
+- **Gap found:** it offered step 5C (Swift tools) on Expo 53, which can't use `expo-app-intents`. In 5C it also asked where the token and host come from, which it should, since Swift can't call the app's JavaScript.
+
+**`jgalat/remote-app`, steps 1 to 3.** It's a Transmission remote on Expo 57, using TanStack Query over a hand-written client.
+
+- **All five tools are callable through `createClient(server)`:** transfer status, what's downloading, progress by name, speed mode, and pause by name. The app's own background notifier already uses that client without React, which the agent cited.
+- **Every candidate was tagged by source.** It flagged `queueMove*` as possibly dead code, and used the mock client as a rejection reason.
+- **Gap found, the same as Enatega's:** the app is Android-first and on Expo 57, and nothing in the skill checks either.
+
+**Fixes:**
+
+- A new "Before you start" check covers iOS, Expo SDK 58 or later, and a test runner.
+- Step 5C is offered only when the first two hold.
+- Step 5B says when a handler can't be verified.
+- `data-layers.md` explains extraction for Apollo hooks.
+
+These fixes haven't been rerun.
+
 ## What's not proven
 
 - No tool from these apps ran on a device. Discovery is a proposal until an evaluation passes.

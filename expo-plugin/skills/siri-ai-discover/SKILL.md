@@ -20,6 +20,16 @@ How a tool gets its answer is the app owners' decision. Their own code already k
 4. **Write the outputs** for the tools the owner kept.
 5. **Offer to implement them:** the extractions, the handlers, and a Swift tool that answers Siri today.
 
+## Before you start
+
+Check three things and put them at the top of the report. None of them stops discovery, but they decide what step 5 can offer.
+
+| Check | Where | If it fails |
+|---|---|---|
+| The app ships on iOS | `app.json` / `app.config.*` has an `ios` section, and nothing says the app is Android-only | Say so: Siri tools are iOS-only, so the owner should decide whether to continue. |
+| Expo SDK 58 or later | the `expo` version in `package.json` | Swift tools need `expo-app-intents`, which needs SDK 58. Don't offer step 5C; say upgrading is the owner's call. |
+| A test runner | `jest` or `jest-expo` in `package.json`, or the app's own test files | The stubs' tests can't run. Say so in the report and in the step 5B offer. Adding a test runner is a dependency change: offer it, never install it yourself. |
+
 ## 1. Find candidates
 
 Make two lists, then merge them.
@@ -202,9 +212,11 @@ For each tool marked **needs extraction**, move the logic out of the hook into t
 
 The stub's test is already failing. Write the handler until it passes: call the app's function and word the answer as one sentence. If that function needs an argument the handler doesn't have, ask the owner where it comes from; don't design it. Change the test only to mock a call the handler needs that the stub didn't list, and say so in your summary. Never change what the answer must be. Then run the app's lint and typecheck.
 
+If the tests can't run (no test runner, no `node_modules`), say so when you offer this job: the handler will be written but not verified. Report what you did check, such as `node --check`, and don't call the handler done.
+
 ### C. Write the Swift tool
 
-Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-siri-ai-kit skill, with:
+Offer this only when the app ships on iOS and is on Expo SDK 58 or later (see "Before you start"). Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-siri-ai-kit skill, with:
 
 - the same `title` and `description`, word for word, and one `@Parameter` per declared parameter;
 - the same answer as the handler: the same sentence for the same data, and failures through `SiriTool`'s `ToolFailure` cases. Where the Swift needs something only the owners can provide, ask them; don't design it;
