@@ -10,6 +10,8 @@ SiriAIKit is not affiliated with or endorsed by Apple.
 
 ## Requirements
 
+Step-by-step setup for the Mac, the iPhone, native and Expo apps, and the agent skills, with a checklist for coding agents: [INSTALL.md](INSTALL.md).
+
 - Xcode 27.3 beta, Swift 6.
 - `SiriAIKit`: iOS 17 or later.
 - `SiriAIEvalKit`: iOS 27.3 on a device. Apple's evaluation frameworks don't ship for the Simulator.
@@ -237,7 +239,7 @@ The negative control in this run was a temporary edit to `DemoAPI.refreshEnabled
 
 ## Agent skills
 
-SiriAIKit ships skills that teach coding agents to build and test Siri AI tools: `siri-ai-tool`, `siri-ai-eval` and `expo-siri-ai-kit`. They cover the checks agents miss without them, such as Keychain items a locked phone can't read and answers left in the Spotlight index.
+SiriAIKit ships skills that teach coding agents to build and test Siri AI tools: `siri-ai-tool`, `siri-ai-eval`, `expo-siri-ai-kit` and `siri-ai-discover`. They cover the checks agents miss without them, such as Keychain items a locked phone can't read and answers left in the Spotlight index. `siri-ai-discover` chooses which tools an app should have.
 
 In Claude Code:
 
@@ -246,7 +248,7 @@ In Claude Code:
 /plugin install siri-ai-kit@siri-ai-kit
 ```
 
-For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into the agent's skills directory. The Expo skill also ships in the `expo-siri-ai-kit` npm package, under `node_modules/expo-siri-ai-kit/skills/`.
+For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into the agent's skills directory. From the release after 0.2.0, the `expo-siri-ai-kit` npm package also includes the Expo skills, under `node_modules/expo-siri-ai-kit/skills/`. 0.2.0 doesn't.
 
 ## Development
 
