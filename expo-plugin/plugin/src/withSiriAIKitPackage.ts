@@ -1,23 +1,23 @@
-import { type ConfigPlugin, type XcodeProject, withXcodeProject } from 'expo/config-plugins';
+import type { XcodeProject } from 'expo/config-plugins';
 
 export type PackageRequirement = { kind: 'version'; version: string } | { kind: 'branch'; branch: string };
 
 const REPOSITORY = 'https://github.com/airowe/siri-ai-kit';
 const PRODUCT = 'SiriAIKit';
-const REFERENCE_COMMENT = 'XCRemoteSwiftPackageReference "siri-ai-kit"';
+export const REFERENCE_COMMENT = 'XCRemoteSwiftPackageReference "siri-ai-kit"';
 const FRAMEWORKS_COMMENT = `${PRODUCT} in Frameworks`;
 
-const quote = (value: string) => `"${value}"`;
+export const quote = (value: string) => `"${value}"`;
 
-type Section = Record<string, any>;
+export type Section = Record<string, any>;
 
-function section(project: XcodeProject, isa: string): Section {
+export function section(project: XcodeProject, isa: string): Section {
   const objects = project.hash.project.objects;
   objects[isa] = objects[isa] ?? {};
   return objects[isa];
 }
 
-function entries(target: Section): [string, any][] {
+export function entries(target: Section): [string, any][] {
   return Object.entries(target).filter(([key]) => !key.endsWith('_comment'));
 }
 
@@ -27,12 +27,21 @@ function packageRequirement(requirement: PackageRequirement) {
     : { kind: 'upToNextMinorVersion', minimumVersion: requirement.version };
 }
 
-export function appTarget(project: XcodeProject): any {
-  const target = entries(project.pbxNativeTargetSection())
-    .map(([, value]) => value)
-    .find((value) => value.productType === quote('com.apple.product-type.application'));
-  if (!target) throw new Error('expo-siri-ai-kit: no iOS app target found');
-  return target;
+export function appTargetEntry(project: XcodeProject): [string, any] {
+  const entry = entries(project.pbxNativeTargetSection()).find(
+    ([, value]) => value.productType === quote('com.apple.product-type.application'),
+  );
+  if (!entry) throw new Error('expo-siri-ai-kit: no iOS app target found');
+  return entry;
+}
+
+const appTarget = (project: XcodeProject) => appTargetEntry(project)[1];
+
+/** The id of the SiriAIKit package reference that `addSiriAIKitPackage` added, if any. */
+export function siriAIKitReferenceId(project: XcodeProject): string | undefined {
+  return entries(section(project, 'XCRemoteSwiftPackageReference')).find(
+    ([, reference]) => reference.repositoryURL === quote(REPOSITORY),
+  )?.[0];
 }
 
 function frameworksPhase(project: XcodeProject, target: any): any {
@@ -44,8 +53,8 @@ function frameworksPhase(project: XcodeProject, target: any): any {
 
 /** Adds SiriAIKit as a remote Swift package and links it to the app target, where inline-module intents compile. */
 export function addSiriAIKitPackage(project: XcodeProject, requirement: PackageRequirement): void {
+  if (siriAIKitReferenceId(project)) return;
   const references = section(project, 'XCRemoteSwiftPackageReference');
-  if (entries(references).some(([, reference]) => reference.repositoryURL === quote(REPOSITORY))) return;
 
   const target = appTarget(project);
   const phase = frameworksPhase(project, target);
@@ -82,9 +91,3 @@ export function addSiriAIKitPackage(project: XcodeProject, requirement: PackageR
   const root = project.getFirstProject().firstProject;
   root.packageReferences = [...(root.packageReferences ?? []), { value: referenceId, comment: REFERENCE_COMMENT }];
 }
-
-export const withSiriAIKitPackage: ConfigPlugin<PackageRequirement> = (config, requirement) =>
-  withXcodeProject(config, (next) => {
-    addSiriAIKitPackage(next.modResults, requirement);
-    return next;
-  });

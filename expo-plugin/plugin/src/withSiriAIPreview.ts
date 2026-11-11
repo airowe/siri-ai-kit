@@ -1,4 +1,4 @@
-import { type ConfigPlugin, type XcodeProject, withXcodeProject } from 'expo/config-plugins';
+import type { XcodeProject } from 'expo/config-plugins';
 
 export const PREVIEW_FLAG = 'SIRI_AI_PREVIEW';
 
@@ -17,9 +17,3 @@ export function enableSiriAIPreview(project: XcodeProject): void {
     entry.buildSettings.IPHONEOS_DEPLOYMENT_TARGET = PREVIEW_DEPLOYMENT_TARGET;
   }
 }
-
-export const withSiriAIPreview: ConfigPlugin = (config) =>
-  withXcodeProject(config, (next) => {
-    enableSiriAIPreview(next.modResults);
-    return next;
-  });

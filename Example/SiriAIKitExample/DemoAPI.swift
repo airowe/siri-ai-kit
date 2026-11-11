@@ -13,8 +13,15 @@ enum DemoAPI {
     static let username = "emilys"
     static let password = "emilyspass"
     static let accessTokenLifetimeMinutes = 1
-    /// Set to false for the negative control: every expired call must then reply "sign in again".
-    static let refreshEnabled = true
+    /// Off only when an evaluation launches the app with `EvalSwitch.refreshOff`, for the negative control: every
+    /// expired call must then reply "sign in again". Release builds ignore the switch.
+    static var refreshEnabled: Bool {
+        #if DEBUG
+        !EvalSwitch.refreshOff.isOn()
+        #else
+        true
+        #endif
+    }
 
     static func signIn() async throws {
         let tokens: Tokens = try await post(

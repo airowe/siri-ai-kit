@@ -1,8 +1,9 @@
-import { type ConfigPlugin, createRunOncePlugin } from 'expo/config-plugins';
+import { type ConfigPlugin, createRunOncePlugin, withXcodeProject } from 'expo/config-plugins';
 
-import { type PackageRequirement, withSiriAIKitPackage } from './withSiriAIKitPackage';
-import { PREVIEW_FLAG, withSiriAIPreview } from './withSiriAIPreview';
-import { type SiriToolsOptions, withSiriTools } from './withSiriTools';
+import { type EvalsOptions, addSiriAIEvals } from './withSiriAIEvals';
+import { type PackageRequirement, addSiriAIKitPackage } from './withSiriAIKitPackage';
+import { PREVIEW_FLAG, enableSiriAIPreview } from './withSiriAIPreview';
+import { type SiriToolsOptions, addSiriToolsGroup, siriToolsFolder, withSiriToolFiles } from './withSiriTools';
 
 const pkg = require('../../package.json');
 
@@ -16,6 +17,8 @@ export type SiriAIKitPluginProps = {
   branch?: string;
   /** Turn on the Siri AI Developer Preview code. Defaults to `SIRI_AI_PREVIEW=1` in the environment. */
   preview?: boolean;
+  /** Add a UI test target for Siri Evaluations, built from Swift files kept outside `ios/`. */
+  evals?: EvalsOptions;
   /** Path to a Siri tools declaration, relative to the project root. Generates a Swift tool for each entry. */
   tools?: string;
 };
@@ -37,17 +40,23 @@ export function siriToolsOptionsFrom(props: SiriAIKitPluginProps, expoName: stri
   return props.tools ? { declarationPath: props.tools, appName: expoName } : undefined;
 }
 
+/**
+ * One Xcode project mod, so the steps run in this order: the evals target links a product from the package
+ * reference, and the preview settings then cover the evals target as well as the app.
+ */
 const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props) => {
   const options = props ?? {};
-  config = withSiriAIKitPackage(config, requirementFrom(options));
-  if (previewEnabled(options, process.env)) {
-    config = withSiriAIPreview(config);
-  }
+  const requirement = requirementFrom(options);
+  const preview = previewEnabled(options, process.env);
   const tools = siriToolsOptionsFrom(options, config.name);
-  if (tools) {
-    config = withSiriTools(config, tools);
-  }
-  return config;
+  if (tools) config = withSiriToolFiles(config, tools);
+  return withXcodeProject(config, (next) => {
+    addSiriAIKitPackage(next.modResults, requirement);
+    if (tools) addSiriToolsGroup(next.modResults, siriToolsFolder(next.modRequest.projectName!));
+    if (options.evals) addSiriAIEvals(next.modResults, options.evals, next.modRequest);
+    if (preview) enableSiriAIPreview(next.modResults);
+    return next;
+  });
 };
 
 export default createRunOncePlugin(withSiriAIKit, pkg.name, pkg.version);

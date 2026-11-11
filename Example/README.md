@@ -24,4 +24,16 @@ xcodebuild test -project Example/SiriAIKitExample.xcodeproj -scheme SiriAIKitExa
 swift run siri-ai-eval summarize cart.xcresult --fail-on real
 ```
 
-`refreshesExpiredTokenEveryTime()` waits 70 seconds before each run so the token expires. For the negative control, set `DemoAPI.refreshEnabled` to `false`: every reply should then say to sign in again, and the reply check must fail.
+`refreshesExpiredTokenEveryTime()` waits 70 seconds before each run so the token expires.
+
+`replyCheckFailsWithRefreshOff()` is the negative control. It launches the app with `EvalSwitch.refreshOff` (defined in `Shared/EvalSwitches.swift`), so every reply should say to sign in again and the reply check must fail. No code edit is needed.
+
+`cartToolWithoutTheAppName()` asks "What's in my cart?" without naming the app. It's informational: the summary reports its pass rate and never fails on it.
+
+Run all four and summarize them together:
+
+```bash
+xcodebuild test -project Example/SiriAIKitExample.xcodeproj -scheme SiriAIKitExampleEvals \
+  -destination 'id=<device UDID>' -allowProvisioningUpdates DEVELOPMENT_TEAM=<team ID> -resultBundlePath all.xcresult
+swift run siri-ai-eval summarize all.xcresult --fail-on real
+```

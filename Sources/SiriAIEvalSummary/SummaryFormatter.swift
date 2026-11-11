@@ -13,6 +13,7 @@ public enum SummaryFormatter {
 
     static func text(for report: EvalReport) -> String {
         var lines = [report.name]
+        if let kindLine = kindLine(for: report) { lines.append(kindLine) }
         for (index, run) in report.runs.enumerated() {
             lines.append("  Run \(index + 1): " + fields(of: run).joined(separator: " | "))
         }
@@ -33,6 +34,21 @@ public enum SummaryFormatter {
             } ?? "  Real pass rate: n/a (no complete runs)"
         )
         return lines.joined(separator: "\n")
+    }
+
+    static func kindLine(for report: EvalReport) -> String? {
+        switch report.kind {
+        case .required:
+            return nil
+        case .informational:
+            return "  Informational: not counted toward the exit status."
+        case .negativeControl:
+            let prefix = "  Negative control: passes when the reply check fails. "
+            guard report.completeRunCount > 0 else { return prefix + "No complete runs, so it proves nothing." }
+            let failed = report.replyFailedCompleteCount
+            let verdict = failed == report.completeRunCount ? "as expected" : "the checks can't be trusted"
+            return prefix + "Reply check failed in \(failed) of \(report.completeRunCount) complete runs: \(verdict)."
+        }
     }
 
     static func fields(of run: EvalRun) -> [String] {

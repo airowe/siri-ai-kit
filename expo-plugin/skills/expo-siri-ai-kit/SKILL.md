@@ -30,7 +30,17 @@ SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
 
 With the preview on, the plugin adds the `SIRI_AI_PREVIEW` Swift condition and sets the **app target** to iOS 27.3. Without `SIRI_AI_PREVIEW=1` (or `["expo-siri-ai-kit", { "preview": true }]`), tool code inside `#if SIRI_AI_PREVIEW` doesn't compile in, and Siri never sees the tool.
 
-Options: `version` (SiriAIKit release, up to next minor; defaults to the tested one), `branch` (unreleased SiriAIKit; not with `version`), `preview`.
+Options: `version` (SiriAIKit release, up to next minor; defaults to the tested one), `branch` (unreleased SiriAIKit; not with `version`), `preview`, `evals`.
+
+## The evaluation target comes from the plugin
+
+Don't add the Siri Evaluations UI test target in Xcode: `prebuild --clean` drops it. Keep the tests outside `ios/` and set `evals`:
+
+```json
+["expo-siri-ai-kit", { "preview": true, "evals": { "sourceDir": "siri-evals" } }]
+```
+
+Prebuild then adds a `<AppName>Evals` UI test target (rename with `targetName`) that compiles every `.swift` file under `siri-evals/`, tests the app, builds for iOS 27.3, links `SiriAIEvalKit` from the same package, and has a shared scheme of the same name: `xcodebuild test -workspace ios/<App>.xcworkspace -scheme <App>Evals -destination 'platform=iOS,name=<device>'`. Prebuild again after adding or removing a test file.
 
 ## The tool lives in `app-intents/`
 
@@ -97,6 +107,7 @@ Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri
 | `hermesvm.xcframework/Info.plist` missing during `pod install` | A broken CocoaPods cache, unrelated to SiriAIKit: `cd ios && CP_CACHE_DIR="$PWD/../.cp-cache" LANG=en_US.UTF-8 pod install` |
 | `No such module 'SiriAIKit'` in `app-intents/` | Plugin missing from `app.json`, or prebuild not re-run after adding it |
 | Siri never calls the tool, no build error | Prebuilt without `SIRI_AI_PREVIEW=1`, so `@AppIntent(.tool)` compiled out |
-| Evaluation UI test target gone | `prebuild --clean` regenerates `ios/` and drops targets added in Xcode. Keep the test sources outside `ios/` (for example `siri-evals/`) and re-add the target after every clean prebuild. |
+| Evaluation UI test target gone | Set the plugin's `evals: { "sourceDir": "siri-evals" }` option instead of adding the target in Xcode, then prebuild again |
+| `evals.sourceDir ... does not exist` / `has no .swift files` | `sourceDir` is relative to the project root, not `ios/`; it needs at least one `.swift` test file |
 
 Siri evaluations need a development build on a physical iPhone running iOS 27.3; not Expo Go and not the Simulator.

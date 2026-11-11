@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { type ConfigPlugin, type XcodeProject, withDangerousMod, withXcodeProject } from 'expo/config-plugins';
+import { type ConfigPlugin, type XcodeProject, withDangerousMod } from 'expo/config-plugins';
 
 import { parseSiriTools } from './siriTools/declaration';
 import { type GeneratedFile, siriToolFiles } from './siriTools/swift';
-import { appTarget } from './withSiriAIKitPackage';
+import { appTargetEntry } from './withSiriAIKitPackage';
 
 const FOLDER = 'SiriTools';
 const SYNCHRONIZED_GROUP = 'PBXFileSystemSynchronizedRootGroup';
@@ -39,7 +39,7 @@ export function addSiriToolsGroup(project: XcodeProject, groupPath: string): voi
   };
   groups[`${id}_comment`] = FOLDER;
 
-  const target = appTarget(project);
+  const [, target] = appTargetEntry(project);
   target.fileSystemSynchronizedGroups = [...(target.fileSystemSynchronizedGroups ?? []), { value: id, comment: FOLDER }];
   const mainGroup = project.getPBXGroupByKey(project.getFirstProject().firstProject.mainGroup);
   mainGroup?.children.push({ value: id, comment: FOLDER });
@@ -75,19 +75,20 @@ export function siriToolFilesFrom(projectRoot: string, declarationPath: string, 
   return siriToolFiles(declaration, declaration.appName ?? fallbackAppName);
 }
 
-/** Generates a Swift tool per declared tool into `ios/<App>/SiriTools` and compiles that folder into the app. */
-export const withSiriTools: ConfigPlugin<SiriToolsOptions> = (config, { declarationPath, appName }) => {
-  config = withDangerousMod(config, [
+/** Where the generated tools live, relative to `ios/`. */
+export const siriToolsFolder = (projectName: string) => `${projectName}/${FOLDER}`;
+
+/**
+ * Writes a Swift tool per declared tool into `ios/<App>/SiriTools`. `addSiriToolsGroup` then compiles that folder
+ * into the app target from the plugin's single Xcode project mod.
+ */
+export const withSiriToolFiles: ConfigPlugin<SiriToolsOptions> = (config, { declarationPath, appName }) =>
+  withDangerousMod(config, [
     'ios',
     (next) => {
       const { projectRoot, platformProjectRoot, projectName } = next.modRequest;
       const files = siriToolFilesFrom(projectRoot, declarationPath, appName);
-      writeSiriToolFiles(path.join(platformProjectRoot, projectName!, FOLDER), files);
+      writeSiriToolFiles(path.join(platformProjectRoot, siriToolsFolder(projectName!)), files);
       return next;
     },
   ]);
-  return withXcodeProject(config, (next) => {
-    addSiriToolsGroup(next.modResults, `${next.modRequest.projectName}/${FOLDER}`);
-    return next;
-  });
-};
