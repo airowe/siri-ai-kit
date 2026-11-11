@@ -8,7 +8,8 @@
     "app.plugin.js",
     "plugin/build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "skills"
   ],
   "scripts": {
     "build": "tsc -p plugin",
