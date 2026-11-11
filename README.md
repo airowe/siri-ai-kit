@@ -178,6 +178,19 @@ The negative control is a temporary edit (`DemoAPI.refreshEnabled = false`) and 
 - **`ToolError`:** replaced by `ToolFailure`. `.rejected` and `.invalidResponse` became `.failed`, and `.keychain` is gone.
 - **Outcomes:** "used saved token" and "refreshed after 401" are no longer recorded automatically. Use `ToolOutcomeLog.standard.note(_:)` from your code.
 
+## Agent skills
+
+SiriAIKit ships skills that teach coding agents to build and test Siri AI tools: `siri-ai-tool`, `siri-ai-eval` and `expo-siri-ai-kit`. They cover the checks agents miss without them, such as Keychain items a locked phone can't read and answers left in the Spotlight index.
+
+In Claude Code:
+
+```
+/plugin marketplace add airowe/siri-ai-kit
+/plugin install siri-ai-kit@siri-ai-kit
+```
+
+For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into the agent's skills directory. The Expo skill also ships in the `expo-siri-ai-kit` npm package, under `node_modules/expo-siri-ai-kit/skills/`.
+
 ## Development
 
 ```bash

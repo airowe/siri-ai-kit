@@ -1,0 +1,12 @@
+{
+  "name": "siri-ai-kit",
+  "description": "SiriAIKit skills for Siri AI tools in iOS and Expo apps",
+  "owner": { "name": "Adam Rowe", "url": "https://github.com/airowe" },
+  "plugins": [
+    {
+      "name": "siri-ai-kit",
+      "source": "./",
+      "description": "Build, test and debug Siri AI tools with SiriAIKit, in native iOS and Expo apps"
+    }
+  ]
+}

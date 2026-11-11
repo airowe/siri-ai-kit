@@ -91,6 +91,10 @@ Function("siriToolOutcome") { () -> String in
 
 Then render it from JavaScript with `testID="siri-ai-tool-outcome"`.
 
+## Agent skill
+
+This package includes an agent skill at `skills/expo-siri-ai-kit/SKILL.md` covering setup, the outcome bridge and known prebuild problems. Claude Code users can install it with the other SiriAIKit skills: `/plugin marketplace add airowe/siri-ai-kit`, then `/plugin install siri-ai-kit@siri-ai-kit`.
+
 ## Requirements
 
 - Expo SDK 58 or later, with `expo-app-intents`.
