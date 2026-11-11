@@ -14,10 +14,11 @@ package = project.new(Xcodeproj::Project::Object::XCLocalSwiftPackageReference)
 package.relative_path = '..'
 project.root_object.package_references << package
 
-def add_sources(project, target, folder)
+def add_sources(project, targets, folder)
   group = project.main_group.new_group(folder, folder)
   Dir[File.join(EXAMPLE_DIR, folder, '*.swift')].sort.each do |file|
-    target.add_file_references([group.new_file(File.basename(file))])
+    reference = group.new_file(File.basename(file))
+    Array(targets).each { |target| target.add_file_references([reference]) }
   end
 end
 
@@ -39,6 +40,8 @@ evals = project.new_target(:ui_test_bundle, EVALS, :ios, DEPLOYMENT_TARGET)
 evals.add_dependency(app)
 add_sources(project, evals, EVALS)
 link_product(project, evals, package, 'SiriAIEvalKit')
+# Code both targets need to agree on, such as the switches the evaluations launch the app with.
+add_sources(project, [app, evals], 'Shared')
 
 shared = {
   'SWIFT_VERSION' => '6.0',
