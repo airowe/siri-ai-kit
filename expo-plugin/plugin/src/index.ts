@@ -1,7 +1,8 @@
-import { type ConfigPlugin, createRunOncePlugin } from 'expo/config-plugins';
+import { type ConfigPlugin, createRunOncePlugin, withXcodeProject } from 'expo/config-plugins';
 
-import { type PackageRequirement, withSiriAIKitPackage } from './withSiriAIKitPackage';
-import { PREVIEW_FLAG, withSiriAIPreview } from './withSiriAIPreview';
+import { type EvalsOptions, addSiriAIEvals } from './withSiriAIEvals';
+import { type PackageRequirement, addSiriAIKitPackage } from './withSiriAIKitPackage';
+import { PREVIEW_FLAG, enableSiriAIPreview } from './withSiriAIPreview';
 
 const pkg = require('../../package.json');
 
@@ -15,6 +16,8 @@ export type SiriAIKitPluginProps = {
   branch?: string;
   /** Turn on the Siri AI Developer Preview code. Defaults to `SIRI_AI_PREVIEW=1` in the environment. */
   preview?: boolean;
+  /** Add a UI test target for Siri Evaluations, built from Swift files kept outside `ios/`. */
+  evals?: EvalsOptions;
 };
 
 export function requirementFrom(props: SiriAIKitPluginProps): PackageRequirement {
@@ -30,13 +33,20 @@ export function previewEnabled(props: SiriAIKitPluginProps, env: NodeJS.ProcessE
   return props.preview ?? env[PREVIEW_FLAG] === '1';
 }
 
+/**
+ * One Xcode project mod, so the steps run in this order: the evals target links a product from the package
+ * reference, and the preview settings then cover the evals target as well as the app.
+ */
 const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props) => {
   const options = props ?? {};
-  config = withSiriAIKitPackage(config, requirementFrom(options));
-  if (previewEnabled(options, process.env)) {
-    config = withSiriAIPreview(config);
-  }
-  return config;
+  const requirement = requirementFrom(options);
+  const preview = previewEnabled(options, process.env);
+  return withXcodeProject(config, (next) => {
+    addSiriAIKitPackage(next.modResults, requirement);
+    if (options.evals) addSiriAIEvals(next.modResults, options.evals, next.modRequest);
+    if (preview) enableSiriAIPreview(next.modResults);
+    return next;
+  });
 };
 
 export default createRunOncePlugin(withSiriAIKit, pkg.name, pkg.version);
