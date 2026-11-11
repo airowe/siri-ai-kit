@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "88ECCAA20E6C88CB1319F259"
+               BlueprintIdentifier = "391EA946F9D429D13D889729"
                BuildableName = "SiriAIKitExample.app"
                BlueprintName = "SiriAIKitExample"
                ReferencedContainer = "container:SiriAIKitExample.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "88ECCAA20E6C88CB1319F259"
+            BlueprintIdentifier = "391EA946F9D429D13D889729"
             BuildableName = "SiriAIKitExample.app"
             BlueprintName = "SiriAIKitExample"
             ReferencedContainer = "container:SiriAIKitExample.xcodeproj">
@@ -41,7 +41,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C67D7E6C53B891C83E3B25F0"
+               BlueprintIdentifier = "BEE07A7293C989F3D42A782A"
                BuildableName = "SiriAIKitExampleEvals.xctest"
                BlueprintName = "SiriAIKitExampleEvals"
                ReferencedContainer = "container:SiriAIKitExample.xcodeproj">
@@ -63,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "88ECCAA20E6C88CB1319F259"
+            BlueprintIdentifier = "391EA946F9D429D13D889729"
             BuildableName = "SiriAIKitExample.app"
             BlueprintName = "SiriAIKitExample"
             ReferencedContainer = "container:SiriAIKitExample.xcodeproj">
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "88ECCAA20E6C88CB1319F259"
+            BlueprintIdentifier = "391EA946F9D429D13D889729"
             BuildableName = "SiriAIKitExample.app"
             BlueprintName = "SiriAIKitExample"
             ReferencedContainer = "container:SiriAIKitExample.xcodeproj">

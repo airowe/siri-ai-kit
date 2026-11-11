@@ -39,6 +39,13 @@ enum DemoAPI {
         return try decode(retryData, status: retryStatus)
     }
 
+    /// A public cart that needs no sign-in. The deferred-property spike uses cart 2 so its products never
+    /// overlap cart 1's.
+    static func publicCart(id: Int) async throws -> Cart {
+        let (data, status) = try await load(URLRequest(url: base.appending(path: "carts/\(id)")))
+        return try decode(data, status: status)
+    }
+
     /// One refresh at a time for the whole app. A Siri call that timed out may still be refreshing when the next
     /// one starts, and APIs that issue a new refresh token on every refresh reject the second use of the old one.
     private static let refresher = Refresher()
