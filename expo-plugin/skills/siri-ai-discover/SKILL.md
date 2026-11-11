@@ -20,15 +20,29 @@ How a tool gets its answer is the app owners' decision. Their own code already k
 4. **Write the outputs** for the tools the owner kept.
 5. **Offer to implement them:** the extractions, the handlers, and a Swift tool that answers Siri today.
 
+## Before you start
+
+Check three things and put them at the top of the report. None of them stops discovery, but they decide what step 5 can offer.
+
+| Check | Where | If it fails |
+|---|---|---|
+| The app ships on iOS | `app.json` / `app.config.*` has an `ios` section, and nothing says the app is Android-only | Say so: Siri tools are iOS-only, so the owner should decide whether to continue. |
+| Expo SDK 58 or later | the `expo` version in `package.json` | Swift tools need `expo-app-intents`, which needs SDK 58. Don't offer step 5C; say upgrading is the owner's call. |
+| A test runner | `jest` or `jest-expo` in `package.json`, or the app's own test files | The stubs' tests can't run. Say so in the report and in the step 5B offer. Adding a test runner is a dependency change: offer it, never install it yourself. |
+
 ## 1. Find candidates
 
-Read where people act and what they look at:
+Make two lists, then merge them.
+
+**From the screens:** where people act and what they look at.
 
 - the route files (`app/` or `src/app/`) and the tab bar;
 - the main actions on each screen;
 - the hooks, queries and stores behind them.
 
-The app's own features are the candidates.
+**From the data layer:** every read and write the app defines, whether or not a screen uses it. Find the data libraries in `package.json` (React Query, RTK Query, SWR, Apollo, tRPC, generated OpenAPI clients, hand-written API modules, Zustand or Redux), then list their definitions. Reads are candidate questions, and writes are candidate actions. `data-layers.md`, next to this skill, says where each library keeps its definitions.
+
+Merge the two lists and note where each candidate came from: `screen`, `data layer` or `both`. The app's own features are the candidates.
 
 ## 2. Draft a shortlist
 
@@ -54,10 +68,10 @@ Siri can launch the app in the background, where no component renders. The tool'
 
 | Status | When | What goes in the report |
 |---|---|---|
-| **Callable** | A plain exported function does it (an API client call, a store action, a query function). | The function and its `file:line`. |
+| **Callable** | A plain exported function does it (an API client call, a store action, a query function), or the library can run the definition outside React (`queryClient.fetchQuery(options)`, `store.dispatch(api.endpoints.x.initiate())`). | The function or exact call, and its `file:line`. |
 | **Needs extraction** | The logic lives only inside a hook or component (`useQuery` with an inline fetcher, a handler defined in a screen). | The hook's `file:line`, and the function to pull out of it, by name. |
 
-A candidate whose data is only in memory was already rejected above.
+A candidate whose data is only in memory was already rejected above. `data-layers.md` lists, for each library, what makes a definition callable and what needs extraction.
 
 
 ## 3. Review it with the owner
@@ -67,6 +81,8 @@ Show the owner the shortlist as one table: tool name, what a person says, what S
 1. **Which of these should Siri have?** They may drop, reorder or rename.
 2. **For each action: is a spoken confirmation enough** before it runs, with the app closed? Drop any action they say no to.
 3. **What do people ask for that isn't on a screen?** Add anything they name that the code supports, with the same checks.
+
+You may add questions about what a tool should cover, such as which of the app's modes or accounts it answers for. Every question is about what Siri should do. How the app reaches its server, and with which credentials, is already in the code the tool calls.
 
 If no owner can answer (you're running unattended), write the report with "Owner review: not done" at the top, and stop there: no `siri-tools.json`, no handler files.
 
@@ -148,7 +164,8 @@ These parts, in this order:
    - Handler: the file under `siri-tools/`.
    - Calls: the function and its `file:line`.
    - Status: callable, or needs extraction with the hook's `file:line` and the function to extract.
-3. **Rejected.** Every candidate dropped, with its reason, including the owner's drops.
+   - Found from: `screen`, `data layer` or `both`.
+3. **Rejected.** Every candidate dropped, with its reason, including the owner's drops. Data-layer candidates can be grouped ("12 paged feed queries: too long to speak"), as long as each group names its definitions.
 4. **Evaluations.** For each tool: a prompt that names the app, and what the reply must contain to prove the app answered (a value only the person's own data has, never generic text). The siri-ai-eval skill runs these.
 
 ## Check before handing over
@@ -175,6 +192,8 @@ These hold at the end of step 4, before you offer step 5.
 | Extracting functions or writing handlers without asking | Offer each job in step 5 and wait for a yes |
 | Changing a test's expected answer to make it pass | Fix the handler; only add mocks the stub didn't list |
 | Writing the handler's logic into the stub | The stub throws; the test says what the answer must be |
+| Only reading screens, so calls no screen reaches are never seen | Sweep the data layer too, and merge the lists |
+| Keeping every query and mutation the sweep finds | They go through the same shortlist rules; most are feeds, ids or plumbing |
 | Proposing features the app doesn't have | Every tool needs a function with a `file:line` |
 | A tool that reads out a feed or a long list | The count and at most three names |
 | Descriptions that say what the tool does, not what it returns | "Says how many unread notifications …", not "Handles notifications" |
@@ -193,9 +212,11 @@ For each tool marked **needs extraction**, move the logic out of the hook into t
 
 The stub's test is already failing. Write the handler until it passes: call the app's function and word the answer as one sentence. If that function needs an argument the handler doesn't have, ask the owner where it comes from; don't design it. Change the test only to mock a call the handler needs that the stub didn't list, and say so in your summary. Never change what the answer must be. Then run the app's lint and typecheck.
 
+If the tests can't run (no test runner, no `node_modules`), say so when you offer this job: the handler will be written but not verified. Report what you did check, such as `node --check`, and don't call the handler done.
+
 ### C. Write the Swift tool
 
-Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-siri-ai-kit skill, with:
+Offer this only when the app ships on iOS and is on Expo SDK 58 or later (see "Before you start"). Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-siri-ai-kit skill, with:
 
 - the same `title` and `description`, word for word, and one `@Parameter` per declared parameter;
 - the same answer as the handler: the same sentence for the same data, and failures through `SiriTool`'s `ToolFailure` cases. Where the Swift needs something only the owners can provide, ask them; don't design it;

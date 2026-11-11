@@ -82,6 +82,56 @@ Rerun on Bluesky, answering as the owner with the same choices as v4:
 
 The v4 and v5 session rules asked discovery to find how the app restores a signed-in session and to mock it in each test. That pulled authentication back into discovery, which the owner decided it shouldn't handle. The rules are removed. A stub now imports and mocks only the app function it calls. If that function needs something the handler doesn't have, such as a client, the agent asks the owner instead of working it out.
 
+## v6: sweeping the data layer
+
+Step 1 used to start from the screens and reach the data layer only by tracing back from them. Now it also lists every read and write the app's data libraries define, merges that with the screens, and notes where each candidate came from. `data-layers.md` says where each library keeps its definitions and when one can run without React.
+
+The test app is Enatega's customer app (`enatega/food-delivery-multivendor`, Expo 53). It uses Apollo, axios and Zustand, and React Navigation rather than Expo Router. Both versions of the skill ran to the owner review, at the same time.
+
+| | Baseline (`main` skill) | With the sweep |
+|---|---|---|
+| Candidates considered | About 25, most from screens | About 100, every query, mutation and subscription |
+| Shortlist | Active order status, last order, cart summary, cancel order | The same four, plus "is this restaurant open?" |
+| Held back for the owner | Reorder, cost of the last order, rider's name | Wallet credit and free deliveries, which only exist in the single-vendor mode |
+| Dead code found | None | `restaurantList`, `myOrders`, `GET_ESTIMATED_DELIVERY_TIME` |
+| Plain helpers it reused | None | `calulateRemainingTime`, `isOpen` |
+| Callable or extraction | All needs extraction: the Apollo client is only built inside `App.js` | The same, citing `data-layers.md`'s rule "client only created inside a provider" |
+| Asked about credentials | **Yes:** where the token comes from in the background | No: it asked only where the shared client comes from, and said it wouldn't design it |
+
+What it shows:
+
+- The top of the list didn't change: on this app, screens already reach the most-asked reads.
+- The sweep found more possible tools, rejected most data-layer definitions quickly, and flagged dead code that a screen-only read can't see.
+- The baseline asked the owner about tokens. The skill now says every owner question is about what Siri should do, and that credentials are already in the code the tool calls.
+- "Is this restaurant open?" depends on matching a restaurant by name on a query with no name filter. The agent flagged that for the owner, which is right.
+- Not run: steps 4 and 5. The credentials wording hasn't been rerun either.
+
+## v7: the full flow, and a React Query app
+
+**Enatega, steps 1 to 5,** with me answering as the owner. Enatega is plain JavaScript on Expo 53, with no test runner.
+
+- **Owner questions stayed on Siri's behaviour,** such as which of the app's modes a tool covers. There were no credential questions in steps 1 to 3.
+- **Step 4** wrote three stubs and tests for order status, last order and cancel order. It couldn't run the tests, and it said so.
+- **Step 5A (extract)** moved the Apollo client out of `App.js` into an exported registry, and added `fetchActiveOrders`, `fetchPastOrders`, `abortOrder` and `fetchConfiguration`. The hooks keep their own `useQuery` but share the variables and filters, and the agent said so.
+- **Step 5B (handlers)** kept every expected answer, added only mocks plus two cases for the owner's cancel rule, and asked the owner for the cancel rule and the currency format rather than choosing them.
+- **Nothing ran:** no test runner, no `node_modules`, so no lint either. The agent checked the new files parse with `node --check`. I tried to install dependencies only to verify. Auto mode blocked it, because with no lockfile the install pulls unpinned packages.
+- **Gap found:** it offered step 5C (Swift tools) on Expo 53, which can't use `expo-app-intents`. In 5C it also asked where the token and host come from, which it should, since Swift can't call the app's JavaScript.
+
+**`jgalat/remote-app`, steps 1 to 3.** It's a Transmission remote on Expo 57, using TanStack Query over a hand-written client.
+
+- **All five tools are callable through `createClient(server)`:** transfer status, what's downloading, progress by name, speed mode, and pause by name. The app's own background notifier already uses that client without React, which the agent cited.
+- **Every candidate was tagged by source.** It flagged `queueMove*` as possibly dead code, and used the mock client as a rejection reason.
+- **Gap found, the same as Enatega's:** the app is Android-first and on Expo 57, and nothing in the skill checks either.
+
+**Fixes:**
+
+- A new "Before you start" check covers iOS, Expo SDK 58 or later, and a test runner.
+- Step 5C is offered only when the first two hold.
+- Step 5B says when a handler can't be verified.
+- `data-layers.md` explains extraction for Apollo hooks.
+
+These fixes haven't been rerun.
+
 ## What's not proven
 
 - No tool from these apps ran on a device. Discovery is a proposal until an evaluation passes.
