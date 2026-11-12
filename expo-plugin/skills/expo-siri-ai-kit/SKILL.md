@@ -30,7 +30,7 @@ SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
 
 With the preview on, the plugin adds the `SIRI_AI_PREVIEW` Swift condition and sets the **app target** to iOS 27.3. Without `SIRI_AI_PREVIEW=1` (or `["expo-siri-ai-kit", { "preview": true }]`), tool code inside `#if SIRI_AI_PREVIEW` doesn't compile in, and Siri never sees the tool.
 
-Options: `version` (SiriAIKit release, up to next minor; defaults to the tested one), `branch` (unreleased SiriAIKit; not with `version`), `preview`, `evals`.
+Options: `version` (SiriAIKit release, up to next minor; defaults to the tested one), `branch` (unreleased SiriAIKit; not with `version`), `preview`, `evals`, `skills` (`{ "sourceDir": "siri-skills" }`: a folder of Apple App Skills, one folder per skill with only a `SKILL.md`; checked at prebuild and compiled into the app as `Skills.skillsbundle`).
 
 ## The evaluation target comes from the plugin
 
@@ -122,5 +122,8 @@ Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri
 | Siri never calls the tool, no build error | Prebuilt without `SIRI_AI_PREVIEW=1`, so `@AppIntent(.tool)` compiled out |
 | Evaluation UI test target gone | Set the plugin's `evals: { "sourceDir": "siri-evals" }` option instead of adding the target in Xcode, then prebuild again |
 | `evals.sourceDir ... does not exist` / `has no .swift files` | `sourceDir` is relative to the project root, not `ios/`; it needs at least one `.swift` test file |
+| `the App Skills in ... have problems` | Fix each listed `SKILL.md`: only `name` and `description` in the frontmatter, `name` matching its folder, no other files in the skill folder |
+| `the app target already has a skills bundle` | A target can have only one. Remove the one added in Xcode and keep the skills in `skills.sourceDir` |
+| App Skills added in Xcode don't reach Siri | Added as a plain folder, Xcode copies them raw and never compiles them. Use the plugin's `skills` option |
 
 Siri evaluations need a development build on a physical iPhone running iOS 27.3; not Expo Go and not the Simulator.
