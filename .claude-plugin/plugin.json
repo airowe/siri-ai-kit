@@ -1,7 +1,7 @@
 {
   "name": "syrup-ai-kit",
   "displayName": "Syrup AI Kit",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Make an iOS, Expo or React Native app work with Siri AI (Apple's iOS 27.3 Siri AI Developer Preview): choose the tools, write them with Syrup AI Kit, and prove Siri calls them.",
   "author": {
     "name": "Adam Rowe",

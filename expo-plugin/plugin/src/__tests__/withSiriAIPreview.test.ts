@@ -52,7 +52,7 @@ describe('previewEnabled', () => {
 
 describe('requirementFrom', () => {
   it.each([
-    [{}, { kind: 'version', version: '0.3.0' }],
+    [{}, { kind: 'version', version: '0.3.1' }],
     [{ version: '0.3.1' }, { kind: 'version', version: '0.3.1' }],
     [{ branch: 'main' }, { kind: 'branch', branch: 'main' }],
   ])('props %j give %j', (props, expected) => {
