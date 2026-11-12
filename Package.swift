@@ -5,21 +5,21 @@ let evaluationFrameworks: [LinkerSetting] = ["XCTest", "SiriEvaluations", "Evalu
     .map { .linkedFramework($0, .when(platforms: [.iOS])) }
 
 let package = Package(
-    name: "SiriAIKit",
+    name: "SyrupAIKit",
     platforms: [.iOS(.v17), .macOS(.v15)],
     products: [
-        .library(name: "SiriAIKit", targets: ["SiriAIKit"]),
-        .library(name: "SiriAIEvalKit", targets: ["SiriAIEvalKit"]),
-        .executable(name: "siri-ai-eval", targets: ["siri-ai-eval"]),
+        .library(name: "SyrupAIKit", targets: ["SyrupAIKit"]),
+        .library(name: "SyrupAIEvalKit", targets: ["SyrupAIEvalKit"]),
+        .executable(name: "syrup-ai-eval", targets: ["syrup-ai-eval"]),
     ],
     targets: [
-        .target(name: "SiriAIKit"),
-        .target(name: "SiriAIEvalKit", dependencies: ["SiriAIKit", "SiriAIEvalSummary"], linkerSettings: evaluationFrameworks),
-        .target(name: "SiriAIEvalSummary"),
-        .executableTarget(name: "siri-ai-eval", dependencies: ["SiriAIEvalSummary"]),
-        .testTarget(name: "SiriAIKitTests", dependencies: ["SiriAIKit"]),
-        .testTarget(name: "SiriAIEvalKitTests", dependencies: ["SiriAIEvalKit"]),
-        .testTarget(name: "SiriAIEvalSummaryTests", dependencies: ["SiriAIEvalSummary"], resources: [.copy("Fixtures")]),
+        .target(name: "SyrupAIKit"),
+        .target(name: "SyrupAIEvalKit", dependencies: ["SyrupAIKit", "SyrupAIEvalSummary"], linkerSettings: evaluationFrameworks),
+        .target(name: "SyrupAIEvalSummary"),
+        .executableTarget(name: "syrup-ai-eval", dependencies: ["SyrupAIEvalSummary"]),
+        .testTarget(name: "SyrupAIKitTests", dependencies: ["SyrupAIKit"]),
+        .testTarget(name: "SyrupAIEvalKitTests", dependencies: ["SyrupAIEvalKit"]),
+        .testTarget(name: "SyrupAIEvalSummaryTests", dependencies: ["SyrupAIEvalSummary"], resources: [.copy("Fixtures")]),
     ],
     swiftLanguageModes: [.v6]
 )

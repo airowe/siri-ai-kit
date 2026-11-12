@@ -123,21 +123,21 @@ describe('siriToolFilesFrom', () => {
 
   it('says which file is missing', () => {
     expect(() => siriToolFilesFrom(directory, 'missing.json', FALLBACK_APP_NAME)).toThrow(
-      `expo-siri-ai-kit: can't read the Siri tools declaration at ${path.join(directory, 'missing.json')}`
+      `expo-syrup-ai-kit: can't read the Siri tools declaration at ${path.join(directory, 'missing.json')}`
     );
   });
 
   it('says which file is not JSON', () => {
     fs.writeFileSync(path.join(directory, 'bad.json'), '{ tools: ');
     expect(() => siriToolFilesFrom(directory, 'bad.json', FALLBACK_APP_NAME)).toThrow(
-      /^expo-siri-ai-kit: bad\.json is not valid JSON/
+      /^expo-syrup-ai-kit: bad\.json is not valid JSON/
     );
   });
 
   it('reports declaration problems with the file name', () => {
     fs.writeFileSync(path.join(directory, 'empty.json'), '{"tools": []}');
     expect(() => siriToolFilesFrom(directory, 'empty.json', FALLBACK_APP_NAME)).toThrow(
-      'expo-siri-ai-kit: empty.json has problems:\n  - tools: must be a non-empty array'
+      'expo-syrup-ai-kit: empty.json has problems:\n  - tools: must be a non-empty array'
     );
   });
 });

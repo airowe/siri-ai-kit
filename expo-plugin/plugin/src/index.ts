@@ -1,20 +1,20 @@
 import { type ConfigPlugin, createRunOncePlugin, withXcodeProject } from 'expo/config-plugins';
 
 import { type EvalsOptions, addSiriAIEvals } from './withSiriAIEvals';
-import { type PackageRequirement, addSiriAIKitPackage } from './withSiriAIKitPackage';
+import { type PackageRequirement, addSyrupAIKitPackage } from './withSyrupAIKitPackage';
 import { PREVIEW_FLAG, enableSiriAIPreview } from './withSiriAIPreview';
 import { type SiriSkillsOptions, addSkillsBundle, skillsBundlePath, withSiriSkillsBundle } from './withSiriSkills';
 import { type SiriToolsOptions, addSiriToolsGroup, siriToolsFolder, withSiriToolFiles } from './withSiriTools';
 
 const pkg = require('../../package.json');
 
-/** The SiriAIKit release this plugin version was tested with. */
-const DEFAULT_VERSION = '0.2.0';
+/** The SyrupAIKit release this plugin version was tested with. */
+const DEFAULT_VERSION = '0.3.0';
 
-export type SiriAIKitPluginProps = {
-  /** SiriAIKit version to use, up to the next minor. Defaults to the release this plugin was tested with. */
+export type SyrupAIKitPluginProps = {
+  /** SyrupAIKit version to use, up to the next minor. Defaults to the release this plugin was tested with. */
   version?: string;
-  /** Follow a SiriAIKit branch instead of a release, for trying unreleased changes. */
+  /** Follow a SyrupAIKit branch instead of a release, for trying unreleased changes. */
   branch?: string;
   /** Turn on the Siri AI Developer Preview code. Defaults to `SIRI_AI_PREVIEW=1` in the environment. */
   preview?: boolean;
@@ -26,28 +26,28 @@ export type SiriAIKitPluginProps = {
   skills?: SiriSkillsOptions;
 };
 
-export function requirementFrom(props: SiriAIKitPluginProps): PackageRequirement {
+export function requirementFrom(props: SyrupAIKitPluginProps): PackageRequirement {
   if (props.version && props.branch) {
-    throw new Error('expo-siri-ai-kit: pass either `version` or `branch`, not both');
+    throw new Error('expo-syrup-ai-kit: pass either `version` or `branch`, not both');
   }
   return props.branch
     ? { kind: 'branch', branch: props.branch }
     : { kind: 'version', version: props.version ?? DEFAULT_VERSION };
 }
 
-export function previewEnabled(props: SiriAIKitPluginProps, env: NodeJS.ProcessEnv): boolean {
+export function previewEnabled(props: SyrupAIKitPluginProps, env: NodeJS.ProcessEnv): boolean {
   return props.preview ?? env[PREVIEW_FLAG] === '1';
 }
 
-export function siriToolsOptionsFrom(props: SiriAIKitPluginProps, expoName: string): SiriToolsOptions | undefined {
+export function siriToolsOptionsFrom(props: SyrupAIKitPluginProps, expoName: string): SiriToolsOptions | undefined {
   return props.tools ? { declarationPath: props.tools, appName: expoName } : undefined;
 }
 
-export function siriSkillsOptionsFrom(props: SiriAIKitPluginProps): SiriSkillsOptions | undefined {
+export function siriSkillsOptionsFrom(props: SyrupAIKitPluginProps): SiriSkillsOptions | undefined {
   if (props.skills === undefined) return undefined;
   const { sourceDir } = (props.skills ?? {}) as Partial<SiriSkillsOptions>;
   if (typeof sourceDir !== 'string' || sourceDir.length === 0) {
-    throw new Error('expo-siri-ai-kit: skills.sourceDir must name a folder of App Skills');
+    throw new Error('expo-syrup-ai-kit: skills.sourceDir must name a folder of App Skills');
   }
   return { sourceDir };
 }
@@ -56,7 +56,7 @@ export function siriSkillsOptionsFrom(props: SiriAIKitPluginProps): SiriSkillsOp
  * One Xcode project mod, so the steps run in this order: the evals target links a product from the package
  * reference, and the preview settings then cover the evals target as well as the app.
  */
-const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props) => {
+const withSyrupAIKit: ConfigPlugin<SyrupAIKitPluginProps | void> = (config, props) => {
   const options = props ?? {};
   const requirement = requirementFrom(options);
   const preview = previewEnabled(options, process.env);
@@ -65,7 +65,7 @@ const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props)
   if (tools) config = withSiriToolFiles(config, tools);
   if (skills) config = withSiriSkillsBundle(config, skills);
   return withXcodeProject(config, (next) => {
-    addSiriAIKitPackage(next.modResults, requirement);
+    addSyrupAIKitPackage(next.modResults, requirement);
     if (tools) addSiriToolsGroup(next.modResults, siriToolsFolder(next.modRequest.projectName!));
     if (skills) addSkillsBundle(next.modResults, skillsBundlePath(next.modRequest.projectName!));
     if (options.evals) addSiriAIEvals(next.modResults, options.evals, next.modRequest);
@@ -74,4 +74,4 @@ const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props)
   });
 };
 
-export default createRunOncePlugin(withSiriAIKit, pkg.name, pkg.version);
+export default createRunOncePlugin(withSyrupAIKit, pkg.name, pkg.version);

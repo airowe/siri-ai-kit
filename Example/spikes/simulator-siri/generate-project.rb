@@ -5,10 +5,10 @@ require 'xcodeproj'
 
 SPIKE_DIR = __dir__
 PROJECT_PATH = File.join(SPIKE_DIR, 'SimulatorSiriSpike.xcodeproj')
-APP = 'SiriAIKitExample'
+APP = 'SyrupAIKitExample'
 TESTS = 'SimulatorSiriSpikeTests'
 DEPLOYMENT_TARGET = '27.3'
-BUNDLE_ID = 'com.example.siriaikit'
+BUNDLE_ID = 'com.example.syrupaikit'
 
 project = Xcodeproj::Project.new(PROJECT_PATH)
 package = project.new(Xcodeproj::Project::Object::XCLocalSwiftPackageReference)
@@ -34,12 +34,12 @@ end
 
 app = project.new_target(:application, APP, :ios, DEPLOYMENT_TARGET)
 add_sources(project, app, "../../#{APP}")
-link_product(project, app, package, 'SiriAIKit')
+link_product(project, app, package, 'SyrupAIKit')
 
 tests = project.new_target(:ui_test_bundle, TESTS, :ios, DEPLOYMENT_TARGET)
 tests.add_dependency(app)
 add_sources(project, tests, TESTS)
-link_product(project, tests, package, 'SiriAIKit')
+link_product(project, tests, package, 'SyrupAIKit')
 
 shared = {
   'SWIFT_VERSION' => '6.0',
@@ -52,7 +52,7 @@ app.build_configurations.each do |config|
   config.build_settings.merge!(shared).merge!(
     'PRODUCT_NAME' => '$(TARGET_NAME)',
     'PRODUCT_BUNDLE_IDENTIFIER' => BUNDLE_ID,
-    'INFOPLIST_KEY_CFBundleDisplayName' => 'SiriAIKit Example',
+    'INFOPLIST_KEY_CFBundleDisplayName' => 'SyrupAIKit Example',
     'INFOPLIST_KEY_UILaunchScreen_Generation' => 'YES',
     'INFOPLIST_KEY_UIApplicationSceneManifest_Generation' => 'YES',
     'MARKETING_VERSION' => '1.0',

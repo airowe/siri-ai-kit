@@ -1,5 +1,5 @@
 {
-  "name": "siri-ai-kit",
+  "name": "syrup-ai-kit",
   "description": "Skills for making iOS, Expo and React Native apps work with Siri AI",
   "owner": {
     "name": "Adam Rowe",
@@ -7,7 +7,7 @@
   },
   "plugins": [
     {
-      "name": "siri-ai-kit",
+      "name": "syrup-ai-kit",
       "source": "./",
       "description": "Make an iOS, Expo or React Native app work with Siri AI: choose the tools, write them, and prove Siri calls them"
     }

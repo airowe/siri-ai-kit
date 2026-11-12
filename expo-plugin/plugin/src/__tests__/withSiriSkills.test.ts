@@ -79,7 +79,7 @@ describe('addSkillsBundle', () => {
     const project = xcode.project(FIXTURE).parseSync();
     addSkillsBundle(project, 'MyApp/Other.skillsbundle');
     expect(() => addSkillsBundle(project, BUNDLE_PATH)).toThrow(
-      'expo-siri-ai-kit: the app target already has a skills bundle, "MyApp/Other.skillsbundle", and can only have one'
+      'expo-syrup-ai-kit: the app target already has a skills bundle, "MyApp/Other.skillsbundle", and can only have one'
     );
   });
 
@@ -145,7 +145,7 @@ describe('writeSkillsBundle', () => {
     addSkill('cart-checkout', SKILL.replace('description: Guides a purchase to checkout.\n', 'version: 1\n'));
     expect(() => writeSkillsBundle(path.join(root, 'siri-skills'), 'siri-skills', bundle())).toThrow(
       [
-        'expo-siri-ai-kit: the App Skills in siri-skills have problems:',
+        'expo-syrup-ai-kit: the App Skills in siri-skills have problems:',
         '- siri-skills/cart-checkout/SKILL.md: description is required',
         '- siri-skills/cart-checkout/SKILL.md: Siri only reads name and description, not "version"',
       ].join('\n')

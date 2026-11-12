@@ -4,7 +4,7 @@ import { type ConfigPlugin, type XcodeProject, withDangerousMod } from 'expo/con
 
 import { parseSiriTools } from './siriTools/declaration';
 import { type GeneratedFile, siriToolFiles } from './siriTools/swift';
-import { appTargetEntry } from './withSiriAIKitPackage';
+import { appTargetEntry } from './withSyrupAIKitPackage';
 
 const FOLDER = 'SiriTools';
 const SYNCHRONIZED_GROUP = 'PBXFileSystemSynchronizedRootGroup';
@@ -59,12 +59,12 @@ function readJson(file: string, declarationPath: string): unknown {
   try {
     text = fs.readFileSync(file, 'utf8');
   } catch {
-    throw new Error(`expo-siri-ai-kit: can't read the Siri tools declaration at ${file}`);
+    throw new Error(`expo-syrup-ai-kit: can't read the Siri tools declaration at ${file}`);
   }
   try {
     return JSON.parse(text);
   } catch (error) {
-    throw new Error(`expo-siri-ai-kit: ${declarationPath} is not valid JSON: ${(error as Error).message}`);
+    throw new Error(`expo-syrup-ai-kit: ${declarationPath} is not valid JSON: ${(error as Error).message}`);
   }
 }
 

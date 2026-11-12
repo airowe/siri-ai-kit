@@ -2,7 +2,7 @@ import path from 'path';
 import xcode from 'xcode';
 import type { XcodeProject } from 'expo/config-plugins';
 
-import { addSiriAIKitPackage } from '../withSiriAIKitPackage';
+import { addSyrupAIKitPackage } from '../withSyrupAIKitPackage';
 import { enableSiriAIPreview } from '../withSiriAIPreview';
 import { addEvalsTarget, evalsScheme, evalsTargetName, findSwiftSources } from '../withSiriAIEvals';
 
@@ -16,7 +16,7 @@ const TARGET_NAME = 'HelloWorldEvals';
 const SOURCE_PATH = '../siri-evals';
 const SOURCES = ['OrderStatusEvaluationTests.swift', 'Scenarios/CartScenarios.swift'];
 const UI_TESTING = '"com.apple.product-type.bundle.ui-testing"';
-const EVAL_PRODUCT = 'SiriAIEvalKit';
+const EVAL_PRODUCT = 'SyrupAIEvalKit';
 const EVAL_DEPLOYMENT_TARGET = '27.3';
 const RELEASE = { kind: 'version', version: '0.2.0' } as const;
 const EVALS = { name: TARGET_NAME, sourcePath: SOURCE_PATH, files: SOURCES };
@@ -27,7 +27,7 @@ function objects(project: XcodeProject, isa: string): [string, any][] {
 
 function loadProjectWithPackage(): XcodeProject {
   const project = xcode.project(FIXTURE).parseSync();
-  addSiriAIKitPackage(project, RELEASE);
+  addSyrupAIKitPackage(project, RELEASE);
   return project;
 }
 
@@ -70,17 +70,17 @@ describe('findSwiftSources', () => {
 
   it('explains when the folder does not exist', () => {
     const missing = path.join(__dirname, 'fixtures', 'no-such-folder');
-    expect(() => findSwiftSources(missing)).toThrow(`expo-siri-ai-kit: evals.sourceDir ${missing} does not exist`);
+    expect(() => findSwiftSources(missing)).toThrow(`expo-syrup-ai-kit: evals.sourceDir ${missing} does not exist`);
   });
 
   it('explains when the path is a file', () => {
     const file = path.join(SOURCE_DIR, SOURCES[0]);
-    expect(() => findSwiftSources(file)).toThrow(`expo-siri-ai-kit: evals.sourceDir ${file} is not a folder`);
+    expect(() => findSwiftSources(file)).toThrow(`expo-syrup-ai-kit: evals.sourceDir ${file} is not a folder`);
   });
 
   it('explains when the folder has no Swift files', () => {
     const noSwift = path.join(__dirname, 'fixtures', 'no-swift');
-    expect(() => findSwiftSources(noSwift)).toThrow(`expo-siri-ai-kit: evals.sourceDir ${noSwift} has no .swift files`);
+    expect(() => findSwiftSources(noSwift)).toThrow(`expo-syrup-ai-kit: evals.sourceDir ${noSwift} has no .swift files`);
   });
 });
 
@@ -160,7 +160,7 @@ describe('addEvalsTarget', () => {
     expect(mainGroup.children.map((ref: any) => ref.value)).toContain(group?.[0]);
   });
 
-  it('links SiriAIEvalKit from the existing SiriAIKit package reference', () => {
+  it('links SyrupAIEvalKit from the existing SyrupAIKit package reference', () => {
     const project = loadProjectWithPackage();
     addEvalsTarget(project, EVALS);
 
@@ -187,9 +187,9 @@ describe('addEvalsTarget', () => {
     expect(JSON.stringify(project.hash).length).toBe(objectCount);
   });
 
-  it('explains when the SiriAIKit package has not been added', () => {
+  it('explains when the SyrupAIKit package has not been added', () => {
     const project = xcode.project(FIXTURE).parseSync();
-    expect(() => addEvalsTarget(project, EVALS)).toThrow('expo-siri-ai-kit: the SiriAIKit package reference is missing');
+    expect(() => addEvalsTarget(project, EVALS)).toThrow('expo-syrup-ai-kit: the SyrupAIKit package reference is missing');
   });
 
   it('is raised to the preview build settings with the app', () => {

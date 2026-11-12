@@ -2,9 +2,9 @@
 
 **Question.** Can an Expo app get Siri AI tools from a small declaration at prebuild, so nobody writes Swift?
 
-**Answer so far: yes, up to the device.** The `expo-siri-ai-kit` plugin now takes a `tools` option. It reads a JSON
+**Answer so far: yes, up to the device.** The `expo-syrup-ai-kit` plugin now takes a `tools` option. It reads a JSON
 declaration, validates it, and writes one Swift tool per entry into the app target at prebuild. The generated Swift
-type-checks against the iOS 27.3 SDK and the real SiriAIKit sources in Swift 5 and Swift 6 modes. It also builds in a
+type-checks against the iOS 27.3 SDK and the real SyrupAIKit sources in Swift 5 and Swift 6 modes. It also builds in a
 full `xcodebuild`, where Xcode's App Intents metadata step records each tool with the same `ToolIntent` system
 protocol as the hand-written `GetCartIntent`, which passes 5/5 on device. **No generated tool has run on a phone
 yet.** The steps for that are at the end.
@@ -51,7 +51,7 @@ Swift and turns the JSON reply into a sentence.
 }
 ```
 
-Plugin config: `["expo-siri-ai-kit", { "tools": "./siri-tools.json" }]`.
+Plugin config: `["expo-syrup-ai-kit", { "tools": "./siri-tools.json" }]`.
 
 ### Why each field exists
 
@@ -89,7 +89,7 @@ do it rather than reading half a sentence.
 `declarationProblems` reports every problem at once, with a path, and prebuild stops with the list:
 
 ```
-expo-siri-ai-kit: siri-tools.json has problems:
+expo-syrup-ai-kit: siri-tools.json has problems:
   - tools[0].parameters[1].type: must be one of string, int, double, bool, date, enum
   - tools[1].reply: has a { without a matching }
 ```
@@ -110,7 +110,7 @@ Prebuild writes to `ios/<App>/SiriTools/`:
   `perform()` that runs the request inside `SiriTool.answer` and returns `.result(value:dialog:)`.
 
 Every generated file is wrapped in `#if SIRI_AI_PREVIEW … #endif`, not just the attribute. Without the preview, the app
-target keeps Expo's deployment target, and SiriAIKit's tool code needs 27.3, so the generated files have to compile to
+target keeps Expo's deployment target, and SyrupAIKit's tool code needs 27.3, so the generated files have to compile to
 nothing. They do (checked with the flag off).
 
 The folder joins the app target as a `PBXFileSystemSynchronizedRootGroup`, the mechanism Expo uses for inline
@@ -127,7 +127,7 @@ The SDK forms come from `iPhoneOS27.3.sdk/.../AppIntents.swiftmodule/arm64e-appl
 
 | Check | Result |
 |---|---|
-| `expo-plugin/scripts/typecheck-siri-tools.sh`: `xcrun -sdk iphoneos swiftc -typecheck -target arm64-apple-ios27.3`, `-D SIRI_AI_PREVIEW`, against a SiriAIKit module built from `Sources/SiriAIKit` | Pass in Swift 5 and Swift 6 modes for all 4 files (3 tools + support) |
+| `expo-plugin/scripts/typecheck-siri-tools.sh`: `xcrun -sdk iphoneos swiftc -typecheck -target arm64-apple-ios27.3`, `-D SIRI_AI_PREVIEW`, against a SyrupAIKit module built from `Sources/SyrupAIKit` | Pass in Swift 5 and Swift 6 modes for all 4 files (3 tools + support) |
 | Same, flag off | Pass (files are empty) |
 | Negative controls: `[String: Int]` parameter, `@AppIntent(.bogus)`, enum without `caseDisplayRepresentations` | Each fails with the expected error, so the type-check can say no |
 | `xcodebuild build` of `Example/` with the 4 files added, `generic/platform=iOS`, `SIRI_AI_PREVIEW` on, Xcode 27.3 beta (27C5020n) | `BUILD SUCCEEDED`, including `ExtractAppIntentsMetadata` for the app |
@@ -172,7 +172,7 @@ The SDK accepting a type doesn't mean Siri fills it well. That's a device questi
 5. **Token refresh.** The generated request reads a token and treats 401 as signed out. Apps with short-lived tokens
    (like the Example) need refresh, which differs per API. The likely answer is a hook into the app's own Swift rather
    than more JSON.
-6. **Where the shared code lives.** `SiriToolsGenerated.swift` could move into SiriAIKit as public API (`HTTPTool`?)
+6. **Where the shared code lives.** `SiriToolsGenerated.swift` could move into SyrupAIKit as public API (`HTTPTool`?)
    once the shape settles, which would make generated files smaller and testable in Swift.
 7. **Reply wording.** Lists read "A, B, C" with no "and", and numbers have no units or currency. A `format` per
    placeholder may be needed.
@@ -189,27 +189,27 @@ product today (check with `curl 'https://dummyjson.com/products/search?q=phone&l
    ```bash
    cd expo-plugin && npm ci && npm run build && cd ..
    # A declaration with only SearchProducts from the sample, written to Example/siri-tools.json
-   node expo-plugin/scripts/generate-siri-tools.js Example/siri-tools.json Example/SiriAIKitExample "SiriAIKit Example"
+   node expo-plugin/scripts/generate-siri-tools.js Example/siri-tools.json Example/SyrupAIKitExample "SyrupAIKit Example"
    ruby Example/scripts/generate-project.rb
    ```
    In Xcode, add `SIRI_AI_PREVIEW` to the app target's Active Compilation Conditions (Debug), or pass
    `'SWIFT_ACTIVE_COMPILATION_CONDITIONS=DEBUG SIRI_AI_PREVIEW'` to `xcodebuild`.
-2. Add `Example/SiriAIKitExampleEvals/SearchProductsEvaluationTests.swift`, based on `CartEvaluationTests.swift`:
+2. Add `Example/SyrupAIKitExampleEvals/SearchProductsEvaluationTests.swift`, based on `CartEvaluationTests.swift`:
    `IntentDefinitions(bundleIdentifier:).intents["SearchProductsIntent"]`, the user turn
-   "In SiriAIKit Example, search for phones and give me three results", `Calls { searchProductsIntent }`,
+   "In SyrupAIKit Example, search for phones and give me three results", `Calls { searchProductsIntent }`,
    `SiriResponse(.contains("charger", caseSensitive: false))`, and `.repeating(times: 5, …)`.
 3. With the phone set up as in `Example/README.md` (Siri AI, Developer Mode and UI Automation on, unlocked, on power):
    ```bash
-   xcodebuild test -project Example/SiriAIKitExample.xcodeproj -scheme SiriAIKitExampleEvals \
+   xcodebuild test -project Example/SyrupAIKitExample.xcodeproj -scheme SyrupAIKitExampleEvals \
      -destination 'id=<device UDID>' -allowProvisioningUpdates DEVELOPMENT_TEAM=<team ID> \
      'SWIFT_ACTIVE_COMPILATION_CONDITIONS=DEBUG SIRI_AI_PREVIEW' \
-     -only-testing:'SiriAIKitExampleEvals/callsSearchProductsToolEveryTime()' -resultBundlePath search.xcresult
-   swift run siri-ai-eval summarize search.xcresult --fail-on real
+     -only-testing:'SyrupAIKitExampleEvals/callsSearchProductsToolEveryTime()' -resultBundlePath search.xcresult
+   swift run syrup-ai-eval summarize search.xcresult --fail-on real
    ```
 4. Negative control: change the sample's `SearchProducts` reply to `"Found {total} products."`, rerun
    `generate-siri-tools.js` and the test. Siri should still call the
    tool, but the "charger" response check must fail 5/5. If it passes, the check isn't reading the tool's answer.
 5. To test the Expo path end to end instead, use a copy of the siri-ai-expo app with
-   `["expo-siri-ai-kit", { "tools": "./siri-tools.json", "preview": true }]` pointing at this branch's plugin, then
+   `["expo-syrup-ai-kit", { "tools": "./siri-tools.json", "preview": true }]` pointing at this branch's plugin, then
    `SIRI_AI_PREVIEW=1 npx expo prebuild -p ios --clean` and `npx expo run:ios --device`. This also covers the untested
    `pod install` plus full Expo build.

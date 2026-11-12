@@ -39,7 +39,7 @@ app-intents/GetUnreadNotificationsIntent.swift the Swift tool, until the `javasc
 | Way | Status | Your answer runs in | Use when |
 |---|---|---|---|
 | **Swift tool** in `app-intents/` | **Works today.** The example's cart tool passes 5 of 5 on a device. | Swift | Now, for any tool. |
-| **`request` + `reply`** in the declaration | **Experimental** ([#8](https://github.com/airowe/siri-ai-kit/pull/8), not merged). A generated tool passed 5 of 5 on a device. | Generated Swift that makes one HTTP call | A public API at one fixed `https` host that needs no credentials. |
+| **`request` + `reply`** in the declaration | **Experimental** ([#8](https://github.com/airowe/syrup-ai-kit/pull/8), not merged). A generated tool passed 5 of 5 on a device. | Generated Swift that makes one HTTP call | A public API at one fixed `https` host that needs no credentials. |
 | **`javascript`** in the declaration | **Planned, not built.** | Your app's JavaScript | Once it ships: any tool, using your existing JS code. |
 
 ### Swift tool (works today)
@@ -49,7 +49,7 @@ Write the tool by hand with the same interface as its declaration entry:
 ```swift
 // app-intents/GetUnreadNotificationsIntent.swift
 import AppIntents
-import SiriAIKit
+import SyrupAIKit
 
 private let tool = SiriTool(appName: "Bluesky")
 
@@ -69,7 +69,7 @@ struct GetUnreadNotificationsIntent: AppIntent {
 
 - The type is the declaration's `name` plus `Intent`. `title` and `description` are copied word for word, and each declared parameter becomes a `@Parameter` with the same name and title.
 - Swift can't call your JavaScript or read JS memory. It needs its own request code, and anything it reads (the server URL, ids) has to be shared from JS where Swift can read it, for example through App Group storage.
-- `tool.answer` keeps to Siri's time budget (10 seconds by default), turns errors into sentences Siri can say ("Couldn't reach Bluesky right now."), and records the outcome for evaluations. The [SiriAIKit README](../README.md) and the `siri-ai-tool` skill cover failures and Spotlight.
+- `tool.answer` keeps to Siri's time budget (10 seconds by default), turns errors into sentences Siri can say ("Couldn't reach Bluesky right now."), and records the outcome for evaluations. The [SyrupAIKit README](../README.md) and the `siri-ai-tool` skill cover failures and Spotlight.
 
 ### `request` + `reply` (experimental)
 
@@ -109,7 +109,7 @@ export async function unreadNotifications(): Promise<string> {
 
 ```ts
 // src/siri-tools/index.ts
-import { defineSiriTool } from 'expo-siri-ai-kit';
+import { defineSiriTool } from 'expo-syrup-ai-kit';
 import { unreadNotifications } from './unread-notifications';
 
 defineSiriTool('unread-notifications', unreadNotifications);
@@ -140,4 +140,4 @@ For each tool, use the prompt and reply check from the discovery report. Discove
 2. A negative control that breaks the tool with an `EvalSwitch` (for example, a host that can't be reached). The reply check must fail. That proves it reads your answer and doesn't just match text.
 3. Optionally, the same question without the app's name. This is informational only, because Siri asks the person for consent the first time.
 
-Run them with the plugin's `evals` target and read the results with `siri-ai-eval summarize --fail-on real`. The `siri-ai-eval` skill has the details.
+Run them with the plugin's `evals` target and read the results with `syrup-ai-eval summarize --fail-on real`. The `siri-ai-eval` skill has the details.

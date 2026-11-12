@@ -8,7 +8,7 @@ license: MIT
 
 ## Overview
 
-Siri AI is Apple's Siri AI Developer Preview (iOS 27.3 SDK). An app joins it through **tools**: App Intents marked `@AppIntent(.tool)` that Siri calls to answer a question ("where's my order?") or do one action ("add milk to my list"). SiriAIKit (`https://github.com/airowe/siri-ai-kit`) and its Expo plugin, `expo-siri-ai-kit`, cover the parts that are easy to get wrong. This skill picks the next skill to read.
+Siri AI is Apple's Siri AI Developer Preview (iOS 27.3 SDK). An app joins it through **tools**: App Intents marked `@AppIntent(.tool)` that Siri calls to answer a question ("where's my order?") or do one action ("add milk to my list"). SyrupAIKit (`https://github.com/airowe/syrup-ai-kit`) and its Expo plugin, `expo-syrup-ai-kit`, cover the parts that are easy to get wrong. This skill picks the next skill to read.
 
 ## 1. Find the app's stack
 
@@ -22,7 +22,7 @@ Siri AI is Apple's Siri AI Developer Preview (iOS 27.3 SDK). An app joins it thr
 | The person wants | Expo / React Native | Native iOS |
 |---|---|---|
 | Siri in their app, and no tools are chosen yet | `siri-ai-discover` | `siri-ai-discover` steps 1 to 3, on the Swift code; skip `siri-tools.json` and the handlers |
-| To set up the kit or write a tool | `expo-siri-ai-kit` | `siri-ai-tool` |
+| To set up the kit or write a tool | `expo-syrup-ai-kit` | `siri-ai-tool` |
 | Proof that Siri calls the tool, or to read an evaluation | `siri-ai-eval` | `siri-ai-eval` |
 | Siri to chain several tools for one request (App Skills) | `siri-ai-discover`, then the plugin's `skills` option | Add a Skills Bundle to the app target in Xcode |
 
@@ -46,8 +46,8 @@ Say this before writing code, so they don't expect more than Siri can do yet:
 Install them before going on. In Claude Code:
 
 ```
-/plugin marketplace add airowe/siri-ai-kit
-/plugin install siri-ai-kit@siri-ai-kit
+/plugin marketplace add airowe/syrup-ai-kit
+/plugin install syrup-ai-kit@syrup-ai-kit
 ```
 
 For other agents, see the kit's `INSTALL.md`.

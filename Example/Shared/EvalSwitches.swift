@@ -1,4 +1,4 @@
-import SiriAIKit
+import SyrupAIKit
 
 /// Switches the evaluations launch the app with. Compiled into both the app and the evaluations target, so the
 /// names can't drift apart.

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "404CEEA0484396B3913BBD2F"
-               BuildableName = "SiriAIKitExample.app"
-               BlueprintName = "SiriAIKitExample"
+               BuildableName = "SyrupAIKitExample.app"
+               BlueprintName = "SyrupAIKitExample"
                ReferencedContainer = "container:SimulatorSiriSpike.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,8 +31,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "404CEEA0484396B3913BBD2F"
-            BuildableName = "SiriAIKitExample.app"
-            BlueprintName = "SiriAIKitExample"
+            BuildableName = "SyrupAIKitExample.app"
+            BlueprintName = "SyrupAIKitExample"
             ReferencedContainer = "container:SimulatorSiriSpike.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,8 +64,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "404CEEA0484396B3913BBD2F"
-            BuildableName = "SiriAIKitExample.app"
-            BlueprintName = "SiriAIKitExample"
+            BuildableName = "SyrupAIKitExample.app"
+            BlueprintName = "SyrupAIKitExample"
             ReferencedContainer = "container:SimulatorSiriSpike.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -81,8 +81,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "404CEEA0484396B3913BBD2F"
-            BuildableName = "SiriAIKitExample.app"
-            BlueprintName = "SiriAIKitExample"
+            BuildableName = "SyrupAIKitExample.app"
+            BlueprintName = "SyrupAIKitExample"
             ReferencedContainer = "container:SimulatorSiriSpike.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
