@@ -25,6 +25,17 @@ Add `https://github.com/airowe/siri-ai-kit` in Xcode (File > Add Package Depende
 
 Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are still in beta. Pin with `.upToNextMinor(from: "0.2.0")` if you need stability.
 
+### Who can use your tools today
+
+Apple's Siri AI Developer Preview limits who can try what you build. This is as of Apple's [announcement](https://developer.apple.com/news/?id=gdk2umrf) of November 3, 2026 and its [preview guide](https://developer.apple.com/documentation/appintents/siri-ai-developer-preview):
+
+- **Your own builds and internal TestFlight testers only.** The preview isn't available to external TestFlight testers or to apps from the App Store. Apple says App Store submission opens "in the spring".
+- **Devices that support Apple Intelligence**, on the 27.3 betas. This kit targets iOS; Apple also lists iPadOS, macOS and visionOS.
+- **The device's language must be English, French, Japanese, Korean, Portuguese or Spanish.** Apple says more languages are coming.
+- **Not in the EU on iOS and iPadOS, and not for people under 13.**
+- **Siri AI has daily usage limits**, because it uses server-side models.
+- **Apple may change the App Intents API and Siri behaviour during the preview.**
+
 Link `SiriAIKit` to your app target and `SiriAIEvalKit` to your UI test target.
 
 **Expo apps:** the [`expo-siri-ai-kit`](expo-plugin/) config plugin adds SiriAIKit to your app target during prebuild, so Swift tools in `app-intents/` can import it.

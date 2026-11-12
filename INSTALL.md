@@ -17,6 +17,9 @@ If you are a coding agent, follow [For coding agents](#for-coding-agents) at the
 | An **iPhone on iOS 27.3 beta** | Siri AI and Siri Evaluations don't run on the Simulator. |
 | On the iPhone: **Siri AI on**, **Developer Mode on**, and **Settings > Developer > Enable UI Automation on** | Siri Evaluations drives Siri through UI automation. |
 | An Apple Developer team signed in to Xcode | To install the app and the evaluation runner on the phone. |
+| An iPhone that supports Apple Intelligence, set to English, French, Japanese, Korean, Portuguese or Spanish, outside the EU | Siri AI isn't available otherwise. |
+
+Only you and your internal TestFlight testers can use the tools you build during the preview. External TestFlight testers and App Store users can't. The README's [Who can use your tools today](README.md#who-can-use-your-tools-today) has the details and Apple's sources.
 
 Check the Mac:
 
@@ -127,7 +130,7 @@ Follow these steps in order. Stop and ask the person at each **Ask** step, becau
    - Expo: use `npx expo install`, or `bunx expo install` when `bun.lock` is present, never `npm install`. Add the plugins to the app config, never to `ios/`.
    - Native: add the package in `Package.swift` or the project, and link the targets as described.
 5. **Prebuild and verify** with the commands in section 4, and report each output to the person. A count of 0 means the step failed: say so, don't move on.
-6. **Ask** the person to set up the phone: Siri AI, Developer Mode and Enable UI Automation on, plugged in and unlocked. Also ask for the device and team to build with. Pass the device UDID and team ID on the command line only, and never write them into files that get committed.
+6. **Ask** the person to set up the phone: Siri AI, Developer Mode and Enable UI Automation on, plugged in and unlocked. Its language must be one Siri AI supports, and it must be outside the EU. If Siri never calls the tool, check these before changing code. Also ask for the device and team to build with. Pass the device UDID and team ID on the command line only, and never write them into files that get committed.
 7. **Build to the phone** (`npx expo run:ios --device`, or `xcodebuild` with `-allowProvisioningUpdates`). If the build asks to sign in or to accept a license, **ask** the person to do it.
 8. **Next:** use `siri-ai-discover` to choose tools, `docs/implementing-tools.md` to write them, and `siri-ai-eval` to prove each one on the phone.
 
