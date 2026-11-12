@@ -227,7 +227,7 @@ These hold at the end of step 4, before you offer step 5.
 - Every `javascript` value matches its file name.
 - Every parameter appears in the spoken prompt, and nothing the prompt needs is missing.
 - Every parameter has a one-line `description` with an example value.
-- Two descriptions aren't easy to confuse.
+- Two descriptions aren't easy to confuse, and no enum case title repeats words another tool's description is built on (a "Phones" case drew "search for phones" away from a search tool on a phone).
 - Every tool an App Skill names has `"returns": "value"`.
 - Every App Skill's steps name only tools in `siri-tools.json`, its `name` matches its folder, and its frontmatter has only `name` and `description`.
 - No existing app file changed, `app.json` included.

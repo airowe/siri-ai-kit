@@ -263,6 +263,16 @@ Later the same day, a two-turn run answered the prompt with "Yes". Siri called `
 
 The 0.2.0 example passed the cart evaluation 5 of 5 on the same phone on Nov 11.
 
+The same day, a fresh Expo app on `expo-syrup-ai-kit@0.3.1` tried tools that return only a value, an enum parameter and a write action with confirmation. Details are in [docs/spikes/tool-codegen.md](docs/spikes/tool-codegen.md#device-run-2-value-only-tools-an-enum-a-failure-and-a-write-action).
+
+| Evaluation | Runs | Real pass rate | What Siri did |
+|---|---|---|---|
+| Two generated value-only tools, chained | 5 | 60% (3 of 5) | Chained them in 3. In 2 it picked a third tool whose enum case "Phones" matched the request. |
+| One generated value-only tool | 5 | 100% (5 of 5) | Worded the answer itself |
+| Generated tool with an enum parameter | 5 | 100% (5 of 5) | Filled `laptops` from "what laptops do you sell?" |
+| Write tool with confirmation, answered "Yes" | 5 | 100% (5 of 5) | Asked to confirm, then added to the cart and said the new total |
+| The same, answered "No" (negative control) | 2 | Passed: the total was never said | "OK. I won't add that to your cart." |
+
 ## Upgrading from SiriAIKit 0.2.0
 
 SiriAIKit is now Syrup AI Kit, and 0.3.0 is the first release under the new name. The types (`SiriTool`, `ToolFailure`, `SiriToolOutcome`) keep their names.
