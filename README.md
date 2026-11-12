@@ -1,5 +1,7 @@
 # Syrup AI Kit
 
+[![npm: expo-syrup-ai-kit](https://img.shields.io/npm/v/expo-syrup-ai-kit?label=expo-syrup-ai-kit)](https://www.npmjs.com/package/expo-syrup-ai-kit)
+
 Syrup AI Kit: Siri AI tools for iOS, Expo and React Native apps. Formerly SiriAIKit.
 
 Make your iOS, Expo or React Native app work with Siri AI, Apple's Siri AI Developer Preview (iOS 27.3 beta): people ask Siri about their orders, bookings or balances, or ask it to act, and Siri calls your app's tools.

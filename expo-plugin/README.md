@@ -1,5 +1,7 @@
 # expo-syrup-ai-kit
 
+[![npm: expo-syrup-ai-kit](https://img.shields.io/npm/v/expo-syrup-ai-kit?label=expo-syrup-ai-kit)](https://www.npmjs.com/package/expo-syrup-ai-kit)
+
 The Expo plugin for Syrup AI Kit: Siri AI tools for Expo and React Native apps. Formerly `expo-siri-ai-kit`.
 
 Make your Expo or React Native app work with Siri AI. This Expo config plugin for [Syrup AI Kit](https://github.com/airowe/syrup-ai-kit) lets the Swift tools in your app use SyrupAIKit, and turns on the Siri AI Developer Preview code (iOS 27.3 beta).
