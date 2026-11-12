@@ -39,7 +39,7 @@ app-intents/GetUnreadNotificationsIntent.swift the Swift tool, until the `javasc
 | Way | Status | Your answer runs in | Use when |
 |---|---|---|---|
 | **Swift tool** in `app-intents/` | **Works today.** The example's cart tool passes 5 of 5 on a device. | Swift | Now, for any tool. |
-| **`request` + `reply`** in the declaration | **Experimental** ([#8](https://github.com/airowe/syrup-ai-kit/pull/8), not merged). A generated tool passed 5 of 5 on a device. | Generated Swift that makes one HTTP call | A public API at one fixed `https` host that needs no credentials. |
+| **`request` + `reply`** in the declaration | **Experimental** ([#8](https://github.com/airowe/syrup-ai-kit/pull/8), shipped in 0.3.0). A generated tool passed 5 of 5 on a device. | Generated Swift that makes one HTTP call | A public API at one fixed `https` host that needs no credentials. |
 | **`javascript`** in the declaration | **Planned, not built.** | Your app's JavaScript | Once it ships: any tool, using your existing JS code. |
 
 ### Swift tool (works today)
@@ -118,8 +118,7 @@ defineSiriTool('unread-notifications', unreadNotifications);
 That works because the answer runs in your app's JavaScript, which already knows its hosts and storage. What it waits on:
 
 1. Expo's `runBackgroundTask`. It's on Expo's `main` but in no released SDK, and is most likely coming in SDK 59.
-2. #8 merging.
-3. Measuring cold-start time on a device, through Siri. On the Simulator, launch takes ~1.7 s and the JS answer 0.2–0.3 s more; device timing hasn't been measured.
+2. Measuring cold-start time on a device, through Siri. On the Simulator, launch takes ~1.7 s and the JS answer 0.2–0.3 s more; device timing hasn't been measured.
 
 Until it ships, the plugin rejects an entry with `javascript` as an unknown field. Write the tool in Swift with the same interface, and keep the declaration as its spec.
 
@@ -127,6 +126,7 @@ Until it ships, the plugin rejects an entry with `javascript` as an unknown fiel
 
 - **Return only the value when Siri should chain the tool.** A spoken dialog ends Siri's turn. Tools an App Skill names declare `"returns": "value"`; in Swift that's `.result(value:)` without `ProvidesDialog`.
 - **Answer in one spoken sentence.** For a list, give the count and at most three names. Keep it under about 200 characters, and leave out raw dates, HTML and ids.
+- **Save tokens a locked phone can read.** Siri can run the tool while the phone is locked, so a tool that needs sign-in saves its tokens with `AfterFirstUnlock` or `AfterFirstUnlockThisDeviceOnly`. See [tools that need the person to be signed in](../README.md#tools-that-need-the-person-to-be-signed-in).
 - **Fail in words.** Unreachable, timed out and failed each have a sentence (`ToolFailure` in Swift or JS).
 - **Confirm before acting.** Siri must confirm any tool that changes something (posting, marking watched, buying) before it acts.
 - **Finish within the timeout.** Siri stops waiting after 10 seconds. Work that must finish, like saving to a cache, can carry on after Siri stops waiting.
