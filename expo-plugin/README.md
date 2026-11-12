@@ -131,7 +131,7 @@ import AppIntents
 import Foundation
 import SyrupAIKit
 
-private let tool = SiriTool(appName: "My App")
+private let tool = SiriTool(appName: "Sample App")
 
 #if SIRI_AI_PREVIEW
 @AppIntent(.tool)

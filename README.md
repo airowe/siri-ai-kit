@@ -58,7 +58,7 @@ Link `SyrupAIKit` to your app target and `SyrupAIEvalKit` to your UI test target
 ```swift
 import SyrupAIKit
 
-private let tool = SiriTool(appName: "My App") { error in
+private let tool = SiriTool(appName: "Sample App") { error in
     (error as? MyAPIError) == .serverDown ? .unreachable : nil
 }
 
@@ -86,8 +86,8 @@ If your networking library wraps `URLError` in its own error type, unwrap it in 
 
 | Failure | What Siri says |
 |---|---|
-| `.timedOut`, `.unreachable` | "Couldn't reach My App right now." |
-| `.failed` | "My App couldn't do that right now." |
+| `.timedOut`, `.unreachable` | "Couldn't reach Sample App right now." |
+| `.failed` | "Sample App couldn't do that right now." |
 
 Pass `replies: ToolReplies` to use your own wording.
 
@@ -125,7 +125,7 @@ private let harness = SiriAppHarness(
   harness: harness,
   dataset: .repeating(times: 5) {
     SiriScenario {
-      UserTurn("In My App, what's in my cart?") {
+      UserTurn("In Sample App, what's in my cart?") {
         Calls { getCartIntent }
         SiriResponse(.contains("motorcycle", caseSensitive: false))
       }
@@ -174,8 +174,8 @@ func replyCheckFailsWithBadHost() async throws {
 To measure whether Siri picks your tool when the person doesn't name your app, ask the same question both ways with `ToolQuestion`:
 
 ```swift
-private let cartQuestion = ToolQuestion("What's in my cart?", appName: "My App")
-// cartQuestion.namingApp      == "In My App, what's in my cart?"
+private let cartQuestion = ToolQuestion("What's in my cart?", appName: "Sample App")
+// cartQuestion.namingApp      == "In Sample App, what's in my cart?"
 // cartQuestion.withoutAppName == "What's in my cart?"
 
 @Test(.evaluates(ToolEvaluation.appNotNamed(
