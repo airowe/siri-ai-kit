@@ -73,6 +73,7 @@ Plugin config: `["expo-syrup-ai-kit", { "tools": "./siri-tools.json" }]`.
 | `request.auth.header` | no | Defaults to `Authorization`. Lets APIs that want `X-API-Key` work. |
 | `request.auth.value` | no | Defaults to `Bearer {token}`. Must contain `{token}`. |
 | `reply` | yes | What Siri says. `{field.path}` reads from the JSON response (see below). |
+| `returns` | no | `dialog` (default): Siri says the reply and ends its turn. `value`: Siri gets the reply and can chain another tool ([#31](https://github.com/airowe/syrup-ai-kit/issues/31)). |
 
 Left out on purpose: response types (the reply reads JSON by path instead of decoding), headers other than auth,
 optional parameters and token refresh. See open questions.
@@ -107,7 +108,7 @@ Prebuild writes to `ios/<App>/SiriTools/`:
 - `SiriToolsGenerated.swift`: the shared `SiriTool`, the request (URL template, JSON body, Keychain token, 401 and
   403 map to signed out), and the reply renderer. Shared so each tool file is short and readable.
 - `<Name>Intent.swift` per tool: `@AppIntent(.tool)`, `@Parameter`s, an `AppEnum` per enum parameter, and a
-  `perform()` that runs the request inside `SiriTool.answer` and returns `.result(value:dialog:)`.
+  `perform()` that runs the request inside `SiriTool.answer` and returns `.result(value:dialog:)`, or `.result(value:)` when `returns` is `value`.
 
 Every generated file is wrapped in `#if SIRI_AI_PREVIEW … #endif`, not just the attribute. Without the preview, the app
 target keeps Expo's deployment target, and SyrupAIKit's tool code needs 27.3, so the generated files have to compile to

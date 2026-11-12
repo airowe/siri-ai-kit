@@ -125,6 +125,7 @@ Until it ships, the plugin rejects an entry with `javascript` as an unknown fiel
 
 ## What every tool must do, however it answers
 
+- **Return only the value when Siri should chain the tool.** A spoken dialog ends Siri's turn. Tools an App Skill names declare `"returns": "value"`; in Swift that's `.result(value:)` without `ProvidesDialog`.
 - **Answer in one spoken sentence.** For a list, give the count and at most three names. Keep it under about 200 characters, and leave out raw dates, HTML and ids.
 - **Fail in words.** Unreachable, timed out and failed each have a sentence (`ToolFailure` in Swift or JS).
 - **Confirm before acting.** Siri must confirm any tool that changes something (posting, marking watched, buying) before it acts.

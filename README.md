@@ -91,6 +91,16 @@ If your networking library wraps `URLError` in its own error type, unwrap it in 
 
 Pass `replies: ToolReplies` to use your own wording.
 
+**Speaking the answer, or handing it to Siri.** `.result(value:dialog:)` makes Siri say your sentence word for word and end its turn. That suits a tool that answers a question on its own. For a tool Siri should use inside a bigger request, such as "what's in my cart, and is the first item in stock?", return only the value:
+
+```swift
+func perform() async throws -> some IntentResult & ReturnsValue<String> {
+    .result(value: await tool.answer { describe(try await MyAPI.shared.cart()) })
+}
+```
+
+Siri then words the reply itself and can call another tool first. On a phone, Siri chained two value-only tools in 5 of 5 runs and two dialog tools in 0 of 5 ([docs/spikes/app-skills-bundle.md](docs/spikes/app-skills-bundle.md#device-runs)). Because Siri picks the wording, evaluations of a value-only tool should check for the value, not a fixed sentence.
+
 **Time budget:**
 - Siri waits for `perform()`, so `SiriTool` gives up after 10 seconds by default (`timeout:`), or as soon as Siri cancels the call, and reports `.timedOut`.
 - It stops waiting but doesn't cancel your code, so work like saving to a cache still finishes. Your code may keep running briefly after Siri has moved on.
@@ -104,6 +114,7 @@ Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read 
 ## Rules learned on a device
 
 - **Answer within a few seconds.** Siri waits for your tool, and `SiriTool` enforces the budget.
+- **A tool that returns a dialog ends Siri's turn.** Siri won't chain it with another tool. Return only the value from any tool that Siri should combine with others, including every tool an App Skill names.
 - **Index what identifies a record (id, name, synonyms), never the answer the tool exists to give.** Otherwise Siri answers from the Spotlight index instead of calling your tool.
 
 ## Testing with Siri Evaluations
