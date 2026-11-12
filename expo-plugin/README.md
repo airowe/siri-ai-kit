@@ -119,6 +119,8 @@ Prebuild stops, listing every problem, if a skill breaks Apple's rules. Xcode it
 - The body is at most 10,000 characters.
 - Each skill folder holds only its `SKILL.md`.
 
+**A skill only helps if Siri can chain your tools, and today it can't chain a tool that returns a dialog.** Such a tool includes `.result(value:dialog:)`, as in [A first tool](#a-first-tool) and every tool the `tools` option generates. On a phone, Siri speaks a dialog and ends the turn. Tools that return only `.result(value:)` let Siri call one after another, and in the same test Siri chained them with or without a skill. The skill changed only how Siri worded the answer. See [docs/spikes/app-skills-bundle.md](https://github.com/airowe/syrup-ai-kit/blob/main/docs/spikes/app-skills-bundle.md#device-runs) and [#31](https://github.com/airowe/syrup-ai-kit/issues/31).
+
 Skills guide Siri; they don't guarantee it follows the steps in order. Nothing checks that a skill names tools your app has, so test the flow with a Siri evaluation. App Skills are part of the Siri AI Developer Preview, with the same limits on who can use them (see the [SyrupAIKit README](https://github.com/airowe/syrup-ai-kit#readme)).
 
 ## A first tool
