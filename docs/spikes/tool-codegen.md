@@ -266,8 +266,19 @@ setting to an archive, that archive reads the switch, which only ever points the
 If the setting doesn't reach the compiler, the switch does nothing and the negative control fails, so the mistake
 shows up rather than passing silently.
 
-**Not yet on a phone:** that nested `$(…)` setting resolves as above in a real Expo Release build, and that the
-control fails 5/5 while the required evaluation still passes.
+**On a phone (Nov 12, 2026):** the Sample App from device run 2, prebuilt with this plugin and kit `main`, built in
+Release with `SIRI_AI_EVAL_SWITCHES=YES`:
+
+| Evaluation | Result |
+|---|---|
+| "How much is product 1?", required | 5 of 5 passed; each run's outcome lists one call |
+| The same with `bad-host` on, negative control | The reply check failed in 4 of 4 complete runs, as it should: Siri said "I'm having trouble reaching Sample App right now". Every outcome was "unreachable". |
+| "How much is product 99999?" | Both outcomes list the failure and the next call ("failed …; succeeded …"), which 0.3.1 lost |
+
+The bad-host URL is in the app binary built with the setting and not in a Release build without it.
+
+One reply check missed only on punctuation: Siri wrote "couldn’t" with a typographic apostrophe, which
+`.contains("couldn't")` doesn't match. Check for a word without an apostrophe, such as "find".
 
 ## Running a device evaluation of a generated tool
 

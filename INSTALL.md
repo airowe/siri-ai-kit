@@ -33,7 +33,7 @@ xcrun --sdk iphoneos --show-sdk-version   # 27.3 or later
 In Xcode, choose File > Add Package Dependencies and enter `https://github.com/airowe/syrup-ai-kit`. Or add it to `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/airowe/syrup-ai-kit", .upToNextMinor(from: "0.3.1"))
+.package(url: "https://github.com/airowe/syrup-ai-kit", .upToNextMinor(from: "0.4.0"))
 ```
 
 - Link **`SyrupAIKit`** to the app target. It supports iOS 17 and later, and tool code needs iOS 27.3.
