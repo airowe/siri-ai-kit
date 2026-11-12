@@ -110,6 +110,14 @@ import SyrupAIKit
 enum SiriToolsGenerated {
     static let tool = SiriTool(appName: ${swiftString(appName)})
 
+    #if DEBUG || SIRI_AI_EVAL_SWITCHES
+    /// An evaluation's negative control turns this on at launch: every generated tool then calls a host that never
+    /// resolves, so Siri must say it couldn't reach the app. Builds without either condition, such as an App Store
+    /// archive, don't read it.
+    static let badHost: EvalSwitch = "bad-host"
+    static let unreachableURL = URL(string: "https://siri-ai-eval-bad-host.invalid")!
+    #endif
+
     /// A parameter value as Siri filled it in.
     enum Value: Sendable {
         case string(String)
@@ -163,6 +171,9 @@ enum SiriToolsGenerated {
         }
 
         func resolvedURL() throws -> URL {
+            #if DEBUG || SIRI_AI_EVAL_SWITCHES
+            if SiriToolsGenerated.badHost.isOn() { return SiriToolsGenerated.unreachableURL }
+            #endif
             var text = url
             for (name, value) in values {
                 let encoded = value.text.addingPercentEncoding(withAllowedCharacters: .siriToolValueAllowed) ?? value.text

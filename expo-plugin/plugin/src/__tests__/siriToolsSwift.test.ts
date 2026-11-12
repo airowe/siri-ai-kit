@@ -11,6 +11,19 @@ const APP_NAME = 'Siri Spike';
 const readSample = (name: string) => fs.readFileSync(path.join(SAMPLE_DIR, name), 'utf8');
 const sample = () => parseSiriTools(JSON.parse(readSample(SAMPLE_SOURCE)), SAMPLE_SOURCE);
 
+const EVAL_GATE = '#if DEBUG || SIRI_AI_EVAL_SWITCHES';
+
+/** The lines of `swift` not inside an `#if` that opens with `gate`. Gates don't nest in the generated code. */
+function linesOutsideGate(swift: string, gate: string): string[] {
+  let inside = false;
+  return swift.split('\n').filter((line) => {
+    if (line.trim() === gate) inside = true;
+    else if (inside && line.trim() === '#endif') inside = false;
+    else return !inside;
+    return false;
+  });
+}
+
 const ORDER_STATUS: ToolDeclaration = {
   name: 'GetOrderStatus',
   title: 'Get Order Status',
@@ -108,6 +121,20 @@ struct GetOrderStatusIntent: AppIntent {
 describe('supportSwift', () => {
   it('generates the shared request and reply code as approved', () => {
     expect(supportSwift(APP_NAME)).toBe(readSample(SUPPORT_FILE));
+  });
+
+  it('sends every request to a host that never resolves when the bad-host switch is on', () => {
+    const swift = supportSwift(APP_NAME);
+    expect(swift).toContain('    static let badHost: EvalSwitch = "bad-host"\n');
+    expect(swift).toContain('    static let unreachableURL = URL(string: "https://siri-ai-eval-bad-host.invalid")!\n');
+    expect(swift).toContain('            if SiriToolsGenerated.badHost.isOn() { return SiriToolsGenerated.unreachableURL }\n');
+  });
+
+  it('reads the switch only in debug builds and builds compiled with SIRI_AI_EVAL_SWITCHES', () => {
+    const ungated = linesOutsideGate(supportSwift(APP_NAME), EVAL_GATE).filter(
+      (line) => line.includes('badHost') || line.includes('unreachableURL')
+    );
+    expect(ungated).toEqual([]);
   });
 
   it('quotes the app name', () => {

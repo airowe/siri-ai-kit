@@ -1,6 +1,7 @@
 #!/bin/sh
 # Type-checks generated Siri tool Swift against the real SyrupAIKit sources and the iOS 27.3 SDK, the way the app
-# target compiles it: with SIRI_AI_PREVIEW on, in Swift 5 and Swift 6 language modes, and once with the flag off.
+# target compiles it: with SIRI_AI_PREVIEW on, in Swift 5 and Swift 6 language modes, once as an evaluation build
+# (SIRI_AI_EVAL_SWITCHES on), and once with the preview off.
 #
 # Usage: expo-plugin/scripts/typecheck-siri-tools.sh [swift files...]
 # Defaults to the approved sample in plugin/src/__tests__/fixtures/siri-tools.
@@ -24,6 +25,10 @@ for mode in 5 6; do
   xcrun -sdk iphoneos swiftc -typecheck -parse-as-library -target "$TARGET" -swift-version "$mode" \
     -D SIRI_AI_PREVIEW -I "$OUT" "$@"
 done
+
+echo "Swift 6, SIRI_AI_PREVIEW and SIRI_AI_EVAL_SWITCHES on"
+xcrun -sdk iphoneos swiftc -typecheck -parse-as-library -target "$TARGET" -swift-version 6 \
+  -D SIRI_AI_PREVIEW -D SIRI_AI_EVAL_SWITCHES -I "$OUT" "$@"
 
 echo "Swift 6, SIRI_AI_PREVIEW off"
 xcrun -sdk iphoneos swiftc -typecheck -parse-as-library -target "$TARGET" -swift-version 6 -I "$OUT" "$@"

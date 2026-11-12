@@ -14,6 +14,28 @@ function appConfigurations(project: XcodeProject): any[] {
     .map(([, entry]) => entry);
 }
 
+const EVAL_SWITCHES = 'SIRI_AI_EVAL_SWITCHES';
+const unquote = (value: string) => value.replace(/^"(.*)"$/, '$1');
+
+/**
+ * The Swift conditions a target compiles with, expanding `$(NAME)` the way Xcode does, nested references included.
+ * Settings passed to xcodebuild win over the target's own; an undefined setting and `$(inherited)` expand to nothing.
+ */
+function conditions(buildSettings: Record<string, string>, commandLine: Record<string, string>): string[] {
+  const lookup = (name: string): string => {
+    if (name === 'inherited') return '';
+    return commandLine[name] ?? (buildSettings[name] === undefined ? '' : expand(unquote(String(buildSettings[name]))));
+  };
+  const expand = (value: string): string => {
+    let text = value;
+    for (let reference = /\$\(([A-Za-z0-9_]*)\)/; reference.test(text); ) {
+      text = text.replace(reference, (_, name: string) => lookup(name));
+    }
+    return text;
+  };
+  return lookup('SWIFT_ACTIVE_COMPILATION_CONDITIONS').split(/\s+/).filter(Boolean);
+}
+
 function projectConfigurations(project: XcodeProject): any[] {
   return Object.entries(project.pbxXCBuildConfigurationSection())
     .filter(([key, entry]: [string, any]) => !key.endsWith('_comment') && !entry.buildSettings?.PRODUCT_NAME)
@@ -29,12 +51,29 @@ describe('enableSiriAIPreview', () => {
     const app = appConfigurations(project);
     expect(app.length).toBeGreaterThan(0);
     for (const entry of app) {
-      expect(entry.buildSettings.SWIFT_ACTIVE_COMPILATION_CONDITIONS).toBe('"$(inherited) SIRI_AI_PREVIEW"');
+      expect(conditions(entry.buildSettings, {})).toContain('SIRI_AI_PREVIEW');
       expect(entry.buildSettings.IPHONEOS_DEPLOYMENT_TARGET).toBe(PREVIEW_DEPLOYMENT_TARGET);
     }
     expect(projectConfigurations(project).map((entry) => entry.buildSettings.IPHONEOS_DEPLOYMENT_TARGET)).toEqual(
       projectTargetsBefore
     );
+  });
+});
+
+describe('the SIRI_AI_EVAL_SWITCHES condition', () => {
+  it.each([
+    [{}, false],
+    [{ SIRI_AI_EVAL_SWITCHES: 'YES' }, true],
+    [{ SIRI_AI_EVAL_SWITCHES: 'NO' }, false],
+  ])('with xcodebuild settings %j is on: %s', (commandLine, expected) => {
+    const project = xcode.project(FIXTURE).parseSync();
+    enableSiriAIPreview(project);
+
+    for (const entry of appConfigurations(project)) {
+      const resolved = conditions(entry.buildSettings, commandLine);
+      expect(resolved.includes(EVAL_SWITCHES)).toBe(expected);
+      expect(resolved).toContain('SIRI_AI_PREVIEW');
+    }
   });
 });
 
