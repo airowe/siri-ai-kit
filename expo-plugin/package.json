@@ -1,7 +1,7 @@
 {
   "name": "expo-siri-ai-kit",
   "version": "0.2.0",
-  "description": "Expo config plugin that adds SiriAIKit to your app and turns on Apple's Siri AI Developer Preview code.",
+  "description": "Make your Expo or React Native app work with Siri AI: an Expo config plugin for SiriAIKit and Apple's Siri AI Developer Preview, with agent skills.",
   "main": "app.plugin.js",
   "types": "plugin/build/index.d.ts",
   "files": [
@@ -22,7 +22,11 @@
     "react-native",
     "siri",
     "app-intents",
-    "config-plugin"
+    "config-plugin",
+    "siri-ai",
+    "apple-intelligence",
+    "ios",
+    "agent-skills"
   ],
   "repository": {
     "type": "git",

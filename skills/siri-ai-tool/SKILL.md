@@ -1,6 +1,6 @@
 ---
 name: siri-ai-tool
-description: Use when adding, changing or debugging a Siri AI tool (`@AppIntent(.tool)`) in an iOS app, or when a request says people should ask Siri for live app data such as an order, cart, balance or booking. Also use when Siri answers with stale data or never seems to call the app.
+description: Use when adding, changing or debugging a Siri AI tool (`@AppIntent(.tool)`) in a native iOS (Swift) app, or when a request says people should ask Siri for live app data such as an order, cart, balance or booking. Also use when Siri answers with stale data or never seems to call the app. In an Expo or React Native app, use expo-siri-ai-kit instead.
 license: MIT
 ---
 

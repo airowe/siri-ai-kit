@@ -1,12 +1,15 @@
 {
   "name": "siri-ai-kit",
-  "description": "SiriAIKit skills for Siri AI tools in iOS and Expo apps",
-  "owner": { "name": "Adam Rowe", "url": "https://github.com/airowe" },
+  "description": "Skills for making iOS, Expo and React Native apps work with Siri AI",
+  "owner": {
+    "name": "Adam Rowe",
+    "url": "https://github.com/airowe"
+  },
   "plugins": [
     {
       "name": "siri-ai-kit",
       "source": "./",
-      "description": "Build, test and debug Siri AI tools with SiriAIKit, in native iOS and Expo apps"
+      "description": "Make an iOS, Expo or React Native app work with Siri AI: choose the tools, write them, and prove Siri calls them"
     }
   ]
 }

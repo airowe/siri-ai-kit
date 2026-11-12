@@ -80,6 +80,7 @@ The skills teach a coding agent the parts that are easy to get wrong:
 
 | Skill | What it covers |
 |---|---|
+| `siri-ai` | Where to start: finds the app's stack and picks the next skill |
 | `siri-ai-tool` | Writing a tool: the time budget, failure replies, the Spotlight index |
 | `siri-ai-eval` | Writing and reading Siri evaluations |
 | `expo-siri-ai-kit` | Using SiriAIKit in an Expo app |
@@ -92,7 +93,13 @@ The skills teach a coding agent the parts that are easy to get wrong:
 /plugin install siri-ai-kit@siri-ai-kit
 ```
 
-**Other agents:** copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into your agent's skills directory. For example, `~/.claude/skills/` for Claude Code, or `~/.agents/skills/` for agents that read that path. The npm package includes `skills/` from the release after 0.2.0; 0.2.0 doesn't have it, so copy the folders from the repository for now.
+**Other agents:** the [skills CLI](https://github.com/vercel-labs/skills) reads this repository's plugin manifest:
+
+```
+npx skills add airowe/siri-ai-kit
+```
+
+Or copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into your agent's skills directory. For example, `~/.claude/skills/` for Claude Code, or `~/.agents/skills/` for agents that read that path. The npm package includes `skills/` from the release after 0.2.0; 0.2.0 doesn't have it, so copy the folders from the repository for now.
 
 ## 4. Check that it worked
 

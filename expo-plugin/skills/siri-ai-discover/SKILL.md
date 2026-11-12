@@ -1,6 +1,6 @@
 ---
 name: siri-ai-discover
-description: Use when deciding which Siri AI tools an Expo or React Native app should have, when asked to find an app's primary actions for Siri, when writing or reviewing the tool list in a siri-tools.json declaration for expo-siri-ai-kit's `tools` option, or when drafting Apple App Skills for requests that need several of the app's tools.
+description: Use when deciding which Siri AI tools an app should have (Expo, React Native or native iOS), when asked to find an app's primary actions for Siri, when writing or reviewing the tool list in a siri-tools.json declaration for expo-siri-ai-kit's `tools` option, or when drafting Apple App Skills for requests that need several of the app's tools.
 license: MIT
 ---
 

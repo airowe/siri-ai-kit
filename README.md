@@ -1,6 +1,17 @@
 # SiriAIKit
 
-Swift helpers for apps that adopt Apple's Siri AI Developer Preview (iOS 27.3 beta). Keep your own networking. SiriAIKit adds what Siri needs on top:
+Make your iOS, Expo or React Native app work with Siri AI, Apple's Siri AI Developer Preview (iOS 27.3 beta): people ask Siri about their orders, bookings or balances, or ask it to act, and Siri calls your app's tools.
+
+Using a coding agent? Install the skills and ask it to "make my app work with Siri AI":
+
+```
+/plugin marketplace add airowe/siri-ai-kit
+/plugin install siri-ai-kit@siri-ai-kit
+```
+
+Other agents: `npx skills add airowe/siri-ai-kit`. Expo apps also use the [`expo-siri-ai-kit`](expo-plugin/) config plugin.
+
+Keep your own networking. SiriAIKit adds what Siri needs on top:
 
 - **`SiriAIKit`:** wraps the API code you already have in a Siri tool. It keeps to Siri's time budget, turns failures into sentences Siri can say, and records what each call did.
 - **`SiriAIEvalKit`:** less setup for Siri Evaluations tests. It launches your app, waits until it's ready, runs a scenario several times, and records what your tool did in each run.
