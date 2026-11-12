@@ -25,8 +25,11 @@ npx expo install expo-syrup-ai-kit expo-app-intents
 ```
 
 ```bash
-SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
+npx expo-app-intents init --examples minimal   # unless app-intents/AppIntentsSetup.swift exists
+SIRI_AI_PREVIEW=1 CP_CACHE_DIR="$PWD/.cp-cache" LANG=en_US.UTF-8 npx expo prebuild -p ios
 ```
+
+`init` creates the `AppIntentsSetup` inline module and turns on inline modules in `app.json`. `npx expo install` adds both plugins; keep `expo-app-intents` first, as above.
 
 With the preview on, the plugin adds the `SIRI_AI_PREVIEW` Swift condition and sets the **app target** to iOS 27.3. Without `SIRI_AI_PREVIEW=1` (or `["expo-syrup-ai-kit", { "preview": true }]`), tool code inside `#if SIRI_AI_PREVIEW` doesn't compile in, and Siri never sees the tool.
 
@@ -40,7 +43,7 @@ Don't add the Siri Evaluations UI test target in Xcode: `prebuild --clean` drops
 ["expo-syrup-ai-kit", { "preview": true, "evals": { "sourceDir": "siri-evals" } }]
 ```
 
-Prebuild then adds a `<AppName>Evals` UI test target (rename with `targetName`) that compiles every `.swift` file under `siri-evals/`, tests the app, builds for iOS 27.3, links `SyrupAIEvalKit` from the same package, and has a shared scheme of the same name: `xcodebuild test -workspace ios/<App>.xcworkspace -scheme <App>Evals -destination 'platform=iOS,name=<device>'`. Prebuild again after adding or removing a test file.
+Prebuild then adds a `<AppName>Evals` UI test target (rename with `targetName`) that compiles every `.swift` file under `siri-evals/`, tests the app, builds for iOS 27.3, links `SyrupAIEvalKit` from the same package, and has a shared scheme of the same name: `xcodebuild test -workspace ios/<App>.xcworkspace -scheme <App>Evals -configuration Release -destination 'platform=iOS,name=<device>'`. Use Release: a Debug build loads its JavaScript from the dev server and won't start without `npx expo start`. Prebuild again after adding or removing a test file.
 
 ## The tool lives in `app-intents/`
 
@@ -84,6 +87,7 @@ Whatever the kind, the answer is one sentence (the count and at most three names
 The screen is React Native, so use a JS `<Text>` instead of SyrupAIKit's SwiftUI `ToolOutcomeView`. Expose the outcome from the `AppIntentsSetup` inline module that expo-app-intents uses (`app-intents/AppIntentsSetup.swift`; keep the class name):
 
 ```swift
+internal import ExpoAppIntents
 internal import ExpoModulesCore
 import SyrupAIKit
 
@@ -106,18 +110,21 @@ export function SiriToolOutcome() {
     const poll = setInterval(() => setOutcome(Setup.siriToolOutcome()), 1000);
     return () => clearInterval(poll);
   }, []);
-  return __DEV__ ? <Text testID="siri-ai-tool-outcome">{outcome}</Text> : null;
+  return <Text testID="siri-ai-tool-outcome">{outcome}</Text>;
 }
 ```
 
-Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri-ai-tool-outcome` is what SyrupAIEvalKit reads. If the module already exists, add the `Function` to it rather than creating a second one.
+Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri-ai-tool-outcome` is what SyrupAIEvalKit reads. Don't hide it behind `__DEV__`: evaluations run a Release build, so the outcome would never show. If the module already exists, add the `Function` to it rather than creating a second one. Import `SyrupAIKit` the same way in every file in `app-intents/`: plain `import SyrupAIKit` here and in the tools.
 
 ## Prebuild and build traps
 
 | Symptom | Fix |
 |---|---|
 | CocoaPods: `Unicode Normalization not appropriate for ASCII-8BIT` | Run with `LANG=en_US.UTF-8` |
-| `hermesvm.xcframework/Info.plist` missing during `pod install` | A broken CocoaPods cache, unrelated to SyrupAIKit: `cd ios && CP_CACHE_DIR="$PWD/../.cp-cache" LANG=en_US.UTF-8 pod install` |
+| `pod install`: `Info.plist` missing in `hermesvm.xcframework` or `React-Core-prebuilt/React.xcframework` | A broken CocoaPods cache, unrelated to SyrupAIKit: `cd ios && CP_CACHE_DIR="$PWD/../.cp-cache" LANG=en_US.UTF-8 pod install` |
+| `ambiguous implicit access level for import of 'SyrupAIKit'` | One file in `app-intents/` has `internal import SyrupAIKit` and another plain `import SyrupAIKit`. Use one form in every file |
+| No `app-intents/AppIntentsSetup.swift` to add the outcome function to | Run `npx expo-app-intents init --examples minimal`, then prebuild again |
+| Evaluations run a Debug build | Debug loads JavaScript from the dev server, so the app needs `npx expo start` running. Use `-configuration Release` |
 | `No such module 'SyrupAIKit'` in `app-intents/` | Plugin missing from `app.json`, or prebuild not re-run after adding it |
 | Siri never calls the tool, no build error | Prebuilt without `SIRI_AI_PREVIEW=1`, so `@AppIntent(.tool)` compiled out |
 | Evaluation UI test target gone | Set the plugin's `evals: { "sourceDir": "siri-evals" }` option instead of adding the target in Xcode, then prebuild again |
