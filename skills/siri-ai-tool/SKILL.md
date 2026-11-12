@@ -14,13 +14,14 @@ A plain `AppIntent` plus an `AppShortcutsProvider` is the older Shortcuts path. 
 
 ## Before writing the tool, check the app
 
-This breaks a tool on a real phone, even when the code compiles. Fix it in the same change.
+These break a tool on a real phone, even when the code compiles. Fix them in the same change.
 
 | Check | Where | Fix |
 |---|---|---|
 | The answer is not in Spotlight | `CSSearchableItem`, `IndexedEntity`, `@Property(indexingKey:)` | Index what identifies a record (id, name, synonyms). Remove the answer the tool exists to give (status, total, balance, dates). Otherwise Siri answers from the index and never calls the tool. |
+| Tokens are readable on a locked phone | Where the app saves tokens to the Keychain, or its secure-storage library's options | Siri can run the tool while the phone is locked. An item saved with `kSecAttrAccessibleWhenUnlocked`, the default in some secure-storage libraries, can't be read then, and the tool fails. Save with `kSecAttrAccessibleAfterFirstUnlock` or `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`. |
 
-Report it even when you can't fix it yet.
+Report them even when you can't fix them yet.
 
 ## The tool
 

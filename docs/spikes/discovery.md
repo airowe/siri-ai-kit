@@ -14,7 +14,7 @@ Skill: `expo-plugin/skills/siri-ai-discover/SKILL.md`. What owners do next: [imp
 How a tool gets its answer belongs to the app's owners, not to discovery. Their code already handles sign-in, hosts,
 tokens and device storage. Discovery outputs the interface: `name`, `title`, `description`, `parameters`, and a
 `javascript` handler name, plus the `file:line` where the app already has the feature and an evaluation prompt for
-each tool. The answer is then a Swift tool (works today), the declaration's `request` + `reply` (experimental, #8), or
+each tool. The answer is then a Swift tool (works today), the declaration's `request` + `reply` (experimental, shipped in 0.3.0 by #8), or
 a JavaScript handler (planned, see the JS bridge spec).
 
 ## Method

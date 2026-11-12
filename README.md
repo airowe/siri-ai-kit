@@ -113,10 +113,25 @@ Siri then words the reply itself and can call another tool first. On a phone, Si
 
 Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read it. If you build your own view, show `ToolOutcomeLog.label()` with the accessibility identifier `ToolOutcomeLog.accessibilityIdentifier`.
 
+## Tools that need the person to be signed in
+
+SyrupAIKit has no sign-in code. Your tool calls your app's own API client, with the auth it already uses.
+
+- **Save tokens a locked phone can read.** See [Rules learned on a device](#rules-learned-on-a-device).
+- **Refresh an expired token at most once per call, and never loop.** Do it in your app's own auth code, through the path the rest of the app uses. A second refresh path can race the app's networking, and APIs that issue a new refresh token on every refresh reject the second use of the old one.
+- **Only a rejected refresh (400, 401 or 403) means signed out.** A server error or a network failure doesn't.
+- **Say what to do when the person is signed out.** SyrupAIKit has no signed-out failure. Today you can:
+  - throw your own error. The rules above count it as `.failed` (or map it in `classify`), and Siri says "Sample App couldn't do that right now.";
+  - also pass `replies:` with a `failed` sentence such as "Open Sample App to sign in again." That sentence then covers every `.failed` error, not only sign-out;
+  - or return that sentence from your own code inside `answer`, with `ToolOutcomeLog.standard.note("signed out")`. The outcome then reads "succeeded (signed out)".
+
+The example app uses a public API with no sign-in, so none of this has been tested through Siri on a device.
+
 ## Rules learned on a device
 
 - **Answer within a few seconds.** Siri waits for your tool, and `SiriTool` enforces the budget.
 - **A tool that returns a dialog ends Siri's turn.** Siri won't chain it with another tool. Return only the value from any tool that Siri should combine with others, including every tool an App Skill names.
+- **Save tokens a locked phone can read.** Siri can run your tool while the phone is locked. A Keychain item saved with `kSecAttrAccessibleWhenUnlocked`, the default in some secure-storage libraries, can't be read then, and the tool fails. Only `kSecAttrAccessibleAfterFirstUnlock` and `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` can be read while the phone is locked.
 - **Index what identifies a record (id, name, synonyms), never the answer the tool exists to give.** Otherwise Siri answers from the Spotlight index instead of calling your tool.
 - **Siri asks once before it sends unnamed requests to your app.** The first time a request doesn't name the app, Siri replies "I can help you with requests like that in <App> from now on. Is that OK?" and calls no tool. After one yes, that device sends such requests straight to your tool, without asking again. Name the app in required evaluations so they don't depend on whether the phone has said yes.
 
