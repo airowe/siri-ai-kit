@@ -49,6 +49,7 @@ struct GetOrderStatusIntent: AppIntent {
 - The default timeout is 10 seconds (`timeout:`). The tool stops waiting but your code keeps running, so saves to a cache still finish.
 - Siri speaks the reply, so keep it to a sentence or two. With several records, say the most relevant one and how many others there are.
 - The `description` is what Siri reads to choose the tool. Say what it returns, in the user's words.
+- Give each parameter a description: `@Parameter(title: "Product", description: "The product to add, as the person names it, like \"oat milk\".")`. Siri reads it to fill the value from what the person said. Say what the person gives, with an example.
 - Put the intent in the app target, where your API client already lives.
 
 ## Show each call's outcome

@@ -6,7 +6,12 @@
       "title": "Search Products",
       "description": "Searches the store's catalog and says how many products match and what they are called.",
       "parameters": [
-        { "name": "query", "type": "string", "title": "Search Text" },
+        {
+          "name": "query",
+          "type": "string",
+          "title": "Search Text",
+          "description": "What to search the catalog for, as the person says it, like \"phone case\"."
+        },
         { "name": "limit", "type": "int", "title": "Number of Results" }
       ],
       "request": { "method": "GET", "url": "https://dummyjson.com/products/search?q={query}&limit={limit}" },

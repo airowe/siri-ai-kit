@@ -155,7 +155,12 @@ Instead of writing Swift, list tools that call your HTTP API in a JSON file and 
       "title": "Search Products",
       "description": "Searches the store's catalog and says how many products match and what they are called.",
       "parameters": [
-        { "name": "query", "type": "string", "title": "Search Text" },
+        {
+          "name": "query",
+          "type": "string",
+          "title": "Search Text",
+          "description": "What to search the catalog for, as the person says it, like \"phone case\"."
+        },
         { "name": "limit", "type": "int", "title": "Number of Results" }
       ],
       "request": { "method": "GET", "url": "https://dummyjson.com/products/search?q={query}&limit={limit}" },
@@ -164,6 +169,8 @@ Instead of writing Swift, list tools that call your HTTP API in a JSON file and 
   ]
 }
 ```
+
+A parameter's optional `description` is one line saying what the person gives, with an example. Siri reads it to fill the value.
 
 At prebuild the plugin writes one Swift tool per entry, plus a shared `SiriToolsGenerated.swift`, to `ios/<App>/SiriTools/` and compiles that folder into the app target. A bad declaration stops prebuild with every problem listed. The format, what it supports and what's still open are in [docs/spikes/tool-codegen.md](../docs/spikes/tool-codegen.md).
 

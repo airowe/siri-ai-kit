@@ -72,7 +72,7 @@ A `siri-tools.json` from the siri-ai-discover skill is the tools' interface. Eac
 
 | The entry has | Do this today |
 |---|---|
-| `javascript` | Not supported yet: the plugin rejects it as an unknown field. Write a Swift tool in `app-intents/` named `<name>Intent`, copy `title` and `description` word for word, and add one `@Parameter` per declared parameter. Keep the entry as the tool's spec, but leave it out of the `tools` file until the `javascript` kind ships. |
+| `javascript` | Not supported yet: the plugin rejects it as an unknown field. Write a Swift tool in `app-intents/` named `<name>Intent`, copy `title` and `description` word for word, and add one `@Parameter(title:description:)` per declared parameter, with its `title` and `description`. Keep the entry as the tool's spec, but leave it out of the `tools` file until the `javascript` kind ships. |
 | `request` and `reply` | Generated at prebuild by the `tools` option (experimental). Use it only when the host is fixed and `https`, the API needs no credentials, and every reply field is always present. Generated tools send plain requests, and any non-2xx response is a failure. Otherwise write Swift. |
 
 Discovery also writes a handler stub and a failing test per tool in `src/siri-tools/<handler>.ts` (or `siri-tools/` without `src/`). Discovery offers to implement it, and to write the Swift tool; if the owner declined, implement the handler against the test now: it's plain TypeScript that calls the app's own functions, never hooks. It answers Siri once the `javascript` kind ships; until then the Swift tool is what answers.

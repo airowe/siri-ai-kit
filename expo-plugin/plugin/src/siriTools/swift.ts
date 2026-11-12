@@ -39,8 +39,9 @@ function requestValue(parameter: ToolParameter): string {
 }
 
 function parameterSwift(tool: ToolDeclaration, parameter: ToolParameter): string {
+  const description = parameter.description === undefined ? '' : `, description: ${swiftString(parameter.description)}`;
   return `
-    @Parameter(title: ${swiftString(parameter.title)})
+    @Parameter(title: ${swiftString(parameter.title)}${description})
     var ${parameter.name}: ${swiftType(tool, parameter)}
 `;
 }
