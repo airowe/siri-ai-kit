@@ -2,7 +2,7 @@ import path from 'path';
 import xcode from 'xcode';
 import type { XcodeProject } from 'expo/config-plugins';
 
-import { previewEnabled, requirementFrom, siriToolsOptionsFrom } from '../index';
+import { previewEnabled, requirementFrom, siriSkillsOptionsFrom, siriToolsOptionsFrom } from '../index';
 import { enableSiriAIPreview } from '../withSiriAIPreview';
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'project.pbxproj');
@@ -74,5 +74,20 @@ describe('siriToolsOptionsFrom', () => {
     [{ tools: './siri-tools.json' }, { declarationPath: './siri-tools.json', appName: EXPO_NAME }],
   ])('props %j give %j', (props, expected) => {
     expect(siriToolsOptionsFrom(props, EXPO_NAME)).toEqual(expected);
+  });
+});
+
+describe('siriSkillsOptionsFrom', () => {
+  it.each([
+    [{}, undefined],
+    [{ skills: { sourceDir: 'siri-skills' } }, { sourceDir: 'siri-skills' }],
+  ])('props %j give %j', (props, expected) => {
+    expect(siriSkillsOptionsFrom(props)).toEqual(expected);
+  });
+
+  it.each([[{ skills: {} }], [{ skills: { sourceDir: '' } }], [{ skills: 'siri-skills' }]])('rejects %j', (props) => {
+    expect(() => siriSkillsOptionsFrom(props as any)).toThrow(
+      'expo-siri-ai-kit: skills.sourceDir must name a folder of App Skills'
+    );
   });
 });

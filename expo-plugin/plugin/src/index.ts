@@ -3,6 +3,7 @@ import { type ConfigPlugin, createRunOncePlugin, withXcodeProject } from 'expo/c
 import { type EvalsOptions, addSiriAIEvals } from './withSiriAIEvals';
 import { type PackageRequirement, addSiriAIKitPackage } from './withSiriAIKitPackage';
 import { PREVIEW_FLAG, enableSiriAIPreview } from './withSiriAIPreview';
+import { type SiriSkillsOptions, addSkillsBundle, skillsBundlePath, withSiriSkillsBundle } from './withSiriSkills';
 import { type SiriToolsOptions, addSiriToolsGroup, siriToolsFolder, withSiriToolFiles } from './withSiriTools';
 
 const pkg = require('../../package.json');
@@ -21,6 +22,8 @@ export type SiriAIKitPluginProps = {
   evals?: EvalsOptions;
   /** Path to a Siri tools declaration, relative to the project root. Generates a Swift tool for each entry. */
   tools?: string;
+  /** Apple App Skills: a folder, relative to the project root, with one folder per skill holding its `SKILL.md`. */
+  skills?: SiriSkillsOptions;
 };
 
 export function requirementFrom(props: SiriAIKitPluginProps): PackageRequirement {
@@ -40,6 +43,15 @@ export function siriToolsOptionsFrom(props: SiriAIKitPluginProps, expoName: stri
   return props.tools ? { declarationPath: props.tools, appName: expoName } : undefined;
 }
 
+export function siriSkillsOptionsFrom(props: SiriAIKitPluginProps): SiriSkillsOptions | undefined {
+  if (props.skills === undefined) return undefined;
+  const { sourceDir } = (props.skills ?? {}) as Partial<SiriSkillsOptions>;
+  if (typeof sourceDir !== 'string' || sourceDir.length === 0) {
+    throw new Error('expo-siri-ai-kit: skills.sourceDir must name a folder of App Skills');
+  }
+  return { sourceDir };
+}
+
 /**
  * One Xcode project mod, so the steps run in this order: the evals target links a product from the package
  * reference, and the preview settings then cover the evals target as well as the app.
@@ -49,10 +61,13 @@ const withSiriAIKit: ConfigPlugin<SiriAIKitPluginProps | void> = (config, props)
   const requirement = requirementFrom(options);
   const preview = previewEnabled(options, process.env);
   const tools = siriToolsOptionsFrom(options, config.name);
+  const skills = siriSkillsOptionsFrom(options);
   if (tools) config = withSiriToolFiles(config, tools);
+  if (skills) config = withSiriSkillsBundle(config, skills);
   return withXcodeProject(config, (next) => {
     addSiriAIKitPackage(next.modResults, requirement);
     if (tools) addSiriToolsGroup(next.modResults, siriToolsFolder(next.modRequest.projectName!));
+    if (skills) addSkillsBundle(next.modResults, skillsBundlePath(next.modRequest.projectName!));
     if (options.evals) addSiriAIEvals(next.modResults, options.evals, next.modRequest);
     if (preview) enableSiriAIPreview(next.modResults);
     return next;

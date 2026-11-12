@@ -11,6 +11,7 @@ Not affiliated with or endorsed by Apple.
   - adds the `SIRI_AI_PREVIEW` Swift compilation condition, so `#if SIRI_AI_PREVIEW` code builds only with the 27.3 SDK;
   - sets the app target's deployment target to iOS 27.3, which `@Property(title:description:)` requires. Pods keep their own targets.
 - **With `evals` set, adds a UI test target for Siri Evaluations** (see [Evaluation target](#evaluation-target)), so it survives `prebuild --clean`.
+- **With `skills` set, checks your Apple App Skills and adds them to the app as `Skills.skillsbundle`** (see [App Skills](#app-skills)).
 
 Running prebuild again doesn't add anything twice.
 
@@ -49,6 +50,7 @@ SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
 | `preview` | `true` when `SIRI_AI_PREVIEW=1` is set | Turns on the Siri AI Developer Preview code. |
 | `tools` | None | Path to a Siri tools declaration, such as `./siri-tools.json`. Generates a Swift tool for each entry. Experimental. |
 | `evals` | None | `{ "sourceDir": "siri-evals", "targetName": "MyAppEvals" }`. Adds a UI test target for Siri Evaluations. `targetName` defaults to `<AppName>Evals`. |
+| `skills` | None | `{ "sourceDir": "siri-skills" }`. A folder of Apple App Skills, one folder per skill holding a `SKILL.md`. Checked against Apple's rules and compiled into the app. |
 
 ## Evaluation target
 
@@ -72,6 +74,40 @@ xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -destination
 ```
 
 Prebuild fails with a clear message if `sourceDir` doesn't exist or has no `.swift` files. The file list is read at prebuild, so prebuild again after adding or removing a test file.
+
+## App Skills
+
+An App Skill is a short Markdown guide that tells Siri how to use several of your tools together, such as "search, add to the cart, then check out". Keep them in a folder at the project root:
+
+```
+siri-skills/
+  cart-checkout/
+    SKILL.md
+```
+
+```markdown
+---
+name: cart-checkout
+description: Guides a purchase from search to checkout in ShopApp.
+---
+Search for the item first, add it to the cart, then confirm the total before checking out.
+```
+
+```json
+["expo-siri-ai-kit", { "preview": true, "skills": { "sourceDir": "siri-skills" } }]
+```
+
+At prebuild the plugin copies each `SKILL.md` into `ios/<App>/Skills.skillsbundle` and adds the bundle to the app target with Xcode's skills-bundle file type, so Xcode compiles it into the app. A skill you delete stops shipping on the next prebuild.
+
+Prebuild stops, listing every problem, if a skill breaks Apple's rules. Xcode itself ignores or only warns about some of them:
+
+- The frontmatter has only `name` and `description`.
+- `name` is 1 to 64 lowercase letters, digits and single hyphens, and matches its folder.
+- `description` is one line of at most 1,024 characters.
+- The body is at most 10,000 characters.
+- Each skill folder holds only its `SKILL.md`.
+
+Skills guide Siri; they don't guarantee it follows the steps in order. Nothing checks that a skill names tools your app has, so test the flow with a Siri evaluation. App Skills are part of the Siri AI Developer Preview, with the same limits on who can use them (see the [SiriAIKit README](https://github.com/airowe/siri-ai-kit#readme)).
 
 ## A first tool
 
