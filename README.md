@@ -105,6 +105,7 @@ Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read 
 
 - **Answer within a few seconds.** Siri waits for your tool, and `SiriTool` enforces the budget.
 - **Index what identifies a record (id, name, synonyms), never the answer the tool exists to give.** Otherwise Siri answers from the Spotlight index instead of calling your tool.
+- **Siri asks once before it sends unnamed requests to your app.** The first time a request doesn't name the app, Siri replies "I can help you with requests like that in <App> from now on. Is that OK?" and calls no tool. After one yes, that device sends such requests straight to your tool, without asking again. Name the app in required evaluations so they don't depend on whether the phone has said yes.
 
 ## Testing with Siri Evaluations
 
@@ -190,6 +191,8 @@ func cartToolWithoutTheAppName() async throws {}
 
 It's a separate, informational evaluation, not runs mixed into the required one. Siri may fairly ask which app you mean, so a low rate here is a finding, not a regression, and mixing it in would drag down the required pass rate. Don't assert it.
 
+The rate depends on the phone. Until someone says yes to Siri's "from now on" prompt, it's 0%: Siri asks and calls nothing. After one yes, the same phone sends the question to your tool every time. Say which state the phone was in when you report it.
+
 Both helpers tag the evaluation's name (`[negative control]`, `[informational]`), so the tag reaches the result bundle and Xcode's report too.
 
 Summarize the results:
@@ -226,6 +229,9 @@ Run on Nov 12, 2026 on an iPhone 16 Pro on iOS 27.3 beta, with Xcode 27.3 beta (
 | Cart from the demo API | 5 | 100% | 100% (5 of 5) | Called `GetCartIntent` and read the cart in all 5 |
 | Cart with a bad host (negative control) | 2 (1 complete) | 0% | Passed: the reply check failed, as expected | Called `GetCartIntent` and said "Couldn't reach SyrupAIKit Example right now." Outcome: "unreachable" |
 | Cart without the app's name (informational) | 5 | 0% | 0% (0 of 5) | Asked to handle such requests in the app from now on, and waited for a yes |
+| Cart without the app's name, after saying yes once (informational) | 5 | 100% | 100% (5 of 5) | Called `GetCartIntent` and read the cart without asking |
+
+Later the same day, a two-turn run answered the prompt with "Yes". Siri called `GetCartIntent`, and in the next four runs it answered the unnamed question from the tool without asking. That yes is why the last row passes ([#27](https://github.com/airowe/syrup-ai-kit/issues/27)).
 
 The 0.2.0 example passed the cart evaluation 5 of 5 on the same phone on Nov 11.
 

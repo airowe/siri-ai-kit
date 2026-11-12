@@ -110,7 +110,7 @@ dataset: .repeating(times: 5) { orderScenario(orderQuestion.namingApp) }
 func orderToolWithoutTheAppName() async throws {}   // don't assert: Siri may fairly ask which app
 ```
 
-Report its rate as a finding, never as a failure. Don't put unnamed runs in the required evaluation: they'd drag down its pass rate.
+Report its rate as a finding, never as a failure, and say which state the phone was in. Until someone answers Siri's "I can help you with requests like that in <App> from now on. Is that OK?" with yes, the rate is 0%. After one yes, that phone sends the question to the tool every time. A scenario that says yes only works on a phone that hasn't said yes yet, so it can't be a repeated evaluation. Don't put unnamed runs in the required evaluation: they'd drag down its pass rate.
 
 ## Run on the device
 

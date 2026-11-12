@@ -138,6 +138,6 @@ For each tool, use the prompt and reply check from the discovery report. Discove
 
 1. Five runs of the prompt naming the app. Check that Siri called the tool by `name`, and that the reply contains something only the person's live data has.
 2. A negative control that breaks the tool with an `EvalSwitch` (for example, a host that can't be reached). The reply check must fail. That proves it reads your answer and doesn't just match text.
-3. Optionally, the same question without the app's name. This is informational only, because Siri asks the person for consent the first time.
+3. Optionally, the same question without the app's name. This is informational only. Until the phone has said yes to Siri's "from now on" prompt, Siri asks for consent and calls nothing. After one yes, it calls the tool every time.
 
 Run them with the plugin's `evals` target and read the results with `syrup-ai-eval summarize --fail-on real`. The `siri-ai-eval` skill has the details.
