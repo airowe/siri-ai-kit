@@ -66,6 +66,16 @@ struct GetOrderStatusIntent: AppIntent {
 `);
   });
 
+  it('passes a parameter description to Siri', () => {
+    const tool: ToolDeclaration = {
+      ...ORDER_STATUS,
+      parameters: [{ name: 'orderNumber', type: 'string', title: 'Order Number', description: 'The order number, like "A1234".' }],
+    };
+    expect(toolSwift(tool)).toContain(
+      '    @Parameter(title: "Order Number", description: "The order number, like \\"A1234\\".")\n    var orderNumber: String\n'
+    );
+  });
+
   it('declares a tool without parameters with empty values', () => {
     const swift = toolSwift({
       ...ORDER_STATUS,

@@ -64,6 +64,7 @@ Plugin config: `["expo-siri-ai-kit", { "tools": "./siri-tools.json" }]`.
 | `parameters[].name` | yes | The Swift property, and the `{placeholder}` name in the URL and the body key. |
 | `parameters[].type` | yes | `string`, `int`, `double`, `bool`, `date` or `enum`: the six types this spike covers. |
 | `parameters[].title` | yes | `@Parameter(title:)`. Siri uses it to fill the value and to ask for it. |
+| `parameters[].description` | no | `@Parameter(description:)`. One line saying what the person gives, with an example; Siri reads it to fill the value. |
 | `parameters[].cases` | enum only | Raw value → spoken title. Becomes an `AppEnum` with `caseDisplayRepresentations`. |
 | `request.method` | yes | GET, POST, PUT, PATCH or DELETE. |
 | `request.url` | yes | `https://` only (ATS blocks plain http). `{parameter}` placeholders are percent-encoded, so a value can't add a path segment or a query field. |
@@ -74,7 +75,7 @@ Plugin config: `["expo-siri-ai-kit", { "tools": "./siri-tools.json" }]`.
 | `reply` | yes | What Siri says. `{field.path}` reads from the JSON response (see below). |
 
 Left out on purpose: response types (the reply reads JSON by path instead of decoding), headers other than auth,
-optional parameters, parameter descriptions, and token refresh. See open questions.
+optional parameters and token refresh. See open questions.
 
 ### Reply paths
 

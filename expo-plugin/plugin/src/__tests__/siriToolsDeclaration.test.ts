@@ -19,6 +19,8 @@ function withTool(change: (tool: Record<string, any>) => void): unknown {
   return { tools: [tool] };
 }
 
+const PARAMETER_DESCRIPTION = 'The order number from the confirmation email, like A1234.';
+
 describe('declarationProblems', () => {
   it('accepts a minimal declaration', () => {
     expect(declarationProblems({ tools: [validTool()] })).toEqual([]);
@@ -40,6 +42,11 @@ describe('declarationProblems', () => {
         body: ['budget', 'refundable', 'departure', 'cabin'],
       };
     });
+    expect(declarationProblems(declaration)).toEqual([]);
+  });
+
+  it('accepts a parameter description', () => {
+    const declaration = withTool((tool) => (tool.parameters[0].description = PARAMETER_DESCRIPTION));
     expect(declarationProblems(declaration)).toEqual([]);
   });
 
@@ -89,6 +96,21 @@ describe('declarationProblems', () => {
         tool.request.url = 'https://api.example.com/orders/{default}';
       }),
       ['tools[0].parameters[0].name: "default" is a Swift keyword']
+    ],
+    [
+      'a blank parameter description',
+      withTool((tool) => (tool.parameters[0].description = ' ')),
+      ['tools[0].parameters[0].description: must be a non-empty string']
+    ],
+    [
+      'a parameter description that is not text',
+      withTool((tool) => (tool.parameters[0].description = 3)),
+      ['tools[0].parameters[0].description: must be a non-empty string']
+    ],
+    [
+      'a parameter description on two lines',
+      withTool((tool) => (tool.parameters[0].description = 'The order number,\nlike A1234.')),
+      ['tools[0].parameters[0].description: must be one line']
     ],
     [
       'a duplicate parameter',
@@ -186,6 +208,19 @@ describe('declarationProblems', () => {
 });
 
 describe('parseSiriTools', () => {
+  it('keeps a parameter description', () => {
+    const declaration = parseSiriTools(
+      withTool((tool) => (tool.parameters[0].description = PARAMETER_DESCRIPTION)),
+      SOURCE
+    );
+    expect(declaration.tools[0].parameters[0]).toEqual({
+      name: 'orderNumber',
+      type: 'string',
+      title: 'Order Number',
+      description: PARAMETER_DESCRIPTION,
+    });
+  });
+
   it('fills in the defaults', () => {
     const declaration = parseSiriTools({ tools: [validTool()] }, SOURCE);
     expect(declaration.tools[0].parameters).toEqual([{ name: 'orderNumber', type: 'string', title: 'Order Number' }]);

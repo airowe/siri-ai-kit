@@ -9,7 +9,7 @@ struct SearchProductsIntent: AppIntent {
     static let title: LocalizedStringResource = "Search Products"
     static let description = IntentDescription("Searches the store's catalog and says how many products match and what they are called.")
 
-    @Parameter(title: "Search Text")
+    @Parameter(title: "Search Text", description: "What to search the catalog for, as the person says it, like \"phone case\".")
     var query: String
 
     @Parameter(title: "Number of Results")

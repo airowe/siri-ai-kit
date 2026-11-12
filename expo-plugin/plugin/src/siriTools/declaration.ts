@@ -6,8 +6,8 @@ const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 export type HttpMethod = (typeof METHODS)[number];
 
 export type ToolParameter =
-  | { name: string; type: ScalarType; title: string }
-  | { name: string; type: 'enum'; title: string; cases: Record<string, string> };
+  | { name: string; type: ScalarType; title: string; description?: string }
+  | { name: string; type: 'enum'; title: string; description?: string; cases: Record<string, string> };
 
 export type ToolRequest = { method: HttpMethod; url: string; body: string[] };
 
@@ -38,7 +38,7 @@ const RESERVED = new Set(
 );
 
 const TOOL_FIELDS = ['name', 'title', 'description', 'parameters', 'request', 'reply'];
-const PARAMETER_FIELDS = ['name', 'type', 'title', 'cases'];
+const PARAMETER_FIELDS = ['name', 'type', 'title', 'description', 'cases'];
 const REQUEST_FIELDS = ['method', 'url', 'body'];
 
 type Json = Record<string, unknown>;
@@ -80,6 +80,13 @@ function casesProblems(parameter: Json, path: string): string[] {
   );
 }
 
+/** Optional, and one line: Siri reads it to know what to fill the parameter with. */
+function parameterDescriptionProblems(description: unknown, path: string): string[] {
+  if (description === undefined) return [];
+  if (!isText(description)) return [`${path}: must be a non-empty string`];
+  return /[\r\n]/.test(description) ? [`${path}: must be one line`] : [];
+}
+
 function parameterProblems(parameter: unknown, path: string): string[] {
   if (!isObject(parameter)) return [`${path}: must be an object`];
   return [
@@ -89,6 +96,7 @@ function parameterProblems(parameter: unknown, path: string): string[] {
       ? []
       : [`${path}.type: must be one of ${PARAMETER_TYPES.join(', ')}`]),
     ...textProblem(parameter.title, `${path}.title`),
+    ...parameterDescriptionProblems(parameter.description, `${path}.description`),
     ...casesProblems(parameter, path),
   ];
 }

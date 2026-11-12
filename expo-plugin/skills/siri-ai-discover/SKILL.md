@@ -104,7 +104,7 @@ One entry per kept tool, in the owner's order:
 
 - `name` is PascalCase, unique, and doesn't end in `Intent`. Evaluations use it to check which tool Siri called.
 - `description` says what the tool returns, in the user's own words. Siri reads it to choose the tool.
-- Each parameter has `name`, `type` and `title`. The type is one of `string`, `int`, `double`, `bool`, `date` or `enum` (with `cases`).
+- Each parameter has `name`, `type`, `title` and `description`. The type is one of `string`, `int`, `double`, `bool`, `date` or `enum` (with `cases`). The `description` is one line saying what the person gives, with an example value: "The product to add, as the person names it, like 'oat milk'." Siri reads it to fill the parameter from what was said.
 - `javascript` is the handler's name and its file name: `name` in kebab-case, dropping a leading `Get` (`GetUnreadNotifications` → `unread-notifications`, `PostMessage` → `post-message`). The handler function is the camelCase of the same words (`unreadNotifications`).
 
 ### One handler file per tool
@@ -177,6 +177,7 @@ These hold at the end of step 4, before you offer step 5.
 - Every tool has a handler file, a test, and a function with a `file:line`.
 - Every `javascript` value matches its file name.
 - Every parameter appears in the spoken prompt, and nothing the prompt needs is missing.
+- Every parameter has a one-line `description` with an example value.
 - Two descriptions aren't easy to confuse.
 - No existing app file changed.
 - You ran the new tests with the app's own test command. Each test fails on the stub's "not implemented" error, not on loading the test. If the tests can't run (no `node_modules`, wrong Node version), say so in the report; never install anything to make them run.
@@ -220,7 +221,7 @@ If the tests can't run (no test runner, no `node_modules`), say so when you offe
 
 Offer this only when the app ships on iOS and is on Expo SDK 58 or later (see "Before you start"). Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-siri-ai-kit skill, with:
 
-- the same `title` and `description`, word for word, and one `@Parameter` per declared parameter;
+- the same `title` and `description`, word for word, and one `@Parameter(title:description:)` per declared parameter, with its `title` and `description` word for word;
 - the same answer as the handler: the same sentence for the same data, and failures through `SiriTool`'s `ToolFailure` cases. Where the Swift needs something only the owners can provide, ask them; don't design it;
 - an evaluation for each prompt in the report, following the siri-ai-eval skill, in the folder the plugin's `evals.sourceDir` names. If the app has no `expo-siri-ai-kit` plugin or no `evals` option yet, adding them is an `app.json` change: ask first.
 
