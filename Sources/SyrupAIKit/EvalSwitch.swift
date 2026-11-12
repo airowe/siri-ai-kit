@@ -1,7 +1,8 @@
 import Foundation
 
 /// A named switch an evaluation turns on by launching the app with an argument, to put the app in a known state
-/// before Siri runs: usually a broken one, for a negative control. Read it only in debug builds.
+/// before Siri runs: usually a broken one, for a negative control. Read it only inside
+/// `#if DEBUG || SIRI_AI_EVAL_SWITCHES`, so no App Store build compiles the check.
 public struct EvalSwitch: Hashable, Sendable, ExpressibleByStringLiteral {
     public static let argumentPrefix = "--siri-ai-eval-switch="
 

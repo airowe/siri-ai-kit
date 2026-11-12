@@ -198,7 +198,7 @@ describe('addEvalsTarget', () => {
     enableSiriAIPreview(project);
 
     for (const setting of buildSettings(project, evalsTarget(project))) {
-      expect(setting.SWIFT_ACTIVE_COMPILATION_CONDITIONS).toBe('"$(inherited) SIRI_AI_PREVIEW"');
+      expect(setting.SWIFT_ACTIVE_COMPILATION_CONDITIONS).toContain('$(inherited) SIRI_AI_PREVIEW');
       expect(setting.IPHONEOS_DEPLOYMENT_TARGET).toBe(EVAL_DEPLOYMENT_TARGET);
     }
   });

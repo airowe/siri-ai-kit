@@ -128,6 +128,7 @@ Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri
 | `ambiguous implicit access level for import of 'SyrupAIKit'` | One file in `app-intents/` has `internal import SyrupAIKit` and another plain `import SyrupAIKit`. Use one form in every file |
 | No `app-intents/AppIntentsSetup.swift` to add the outcome function to | Run `npx expo-app-intents init --examples minimal`, then prebuild again |
 | Evaluations run a Debug build | Debug loads JavaScript from the dev server, so the app needs `npx expo start` running. Use `-configuration Release` |
+| Negative control's reply check passes: the `EvalSwitch` did nothing | Release compiles `#if DEBUG` out. Guard the switch with `#if DEBUG \|\| SIRI_AI_EVAL_SWITCHES` and pass `SIRI_AI_EVAL_SWITCHES=YES` to `xcodebuild test`. Generated tools already honour `bad-host` |
 | `No such module 'SyrupAIKit'` in `app-intents/` | Plugin missing from `app.json`, or prebuild not re-run after adding it |
 | Siri never calls the tool, no build error | Prebuilt without `SIRI_AI_PREVIEW=1`, so `@AppIntent(.tool)` compiled out |
 | Evaluation UI test target gone | Set the plugin's `evals: { "sourceDir": "siri-evals" }` option instead of adding the target in Xcode, then prebuild again |
