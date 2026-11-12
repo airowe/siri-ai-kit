@@ -10,9 +10,7 @@
 		1D7FA5240FA50AD07B7060BE /* EvalSwitches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DC5E1289FDD12D06286620 /* EvalSwitches.swift */; };
 		1EF100C5096A3510B0E962B6 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A5DEA62A1D9735AB089C37 /* App.swift */; };
 		3589937A5B6EBFB5CC2A4972 /* EvalSwitches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DC5E1289FDD12D06286620 /* EvalSwitches.swift */; };
-		41BB79A1B24325DCE5EBDFD8 /* OrderProbeEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43020584FD46983215B2E4F5 /* OrderProbeEvaluationTests.swift */; };
 		65A4771CBD78CF2C458C71FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 750927A57CE0055671054C6D /* Foundation.framework */; };
-		7B2E4FFA7DE91BAF19022857 /* OrderProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = B554987E49C39B4AE8A06A3E /* OrderProbe.swift */; };
 		98568A312ADD12966F89084B /* CartEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248D87722D1F373DD801376F /* CartEvaluationTests.swift */; };
 		AB6FE3E358DA660C9F2809EF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 750927A57CE0055671054C6D /* Foundation.framework */; };
 		B3BE143F588B99ECBACDA141 /* SyrupAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 25F9EE34BA6B40C07BD2561C /* SyrupAIKit */; };
@@ -38,11 +36,9 @@
 		27DC5E1289FDD12D06286620 /* EvalSwitches.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EvalSwitches.swift; sourceTree = "<group>"; };
 		2F9D2CD67A781978BAF4A2B6 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		41338E67E5175052E39D95C0 /* SyrupAIKitExampleEvals.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyrupAIKitExampleEvals.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		43020584FD46983215B2E4F5 /* OrderProbeEvaluationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OrderProbeEvaluationTests.swift; sourceTree = "<group>"; };
 		7110DEE02D550FAEB6ECEEFD /* SyrupAIKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyrupAIKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		750927A57CE0055671054C6D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9CC5C62A33A463E2FE107E13 /* DemoAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DemoAPI.swift; sourceTree = "<group>"; };
-		B554987E49C39B4AE8A06A3E /* OrderProbe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OrderProbe.swift; sourceTree = "<group>"; };
 		ECDDDEE41698E3853D7918EB /* GetCartIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GetCartIntent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -100,7 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				248D87722D1F373DD801376F /* CartEvaluationTests.swift */,
-				43020584FD46983215B2E4F5 /* OrderProbeEvaluationTests.swift */,
 			);
 			name = SyrupAIKitExampleEvals;
 			path = SyrupAIKitExampleEvals;
@@ -122,7 +117,6 @@
 				2F9D2CD67A781978BAF4A2B6 /* ContentView.swift */,
 				9CC5C62A33A463E2FE107E13 /* DemoAPI.swift */,
 				ECDDDEE41698E3853D7918EB /* GetCartIntent.swift */,
-				B554987E49C39B4AE8A06A3E /* OrderProbe.swift */,
 			);
 			name = SyrupAIKitExample;
 			path = SyrupAIKitExample;
@@ -236,7 +230,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				98568A312ADD12966F89084B /* CartEvaluationTests.swift in Sources */,
-				41BB79A1B24325DCE5EBDFD8 /* OrderProbeEvaluationTests.swift in Sources */,
 				1D7FA5240FA50AD07B7060BE /* EvalSwitches.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,7 +242,6 @@
 				CB9939705EEBC19B2C079FD8 /* ContentView.swift in Sources */,
 				F24DD0EAC756AE56539E7BB6 /* DemoAPI.swift in Sources */,
 				DEF68EFE95E26689C05CAA60 /* GetCartIntent.swift in Sources */,
-				7B2E4FFA7DE91BAF19022857 /* OrderProbe.swift in Sources */,
 				3589937A5B6EBFB5CC2A4972 /* EvalSwitches.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
