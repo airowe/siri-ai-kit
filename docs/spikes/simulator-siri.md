@@ -14,7 +14,7 @@ Run on 2026-11-11.
 | Xcode | 27.3 beta (27C5020n) |
 | Runtime | iOS 27.3 (24C5037i) |
 | Device | A new iPhone 18 Pro Simulator made for this spike (`SiriSpike-27.3`), never signed in to an Apple Account |
-| App | `Example/SiriAIKitExample` with its `GetCartIntent` tool, built from a throwaway project in `Example/spikes/simulator-siri/` |
+| App | `Example/SyrupAIKitExample` with its `GetCartIntent` tool, built from a throwaway project in `Example/spikes/simulator-siri/` |
 
 The spike project exists because the real evals target imports `SiriEvaluations`, which isn't in the Simulator SDK, so it can't build for the Simulator. Regenerate the spike project with `ruby Example/spikes/simulator-siri/generate-project.rb`, then run:
 
@@ -50,7 +50,7 @@ Settings > Siri shows **Turn Off Siri**, so Siri is on. The pane's footer says S
 I checked the real API in the 27.3 SDK headers (`XCUIAutomation.framework/Headers/XCUISiriService.h` plus its apinotes) before writing the test. There is no `XCUISiriService.shared`; `init` is unavailable with the message "Access XCUISiriService through the siriService property on XCUIDevice." The call is:
 
 ```swift
-XCUIDevice.shared.siriService.activate(voiceRecognitionText: "In SiriAIKit Example, what's in my cart?")
+XCUIDevice.shared.siriService.activate(voiceRecognitionText: "In SyrupAIKit Example, what's in my cart?")
 ```
 
 It exists in both the Simulator and device SDKs.
@@ -73,7 +73,7 @@ The timestamp is the negative control. The label records each real tool run with
 The Simulator's unified log shows where the request dies:
 
 ```
-testmanagerd  Starting Siri UI request with text: In SiriAIKit Example, what's in my cart?
+testmanagerd  Starting Siri UI request with text: In SyrupAIKit Example, what's in my cart?
 testmanagerd  -[AFSettingsConnection startUIRequestWithText:]_block_invoke settingsService got error:
               Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service with pid … named
               com.apple.assistant.settings was invalidated …"
@@ -96,9 +96,9 @@ What the SDK ships: `iPhoneSimulator.platform/Developer/Library/Frameworks` has 
 
 | Framework | `canImport` on Simulator | Works on Simulator? | Evidence |
 |---|---|---|---|
-| `AppIntentsTesting` | yes | **Yes, fully.** It ran the real tool against the live API. | `IntentDefinitions(bundleIdentifier: "com.example.siriaikit").intents["GetCartIntent"].makeIntent().run()` returned `Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.` It also updated the app's `siri-ai-tool-outcome` label to `succeeded at …`. Test passed in 12.4 s. |
+| `AppIntentsTesting` | yes | **Yes, fully.** It ran the real tool against the live API. | `IntentDefinitions(bundleIdentifier: "com.example.syrupaikit").intents["GetCartIntent"].makeIntent().run()` returned `Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.` It also updated the app's `siri-ai-tool-outcome` label to `succeeded at …`. Test passed in 12.4 s. |
 | `Evaluations` | yes | **Yes, for the types.** I didn't run a model-backed evaluation. | `TrajectoryExpectation(expected: "GetCartIntent")` encoded to `{"disallowed":[],"allowsAdditionalCalls":true,"unordered":[{"name":"GetCartIntent","arguments":[]}],"ordered":[]}`. Test passed. |
-| `SiriEvaluations` | **no** | No. It isn't in the Simulator SDK, so `SiriAIEvalKit`'s `#if canImport(SiriEvaluations)` code compiles out. | `SPIKE imports: ["AppIntentsTesting", "Evaluations"]` |
+| `SiriEvaluations` | **no** | No. It isn't in the Simulator SDK, so `SyrupAIEvalKit`'s `#if canImport(SiriEvaluations)` code compiles out. | `SPIKE imports: ["AppIntentsTesting", "Evaluations"]` |
 
 ## Follow-up: root cause and workarounds tried
 
@@ -124,7 +124,7 @@ I didn't try anything more invasive, such as patching or injecting into SpringBo
 
 ## Recommendation
 
-**No to an agent-device `siri` command for the Simulator on iOS 27.3 beta (27C5020n / 24C5037i).** Siri can't present on the Simulator, by the test API or by the hardware button, so there is nothing to drive. And even if Siri started working, `SiriEvaluations` (the scored Siri runs `SiriAIEvalKit` wraps) isn't in the Simulator SDK. Siri tests still need a device.
+**No to an agent-device `siri` command for the Simulator on iOS 27.3 beta (27C5020n / 24C5037i).** Siri can't present on the Simulator, by the test API or by the hardware button, so there is nothing to drive. And even if Siri started working, `SiriEvaluations` (the scored Siri runs `SyrupAIEvalKit` wraps) isn't in the Simulator SDK. Siri tests still need a device.
 
 **Worth building instead:** a Simulator command that runs a tool directly through `AppIntentsTesting` and then reads `siri-ai-tool-outcome`. It skips Siri's choice of tool and Siri's reply, but it does check the tool's own behaviour (auth, refresh, the API call, the recorded outcome) without a phone. It works today.
 

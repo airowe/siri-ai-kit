@@ -1,5 +1,5 @@
 #!/bin/sh
-# Type-checks generated Siri tool Swift against the real SiriAIKit sources and the iOS 27.3 SDK, the way the app
+# Type-checks generated Siri tool Swift against the real SyrupAIKit sources and the iOS 27.3 SDK, the way the app
 # target compiles it: with SIRI_AI_PREVIEW on, in Swift 5 and Swift 6 language modes, and once with the flag off.
 #
 # Usage: expo-plugin/scripts/typecheck-siri-tools.sh [swift files...]
@@ -16,8 +16,8 @@ if [ "$#" -eq 0 ]; then
 fi
 
 mkdir -p "$OUT"
-xcrun -sdk iphoneos swiftc -emit-module -parse-as-library -module-name SiriAIKit -target "$TARGET" -swift-version 6 \
-  -emit-module-path "$OUT/SiriAIKit.swiftmodule" "$ROOT"/Sources/SiriAIKit/*.swift
+xcrun -sdk iphoneos swiftc -emit-module -parse-as-library -module-name SyrupAIKit -target "$TARGET" -swift-version 6 \
+  -emit-module-path "$OUT/SyrupAIKit.swiftmodule" "$ROOT"/Sources/SyrupAIKit/*.swift
 
 for mode in 5 6; do
   echo "Swift $mode, SIRI_AI_PREVIEW on: $*"

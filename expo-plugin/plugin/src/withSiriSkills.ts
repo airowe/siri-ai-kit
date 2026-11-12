@@ -3,7 +3,7 @@ import path from 'path';
 import { type ConfigPlugin, type XcodeProject, withDangerousMod } from 'expo/config-plugins';
 
 import { SKILL_FILE, skillsFolderProblems } from './siriSkills/validate';
-import { appTargetEntry } from './withSiriAIKitPackage';
+import { appTargetEntry } from './withSyrupAIKitPackage';
 
 const BUNDLE = 'Skills.skillsbundle';
 /** Xcode's file type for a skills bundle. Any other type copies the folder raw: no validation and no skills. */
@@ -29,7 +29,7 @@ export const skillsBundlePath = (projectName: string) => `${projectName}/${BUNDL
 function resourcesPhase(project: XcodeProject, target: any): any {
   const phases = section(project, 'PBXResourcesBuildPhase');
   const id = target.buildPhases.map((phase: any) => phase.value).find((value: string) => phases[value]);
-  if (!id) throw new Error('expo-siri-ai-kit: the app target has no Copy Bundle Resources phase');
+  if (!id) throw new Error('expo-syrup-ai-kit: the app target has no Copy Bundle Resources phase');
   return phases[id];
 }
 
@@ -52,7 +52,7 @@ export function addSkillsBundle(project: XcodeProject, bundlePath: string): void
   if (existing) return;
   if (bundled.length > 0) {
     throw new Error(
-      `expo-siri-ai-kit: the app target already has a skills bundle, "${unquote(bundled[0].path)}", and can only have one`
+      `expo-syrup-ai-kit: the app target already has a skills bundle, "${unquote(bundled[0].path)}", and can only have one`
     );
   }
 
@@ -84,7 +84,7 @@ export function writeSkillsBundle(sourceDir: string, label: string, bundleDir: s
   const problems = skillsFolderProblems(sourceDir, label);
   if (problems.length > 0) {
     throw new Error(
-      [`expo-siri-ai-kit: the App Skills in ${label} have problems:`, ...problems.map((problem) => `- ${problem}`)].join('\n')
+      [`expo-syrup-ai-kit: the App Skills in ${label} have problems:`, ...problems.map((problem) => `- ${problem}`)].join('\n')
     );
   }
   fs.rmSync(bundleDir, { recursive: true, force: true });

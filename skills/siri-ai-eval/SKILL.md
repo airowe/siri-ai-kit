@@ -1,24 +1,24 @@
 ---
 name: siri-ai-eval
-description: Use when writing, running or reading Siri Evaluations tests for a Siri AI tool (`@AppIntent(.tool)`), when asked to prove Siri calls an app's tool, or when a Siri evaluation pass rate looks wrong, flaky, or too good to trust. Also covers `siri-ai-eval summarize` output and `.xcresult` bundles from Siri evaluations.
+description: Use when writing, running or reading Siri Evaluations tests for a Siri AI tool (`@AppIntent(.tool)`), when asked to prove Siri calls an app's tool, or when a Siri evaluation pass rate looks wrong, flaky, or too good to trust. Also covers `syrup-ai-eval summarize` output and `.xcresult` bundles from Siri evaluations.
 license: MIT
 ---
 
-# Siri evaluations with SiriAIEvalKit
+# Siri evaluations with SyrupAIEvalKit
 
 ## Overview
 
 A Siri evaluation speaks a prompt to Siri on a real device and checks two things: which intents Siri called, and what Siri said. Siri varies between runs, so one pass proves little. A pass rate is only worth trusting when the checks can fail and you can see what the tool did in each run.
 
-Requirements: iOS 27.3 on a physical iPhone (the frameworks don't ship for the Simulator), a UI test target linking `SiriAIEvalKit`, and the app showing `ToolOutcomeView()` in debug builds (see the siri-ai-tool skill). Without that view every run records "tool outcome missing".
+Requirements: iOS 27.3 on a physical iPhone (the frameworks don't ship for the Simulator), a UI test target linking `SyrupAIEvalKit`, and the app showing `ToolOutcomeView()` in debug builds (see the siri-ai-tool skill). Without that view every run records "tool outcome missing".
 
-Setup: add a UI Testing Bundle target (for example `ParcelPalEvals`) that targets the app, link `SiriAIEvalKit` to it, and give it a shared scheme. Use test data you control, so the expected reply text is known.
+Setup: add a UI Testing Bundle target (for example `ParcelPalEvals`) that targets the app, link `SyrupAIEvalKit` to it, and give it a shared scheme. Use test data you control, so the expected reply text is known.
 
 ## Write the test
 
 ```swift
 import AppIntentsTesting
-import SiriAIEvalKit
+import SyrupAIEvalKit
 import SiriEvaluations
 import Testing
 
@@ -64,7 +64,7 @@ Break the tool, not the expectation, and do it with a launch switch, never a tem
 
 1. Define the switch in a file compiled into both the app and the UI test target:
    ```swift
-   import SiriAIKit
+   import SyrupAIKit
    extension EvalSwitch { static let badHost: EvalSwitch = "bad-host" }   // lowercase, digits, hyphens
    ```
 2. Read it in the app's own code, debug builds only, where it breaks the tool (here, an API host that can't be reached):
@@ -120,7 +120,7 @@ The phone must be unlocked, on power and quiet (Siri speaks each reply), with Si
 xcodebuild test -project ParcelPal.xcodeproj -scheme ParcelPalEvals \
   -destination 'id=<device UDID>' -allowProvisioningUpdates DEVELOPMENT_TEAM=<team ID> \
   -only-testing:'ParcelPalEvals/callsOrderStatusToolEveryTime()' -resultBundlePath order.xcresult
-swift run --package-path <path to siri-ai-kit checkout> siri-ai-eval summarize order.xcresult --fail-on real
+swift run --package-path <path to syrup-ai-kit checkout> syrup-ai-eval summarize order.xcresult --fail-on real
 ```
 
 Find the device UDID with `xcrun devicectl list devices`. A result bundle path that already exists makes `xcodebuild` fail; use a new name per run.

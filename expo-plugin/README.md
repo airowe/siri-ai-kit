@@ -1,6 +1,8 @@
-# expo-siri-ai-kit
+# expo-syrup-ai-kit
 
-Make your Expo or React Native app work with Siri AI. This Expo config plugin for [SiriAIKit](https://github.com/airowe/siri-ai-kit) lets the Swift tools in your app use SiriAIKit, and turns on the Siri AI Developer Preview code (iOS 27.3 beta).
+The Expo plugin for Syrup AI Kit: Siri AI tools for Expo and React Native apps. Formerly `expo-siri-ai-kit`.
+
+Make your Expo or React Native app work with Siri AI. This Expo config plugin for [Syrup AI Kit](https://github.com/airowe/syrup-ai-kit) lets the Swift tools in your app use SyrupAIKit, and turns on the Siri AI Developer Preview code (iOS 27.3 beta).
 
 Using a coding agent? Install the [agent skills](#agent-skills) and ask it to "make my app work with Siri AI".
 
@@ -8,7 +10,7 @@ Not affiliated with or endorsed by Apple.
 
 ## What it does when you prebuild
 
-- **Adds SiriAIKit** as a Swift package and links it to your app target. That's where [`expo-app-intents`](https://docs.expo.dev/versions/latest/sdk/app-intents) compiles the Swift in `app-intents/`, so your tools can `import SiriAIKit`.
+- **Adds SyrupAIKit** as a Swift package and links it to your app target. That's where [`expo-app-intents`](https://docs.expo.dev/versions/latest/sdk/app-intents) compiles the Swift in `app-intents/`, so your tools can `import SyrupAIKit`.
 - **With the preview on, it also:**
   - adds the `SIRI_AI_PREVIEW` Swift compilation condition, so `#if SIRI_AI_PREVIEW` code builds only with the 27.3 SDK;
   - sets the app target's deployment target to iOS 27.3, which `@Property(title:description:)` requires. Pods keep their own targets.
@@ -19,16 +21,16 @@ Running prebuild again doesn't add anything twice.
 
 ## Install
 
-The full setup, including the Mac, the iPhone and a checklist for coding agents, is in [INSTALL.md](https://github.com/airowe/siri-ai-kit/blob/main/INSTALL.md).
+The full setup, including the Mac, the iPhone and a checklist for coding agents, is in [INSTALL.md](https://github.com/airowe/syrup-ai-kit/blob/main/INSTALL.md).
 
 ```bash
-npx expo install expo-siri-ai-kit expo-app-intents
+npx expo install expo-syrup-ai-kit expo-app-intents
 ```
 
 ```json
 {
   "expo": {
-    "plugins": ["expo-app-intents", "expo-siri-ai-kit"]
+    "plugins": ["expo-app-intents", "expo-syrup-ai-kit"]
   }
 }
 ```
@@ -42,13 +44,13 @@ SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
 ## Options
 
 ```json
-["expo-siri-ai-kit", { "version": "0.2.0", "preview": true }]
+["expo-syrup-ai-kit", { "version": "0.3.0", "preview": true }]
 ```
 
 | Option | Default | What it does |
 |---|---|---|
-| `version` | The SiriAIKit release this plugin was tested with | Uses SiriAIKit up to the next minor version. |
-| `branch` | None | Follows a SiriAIKit branch instead. Use it only to try unreleased changes. Can't be combined with `version`. |
+| `version` | The SyrupAIKit release this plugin was tested with | Uses SyrupAIKit up to the next minor version. |
+| `branch` | None | Follows a SyrupAIKit branch instead. Use it only to try unreleased changes. Can't be combined with `version`. |
 | `preview` | `true` when `SIRI_AI_PREVIEW=1` is set | Turns on the Siri AI Developer Preview code. |
 | `tools` | None | Path to a Siri tools declaration, such as `./siri-tools.json`. Generates a Swift tool for each entry. Experimental. |
 | `evals` | None | `{ "sourceDir": "siri-evals", "targetName": "MyAppEvals" }`. Adds a UI test target for Siri Evaluations. `targetName` defaults to `<AppName>Evals`. |
@@ -59,14 +61,14 @@ SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
 `prebuild --clean` regenerates `ios/`, so a test target added in Xcode disappears. Keep the evaluation tests in a folder outside `ios/` and let the plugin add the target:
 
 ```json
-["expo-siri-ai-kit", { "preview": true, "evals": { "sourceDir": "siri-evals" } }]
+["expo-syrup-ai-kit", { "preview": true, "evals": { "sourceDir": "siri-evals" } }]
 ```
 
 On every prebuild the plugin adds a `<AppName>Evals` UI test target that:
 
 - compiles every `.swift` file under `sourceDir` (subfolders included), referenced in place rather than copied;
 - tests the app target (`TEST_TARGET_NAME`), depends on it, and builds for iOS 27.3;
-- links `SiriAIEvalKit` from the same SiriAIKit package, and copies the app's development team for signing;
+- links `SyrupAIEvalKit` from the same SyrupAIKit package, and copies the app's development team for signing;
 - gets a shared scheme of the same name.
 
 Run the evaluations on an iPhone on iOS 27.3 with Siri AI on:
@@ -96,7 +98,7 @@ Search for the item first, add it to the cart, then confirm the total before che
 ```
 
 ```json
-["expo-siri-ai-kit", { "preview": true, "skills": { "sourceDir": "siri-skills" } }]
+["expo-syrup-ai-kit", { "preview": true, "skills": { "sourceDir": "siri-skills" } }]
 ```
 
 At prebuild the plugin copies each `SKILL.md` into `ios/<App>/Skills.skillsbundle` and adds the bundle to the app target with Xcode's skills-bundle file type, so Xcode compiles it into the app. A skill you delete stops shipping on the next prebuild.
@@ -109,7 +111,7 @@ Prebuild stops, listing every problem, if a skill breaks Apple's rules. Xcode it
 - The body is at most 10,000 characters.
 - Each skill folder holds only its `SKILL.md`.
 
-Skills guide Siri; they don't guarantee it follows the steps in order. Nothing checks that a skill names tools your app has, so test the flow with a Siri evaluation. App Skills are part of the Siri AI Developer Preview, with the same limits on who can use them (see the [SiriAIKit README](https://github.com/airowe/siri-ai-kit#readme)).
+Skills guide Siri; they don't guarantee it follows the steps in order. Nothing checks that a skill names tools your app has, so test the flow with a Siri evaluation. App Skills are part of the Siri AI Developer Preview, with the same limits on who can use them (see the [SyrupAIKit README](https://github.com/airowe/syrup-ai-kit#readme)).
 
 ## A first tool
 
@@ -117,7 +119,7 @@ Skills guide Siri; they don't guarantee it follows the steps in order. Nothing c
 // app-intents/GetQuoteIntent.swift
 import AppIntents
 import Foundation
-import SiriAIKit
+import SyrupAIKit
 
 private let tool = SiriTool(appName: "My App")
 
@@ -143,7 +145,7 @@ private struct Quote: Decodable {
 }
 ```
 
-See the [SiriAIKit README](https://github.com/airowe/siri-ai-kit#readme) for `SiriTool`, outcomes, and testing with Siri Evaluations.
+See the [Syrup AI Kit README](https://github.com/airowe/syrup-ai-kit#readme) for `SiriTool`, outcomes, and testing with Siri Evaluations.
 
 ## Generating tools from a declaration (experimental)
 
@@ -200,10 +202,10 @@ Then render it from JavaScript with `testID="siri-ai-tool-outcome"`.
 
 This package includes two agent skills:
 
-- `skills/expo-siri-ai-kit/SKILL.md` covers setup, the outcome bridge and known prebuild problems.
+- `skills/expo-syrup-ai-kit/SKILL.md` covers setup, the outcome bridge and known prebuild problems.
 - `skills/siri-ai-discover/SKILL.md` finds which Siri AI tools an app should have and writes their interfaces (name, description, parameters) to `siri-tools.json`, with an evaluation prompt for each. How each tool gets its answer is left to the app's own code.
 
-Install them with the other SiriAIKit skills, including `siri-ai`, the one to start from. In Claude Code: `/plugin marketplace add airowe/siri-ai-kit`, then `/plugin install siri-ai-kit@siri-ai-kit`. In other agents: `npx skills add airowe/siri-ai-kit`.
+Install them with the other Syrup AI Kit skills, including `siri-ai`, the one to start from. In Claude Code: `/plugin marketplace add airowe/syrup-ai-kit`, then `/plugin install syrup-ai-kit@syrup-ai-kit`. In other agents: `npx skills add airowe/syrup-ai-kit`.
 
 ## Requirements
 

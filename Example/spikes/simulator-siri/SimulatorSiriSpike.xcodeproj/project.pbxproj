@@ -10,10 +10,10 @@
 		2184C4CD81987C2679D44199 /* GetCartIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7D3B97674647E730F2C6F9 /* GetCartIntent.swift */; };
 		3501CB07CA42B981A36FCF18 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 647E306C3FA32FEAC3D5E3D9 /* Foundation.framework */; };
 		6422241375720B4E3DDA569C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 647E306C3FA32FEAC3D5E3D9 /* Foundation.framework */; };
-		96F9A0480CD0734F141EEAE2 /* SiriAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF9B34AAFA3702D10E7FDC50 /* SiriAIKit */; };
+		96F9A0480CD0734F141EEAE2 /* SyrupAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = AF9B34AAFA3702D10E7FDC50 /* SyrupAIKit */; };
 		989D7FC75BCE71B30809EC08 /* DemoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218E6BF0B3F7AED3A2CF305B /* DemoAPI.swift */; };
 		A89D36986919F2D747F93905 /* SiriOnSimulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A862FBE4F60A508A805B8255 /* SiriOnSimulatorTests.swift */; };
-		AB1F7F1768337CA5A49AB998 /* SiriAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8D6408128616003FFAD2D96D /* SiriAIKit */; };
+		AB1F7F1768337CA5A49AB998 /* SyrupAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8D6408128616003FFAD2D96D /* SyrupAIKit */; };
 		AE467EE7B59E227747DDE7C5 /* FrameworkProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBC118F42095F3C39AD752D /* FrameworkProbeTests.swift */; };
 		EEEFD5101C5262941B8DB591 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864B59FF8D17558F43B5E515 /* ContentView.swift */; };
 		F203A32141B41C64B653D632 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410EA885B7736FE4E2875A7A /* App.swift */; };
@@ -25,13 +25,13 @@
 			containerPortal = E78D8EEC6A789C97D01A76F7 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 404CEEA0484396B3913BBD2F;
-			remoteInfo = SiriAIKitExample;
+			remoteInfo = SyrupAIKitExample;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0566A63E83127C1F7E0FD3B8 /* SimulatorSiriSpikeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimulatorSiriSpikeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0D322E0E54AC061F576309C0 /* SiriAIKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SiriAIKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D322E0E54AC061F576309C0 /* SyrupAIKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyrupAIKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		218E6BF0B3F7AED3A2CF305B /* DemoAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DemoAPI.swift; sourceTree = "<group>"; };
 		3F7D3B97674647E730F2C6F9 /* GetCartIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GetCartIntent.swift; sourceTree = "<group>"; };
 		410EA885B7736FE4E2875A7A /* App.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
@@ -47,7 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3501CB07CA42B981A36FCF18 /* Foundation.framework in Frameworks */,
-				96F9A0480CD0734F141EEAE2 /* SiriAIKit in Frameworks */,
+				96F9A0480CD0734F141EEAE2 /* SyrupAIKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +56,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6422241375720B4E3DDA569C /* Foundation.framework in Frameworks */,
-				AB1F7F1768337CA5A49AB998 /* SiriAIKit in Frameworks */,
+				AB1F7F1768337CA5A49AB998 /* SyrupAIKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +66,7 @@
 		13D77E9B36879FAB7454A617 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0D322E0E54AC061F576309C0 /* SiriAIKitExample.app */,
+				0D322E0E54AC061F576309C0 /* SyrupAIKitExample.app */,
 				0566A63E83127C1F7E0FD3B8 /* SimulatorSiriSpikeTests.xctest */,
 			);
 			name = Products;
@@ -95,12 +95,12 @@
 			children = (
 				13D77E9B36879FAB7454A617 /* Products */,
 				59B7F8F2F25B4AA5ABE0ACB0 /* Frameworks */,
-				7805429FA5A7141DD9C58945 /* SiriAIKitExample */,
+				7805429FA5A7141DD9C58945 /* SyrupAIKitExample */,
 				5373AA0467203342757E3149 /* SimulatorSiriSpikeTests */,
 			);
 			sourceTree = "<group>";
 		};
-		7805429FA5A7141DD9C58945 /* SiriAIKitExample */ = {
+		7805429FA5A7141DD9C58945 /* SyrupAIKitExample */ = {
 			isa = PBXGroup;
 			children = (
 				410EA885B7736FE4E2875A7A /* App.swift */,
@@ -108,8 +108,8 @@
 				218E6BF0B3F7AED3A2CF305B /* DemoAPI.swift */,
 				3F7D3B97674647E730F2C6F9 /* GetCartIntent.swift */,
 			);
-			name = SiriAIKitExample;
-			path = ../../SiriAIKitExample;
+			name = SyrupAIKitExample;
+			path = ../../SyrupAIKitExample;
 			sourceTree = "<group>";
 		};
 		EBA99B91E963E8217FC6F793 /* iOS */ = {
@@ -123,9 +123,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		404CEEA0484396B3913BBD2F /* SiriAIKitExample */ = {
+		404CEEA0484396B3913BBD2F /* SyrupAIKitExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ECAC9FAE67D12004EABCB5B6 /* Build configuration list for PBXNativeTarget "SiriAIKitExample" */;
+			buildConfigurationList = ECAC9FAE67D12004EABCB5B6 /* Build configuration list for PBXNativeTarget "SyrupAIKitExample" */;
 			buildPhases = (
 				D832BE883AE211194C8B784C /* Sources */,
 				83C5D435094C10D33EA5862E /* Frameworks */,
@@ -135,12 +135,12 @@
 			);
 			dependencies = (
 			);
-			name = SiriAIKitExample;
+			name = SyrupAIKitExample;
 			packageProductDependencies = (
-				8D6408128616003FFAD2D96D /* SiriAIKit */,
+				8D6408128616003FFAD2D96D /* SyrupAIKit */,
 			);
-			productName = SiriAIKitExample;
-			productReference = 0D322E0E54AC061F576309C0 /* SiriAIKitExample.app */;
+			productName = SyrupAIKitExample;
+			productReference = 0D322E0E54AC061F576309C0 /* SyrupAIKitExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D9EA9982CBC026BBFF5E0CC4 /* SimulatorSiriSpikeTests */ = {
@@ -158,7 +158,7 @@
 			);
 			name = SimulatorSiriSpikeTests;
 			packageProductDependencies = (
-				AF9B34AAFA3702D10E7FDC50 /* SiriAIKit */,
+				AF9B34AAFA3702D10E7FDC50 /* SyrupAIKit */,
 			);
 			productName = SimulatorSiriSpikeTests;
 			productReference = 0566A63E83127C1F7E0FD3B8 /* SimulatorSiriSpikeTests.xctest */;
@@ -191,7 +191,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				404CEEA0484396B3913BBD2F /* SiriAIKitExample */,
+				404CEEA0484396B3913BBD2F /* SyrupAIKitExample */,
 				D9EA9982CBC026BBFF5E0CC4 /* SimulatorSiriSpikeTests */,
 			);
 		};
@@ -240,8 +240,8 @@
 /* Begin PBXTargetDependency section */
 		431E6162958EC3E59E92E5AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = SiriAIKitExample;
-			target = 404CEEA0484396B3913BBD2F /* SiriAIKitExample */;
+			name = SyrupAIKitExample;
+			target = 404CEEA0484396B3913BBD2F /* SyrupAIKitExample */;
 			targetProxy = F10D33E8F4C2A92DE45488F6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -254,12 +254,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 27.3;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.siriaikit.simspike;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.syrupaikit.simspike;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = SiriAIKitExample;
+				TEST_TARGET_NAME = SyrupAIKitExample;
 			};
 			name = Debug;
 		};
@@ -272,13 +272,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "SiriAIKit Example";
+				INFOPLIST_KEY_CFBundleDisplayName = "SyrupAIKit Example";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 27.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.siriaikit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.syrupaikit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
@@ -294,12 +294,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 27.3;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.siriaikit.simspike;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.syrupaikit.simspike;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = SiriAIKitExample;
+				TEST_TARGET_NAME = SyrupAIKitExample;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -313,13 +313,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "SiriAIKit Example";
+				INFOPLIST_KEY_CFBundleDisplayName = "SyrupAIKit Example";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 27.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.siriaikit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.syrupaikit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
@@ -463,7 +463,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ECAC9FAE67D12004EABCB5B6 /* Build configuration list for PBXNativeTarget "SiriAIKitExample" */ = {
+		ECAC9FAE67D12004EABCB5B6 /* Build configuration list for PBXNativeTarget "SyrupAIKitExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				459E4AF2479A38C01431EA1E /* Release */,
@@ -482,15 +482,15 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8D6408128616003FFAD2D96D /* SiriAIKit */ = {
+		8D6408128616003FFAD2D96D /* SyrupAIKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 44A3C3E686718F3825B8D212 /* XCLocalSwiftPackageReference ".." */;
-			productName = SiriAIKit;
+			productName = SyrupAIKit;
 		};
-		AF9B34AAFA3702D10E7FDC50 /* SiriAIKit */ = {
+		AF9B34AAFA3702D10E7FDC50 /* SyrupAIKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 44A3C3E686718F3825B8D212 /* XCLocalSwiftPackageReference ".." */;
-			productName = SiriAIKit;
+			productName = SyrupAIKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

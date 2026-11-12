@@ -1,9 +1,9 @@
 # Spike: `@DeferredProperty` and the indexing rule
 
 **Status:** SDK reading and a Simulator index probe are done. The Siri half needs one device run (the command is at the end).
-**Probe:** `Example/SiriAIKitExample/OrderProbe.swift`, `Example/SiriAIKitExampleEvals/OrderProbeEvaluationTests.swift`. Throwaway code: don't merge it into the example's pattern.
+**Probe:** `Example/SyrupAIKitExample/OrderProbe.swift`, `Example/SyrupAIKitExampleEvals/OrderProbeEvaluationTests.swift`. Throwaway code: don't merge it into the example's pattern.
 
-SiriAIKit's rule is to index what identifies a record (id, name, synonyms) and never the answer the tool exists to give. If the answer is indexed, Siri answers from Spotlight and never calls the tool. The question here is whether an App Intents entity with an identity-only index and an async `@DeferredProperty` for the answer lets Siri answer live without a tool, and whether giving that property an `indexingKey` brings the stale answer back.
+SyrupAIKit's rule is to index what identifies a record (id, name, synonyms) and never the answer the tool exists to give. If the answer is indexed, Siri answers from Spotlight and never calls the tool. The question here is whether an App Intents entity with an identity-only index and an async `@DeferredProperty` for the answer lets Siri answer live without a tool, and whether giving that property an `indexingKey` brings the stale answer back.
 
 ## Short answers
 
@@ -62,30 +62,30 @@ Spotlight matches: fish=0 charger=1 zebra=1. Order contentDescription: nil
 
 `OrderProbeEvaluationTests.swift` has two evaluations, 5 runs each. The harness waits for the "Indexed…" label, so each run starts after a fresh index.
 
-1. **`readsDeferredPropertyLive()`** asks "In SiriAIKit Example, what's in order 3?" and expects Siri to find `OrderEntity` 3 and say "fish". The only source of "fish" is the getter, so a passing reply means Siri read the deferred property. To tell *live* from *a value computed at index time and cached*, read each run's outcome attachment. It should be `succeeded (order status getter) at <time>`, with a time after the run started. Indexing finishes before the run, so a later time means the getter ran for Siri.
+1. **`readsDeferredPropertyLive()`** asks "In SyrupAIKit Example, what's in order 3?" and expects Siri to find `OrderEntity` 3 and say "fish". The only source of "fish" is the getter, so a passing reply means Siri read the deferred property. To tell *live* from *a value computed at index time and cached*, read each run's outcome attachment. It should be `succeeded (order status getter) at <time>`, with a time after the run started. Indexing finishes before the run, so a later time means the getter ran for Siri.
    - Pass, with the getter timed during the run: **deferred properties give live answers.**
    - Pass, with the getter last run at index time: Siri used a cached value, and the property is no better than indexing it.
    - Fail: Siri doesn't read deferred properties, or doesn't resolve the entity. `foundEntities` tells which.
 2. **`answersIndexedDeferredProperty()`** asks the same question about shipment 2, as the control for the stale-answer rule. A pass with no shipment-getter call during the run means Siri answered from Spotlight. That's expected after section 2, and it confirms the rule extends to deferred properties.
 
-Also note whether Siri ever calls `GetCartIntent` for these questions. It reads cart 1, so it can't supply either marker. And `siri-ai-eval summarize` can't flag "answered without the tool" for these runs, because the scenarios expect no intent. Read the outcomes it prints instead.
+Also note whether Siri ever calls `GetCartIntent` for these questions. It reads cart 1, so it can't supply either marker. And `syrup-ai-eval summarize` can't flag "answered without the tool" for these runs, because the scenarios expect no intent. Read the outcomes it prints instead.
 
 ## Recommendation (draft, pending the device run)
 
 - **Extend the rule now, whatever the device shows:** never put an `indexingKey` (or `customIndexingKey`) on a property that holds the answer, and that includes `@DeferredProperty`. Indexing fetches the value and stores it, so the answer goes stale.
 - **Default pattern: the entity is a complement, not a replacement.** An `IndexedEntity` with an identity-only index (id, title, synonyms) lets Siri resolve "order 3" or "my order". A `@AppIntent(.tool)` that takes the entity as a parameter gives the answer through `SiriTool`, which provides the timeout, signed-out reply and outcome log, and which Siri Evaluations can assert with `Calls`.
 - **If the device run shows live reads:** a `@DeferredProperty` can carry read-only facts about an entity without a separate tool. Wrap the getter in `SiriTool.answer` (the probe does this) so failures become replies and outcomes get logged. Remember that `indexAppEntities` will call the getter for every entity it indexes, so keep the getter cheap or index rarely. And Siri Evaluations can only assert the result through `Finds` plus reply text, not `Calls`.
-- **Consider for SiriAIKit 0.3 after the run:** a lint or `summarize` check that warns when an entity property with `"capabilities": 2` also has a `spotlightAttributeKey` in `extract.actionsdata`.
+- **Consider for SyrupAIKit 0.3 after the run:** a lint or `summarize` check that warns when an entity property with `"capabilities": 2` also has a `spotlightAttributeKey` in `extract.actionsdata`.
 
 ## Device command (not yet run)
 
 The iPhone is shared with other sessions, so this spike didn't run anything on it. Keep the phone unlocked, on power and quiet.
 
 ```bash
-xcodebuild test -project Example/SiriAIKitExample.xcodeproj -scheme SiriAIKitExampleEvals \
+xcodebuild test -project Example/SyrupAIKitExample.xcodeproj -scheme SyrupAIKitExampleEvals \
   -destination 'id=<device UDID>' -allowProvisioningUpdates DEVELOPMENT_TEAM=<team ID> \
-  -only-testing:'SiriAIKitExampleEvals/readsDeferredPropertyLive()' \
-  -only-testing:'SiriAIKitExampleEvals/answersIndexedDeferredProperty()' \
+  -only-testing:'SyrupAIKitExampleEvals/readsDeferredPropertyLive()' \
+  -only-testing:'SyrupAIKitExampleEvals/answersIndexedDeferredProperty()' \
   -resultBundlePath deferred.xcresult
-swift run siri-ai-eval summarize deferred.xcresult
+swift run syrup-ai-eval summarize deferred.xcresult
 ```

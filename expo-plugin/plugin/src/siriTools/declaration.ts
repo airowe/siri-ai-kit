@@ -229,7 +229,7 @@ export function parseSiriTools(input: unknown, source: string): SiriToolsDeclara
   const problems = declarationProblems(input);
   if (problems.length > 0) {
     throw new Error(
-      `expo-siri-ai-kit: ${source} has problems:\n${problems.map((problem) => `  - ${problem}`).join('\n')}`
+      `expo-syrup-ai-kit: ${source} has problems:\n${problems.map((problem) => `  - ${problem}`).join('\n')}`
     );
   }
   const { appName, tools } = input as Json;

@@ -1,40 +1,42 @@
-# SiriAIKit
+# Syrup AI Kit
+
+Syrup AI Kit: Siri AI tools for iOS, Expo and React Native apps. Formerly SiriAIKit.
 
 Make your iOS, Expo or React Native app work with Siri AI, Apple's Siri AI Developer Preview (iOS 27.3 beta): people ask Siri about their orders, bookings or balances, or ask it to act, and Siri calls your app's tools.
 
 Using a coding agent? Install the skills and ask it to "make my app work with Siri AI":
 
 ```
-/plugin marketplace add airowe/siri-ai-kit
-/plugin install siri-ai-kit@siri-ai-kit
+/plugin marketplace add airowe/syrup-ai-kit
+/plugin install syrup-ai-kit@syrup-ai-kit
 ```
 
-Other agents: `npx skills add airowe/siri-ai-kit`. Expo apps also use the [`expo-siri-ai-kit`](expo-plugin/) config plugin.
+Other agents: `npx skills add airowe/syrup-ai-kit`. Expo apps also use the [`expo-syrup-ai-kit`](expo-plugin/) config plugin.
 
-Keep your own networking. SiriAIKit adds what Siri needs on top:
+Keep your own networking. Syrup AI Kit adds what Siri needs on top:
 
-- **`SiriAIKit`:** wraps the API code you already have in a Siri tool. It keeps to Siri's time budget, turns failures into sentences Siri can say, and records what each call did.
-- **`SiriAIEvalKit`:** less setup for Siri Evaluations tests. It launches your app, waits until it's ready, runs a scenario several times, and records what your tool did in each run.
+- **`SyrupAIKit`:** wraps the API code you already have in a Siri tool. It keeps to Siri's time budget, turns failures into sentences Siri can say, and records what each call did.
+- **`SyrupAIEvalKit`:** less setup for Siri Evaluations tests. It launches your app, waits until it's ready, runs a scenario several times, and records what your tool did in each run.
 - **`siri-ai-eval`:** a command-line tool that summarizes evaluation results and separates runs that were cut short from real failures.
 
-SiriAIKit is not affiliated with or endorsed by Apple.
+Syrup AI Kit is not affiliated with or endorsed by Apple.
 
 ## Requirements
 
 Step-by-step setup for the Mac, the iPhone, native and Expo apps, and the agent skills, with a checklist for coding agents: [INSTALL.md](INSTALL.md).
 
 - Xcode 27.3 beta, Swift 6.
-- `SiriAIKit`: iOS 17 or later.
-- `SiriAIEvalKit`: iOS 27.3 on a device. Apple's evaluation frameworks don't ship for the Simulator.
+- `SyrupAIKit`: iOS 17 or later.
+- `SyrupAIEvalKit`: iOS 27.3 on a device. Apple's evaluation frameworks don't ship for the Simulator.
 - `siri-ai-eval`: macOS 15 or later.
 
-Add `https://github.com/airowe/siri-ai-kit` in Xcode (File > Add Package Dependencies), or in `Package.swift`:
+Add `https://github.com/airowe/syrup-ai-kit` in Xcode (File > Add Package Dependencies), or in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/airowe/siri-ai-kit", from: "0.2.0")
+.package(url: "https://github.com/airowe/syrup-ai-kit", from: "0.3.0")
 ```
 
-Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are still in beta. Pin with `.upToNextMinor(from: "0.2.0")` if you need stability.
+Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are still in beta. Pin with `.upToNextMinor(from: "0.3.0")` if you need stability.
 
 ### Who can use your tools today
 
@@ -47,14 +49,14 @@ Apple's Siri AI Developer Preview limits who can try what you build. This is as 
 - **Siri AI has daily usage limits**, because it uses server-side models.
 - **Apple may change the App Intents API and Siri behaviour during the preview.**
 
-Link `SiriAIKit` to your app target and `SiriAIEvalKit` to your UI test target.
+Link `SyrupAIKit` to your app target and `SyrupAIEvalKit` to your UI test target.
 
-**Expo apps:** the [`expo-siri-ai-kit`](expo-plugin/) config plugin adds SiriAIKit to your app target during prebuild, so Swift tools in `app-intents/` can import it.
+**Expo apps:** the [`expo-syrup-ai-kit`](expo-plugin/) config plugin adds SyrupAIKit to your app target during prebuild, so Swift tools in `app-intents/` can import it.
 
 ## Wrapping your API code in a tool
 
 ```swift
-import SiriAIKit
+import SyrupAIKit
 
 private let tool = SiriTool(appName: "My App") { error in
     (error as? MyAPIError) == .serverDown ? .unreachable : nil
@@ -108,7 +110,7 @@ Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read 
 
 ```swift
 import AppIntentsTesting
-import SiriAIEvalKit
+import SyrupAIEvalKit
 import SiriEvaluations
 import Testing
 
@@ -193,7 +195,7 @@ Both helpers tag the evaluation's name (`[negative control]`, `[informational]`)
 Summarize the results:
 
 ```bash
-swift run siri-ai-eval summarize cart.xcresult [--json] [--fail-on any|real]
+swift run syrup-ai-eval summarize cart.xcresult [--json] [--fail-on any|real]
 ```
 
 It prints each run's tool calls, reply, intents check, reply check, recorded outcome, and whether the run was cut short ("the run ended before all of its results arrived").
@@ -225,7 +227,14 @@ Run on Nov 11, 2026 on an iPhone 16 Pro on iOS 27.3 beta, with Xcode 27.3 beta (
 
 The example has since moved to DummyJSON's public cart, with a `bad-host` negative control. Those evaluations haven't been rerun on a device yet.
 
-## Upgrading from 0.2.0
+## Upgrading from SiriAIKit 0.2.0
+
+SiriAIKit is now Syrup AI Kit, and 0.3.0 is the first release under the new name. The types (`SiriTool`, `ToolFailure`, `SiriToolOutcome`) keep their names.
+
+- **Swift package:** `https://github.com/airowe/syrup-ai-kit` (the old URL redirects). Products: `SyrupAIKit`, `SyrupAIEvalKit`. Change `import SiriAIKit` to `import SyrupAIKit`, and `import SiriAIEvalKit` to `import SyrupAIEvalKit`.
+- **Command-line tool:** `swift run syrup-ai-eval summarize …`, was `siri-ai-eval`.
+- **Expo plugin:** the npm package is `expo-syrup-ai-kit`, was `expo-siri-ai-kit`. Change the name in `app.json` plugins and `package.json`.
+- **Agent skills:** the plugin is `syrup-ai-kit@syrup-ai-kit`, and the Expo skill is `expo-syrup-ai-kit`. The `siri-ai*` skills keep their names.
 
 - **`ToolFailure.signedOut`:** removed, along with its reply and recorded outcome. Map those errors to another `ToolFailure` in `classify`, or let them fall through to `.failed`.
 - **`ToolReplies`:** takes `unreachable:` and `failed:` only.
@@ -233,7 +242,7 @@ The example has since moved to DummyJSON's public cart, with a `bad-host` negati
 
 ## Upgrading from 0.1.0
 
-0.2.0 removes SiriAIKit's networking layer. Your app's own networking handles requests now.
+0.2.0 removed SiriAIKit's networking layer. Your app's own networking handles requests now.
 
 - **`ToolHTTPClient`, `TokenAuthenticator`, `HTTPMethod`:** wrap your existing API call with `SiriTool.answer` or `SiriTool.run`.
 - **`KeychainTokenStore`, `TokenStore`, `Tokens`, `KeychainAccessibility`:** removed. Keep what they stored in your app's own code.
@@ -242,22 +251,22 @@ The example has since moved to DummyJSON's public cart, with a `bad-host` negati
 
 ## Agent skills
 
-SiriAIKit ships skills that teach coding agents to build and test Siri AI tools: `siri-ai-tool`, `siri-ai-eval`, `expo-siri-ai-kit` and `siri-ai-discover`. They cover the checks agents miss without them, such as answers left in the Spotlight index. `siri-ai-discover` chooses which tools an app should have.
+Syrup AI Kit ships skills that teach coding agents to build and test Siri AI tools: `siri-ai-tool`, `siri-ai-eval`, `expo-syrup-ai-kit` and `siri-ai-discover`. They cover the checks agents miss without them, such as answers left in the Spotlight index. `siri-ai-discover` chooses which tools an app should have.
 
 In Claude Code:
 
 ```
-/plugin marketplace add airowe/siri-ai-kit
-/plugin install siri-ai-kit@siri-ai-kit
+/plugin marketplace add airowe/syrup-ai-kit
+/plugin install syrup-ai-kit@syrup-ai-kit
 ```
 
-For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into the agent's skills directory. From the release after 0.2.0, the `expo-siri-ai-kit` npm package also includes the Expo skills, under `node_modules/expo-siri-ai-kit/skills/`. 0.2.0 doesn't.
+For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into the agent's skills directory. From the release after 0.2.0, the `expo-syrup-ai-kit` npm package also includes the Expo skills, under `node_modules/expo-syrup-ai-kit/skills/`. 0.2.0 doesn't.
 
 ## Development
 
 ```bash
-swift test                     # SiriAIKit, SiriAIEvalKit and summary tests, on the Mac
-xcodebuild build -scheme SiriAIEvalKit -destination 'generic/platform=iOS'
+swift test                     # SyrupAIKit, SyrupAIEvalKit and summary tests, on the Mac
+xcodebuild build -scheme SyrupAIEvalKit -destination 'generic/platform=iOS'
 ```
 
 The tests run on the Mac rather than the Simulator, because booting the iOS 27.3 beta Simulator crash-looped its `identityservicesd`.

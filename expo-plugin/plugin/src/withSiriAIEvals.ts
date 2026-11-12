@@ -8,8 +8,8 @@ import {
   entries,
   quote,
   section,
-  siriAIKitReferenceId,
-} from './withSiriAIKitPackage';
+  syrupAIKitReferenceId,
+} from './withSyrupAIKitPackage';
 
 export type EvalsOptions = {
   /** Folder of Swift evaluation tests, relative to the project root. Keep it outside `ios/`. */
@@ -29,7 +29,7 @@ export type EvalsTarget = {
 type TargetRef = { id: string; name: string };
 export type EvalsTargets = { app: TargetRef; evals: TargetRef };
 
-const PRODUCT = 'SiriAIEvalKit';
+const PRODUCT = 'SyrupAIEvalKit';
 /** Siri Evaluations run on iOS 27.3 devices only. */
 const EVALS_DEPLOYMENT_TARGET = '27.3';
 const UI_TESTING = 'com.apple.product-type.bundle.ui-testing';
@@ -40,16 +40,16 @@ export const evalsTargetName = (options: EvalsOptions, appName: string) => optio
 
 /** Lists the `.swift` files under `directory`, as sorted POSIX paths relative to it. */
 export function findSwiftSources(directory: string): string[] {
-  if (!fs.existsSync(directory)) throw new Error(`expo-siri-ai-kit: evals.sourceDir ${directory} does not exist`);
+  if (!fs.existsSync(directory)) throw new Error(`expo-syrup-ai-kit: evals.sourceDir ${directory} does not exist`);
   if (!fs.statSync(directory).isDirectory()) {
-    throw new Error(`expo-siri-ai-kit: evals.sourceDir ${directory} is not a folder`);
+    throw new Error(`expo-syrup-ai-kit: evals.sourceDir ${directory} is not a folder`);
   }
   const files = fs
     .readdirSync(directory, { recursive: true, encoding: 'utf8' })
     .filter((file) => file.endsWith('.swift') && fs.statSync(path.join(directory, file)).isFile())
     .map((file) => file.split(path.sep).join('/'))
     .sort();
-  if (files.length === 0) throw new Error(`expo-siri-ai-kit: evals.sourceDir ${directory} has no .swift files`);
+  if (files.length === 0) throw new Error(`expo-syrup-ai-kit: evals.sourceDir ${directory} has no .swift files`);
   return files;
 }
 
@@ -131,7 +131,7 @@ function addAppDependency(project: XcodeProject, app: TargetRef): string {
 
 /**
  * Adds a UI testing target that compiles the evaluation sources from outside `ios/`, tests the app target and
- * links SiriAIEvalKit from the SiriAIKit package reference. Run it after `addSiriAIKitPackage`.
+ * links SyrupAIEvalKit from the SyrupAIKit package reference. Run it after `addSyrupAIKitPackage`.
  */
 export function addEvalsTarget(project: XcodeProject, target: EvalsTarget): EvalsTargets {
   const [appId, appTarget] = appTargetEntry(project);
@@ -140,8 +140,8 @@ export function addEvalsTarget(project: XcodeProject, target: EvalsTarget): Eval
   const existing = entries(project.pbxNativeTargetSection()).find(([, value]) => unquote(value.name) === target.name);
   if (existing) return { app, evals: { id: existing[0], name: target.name } };
 
-  const referenceId = siriAIKitReferenceId(project);
-  if (!referenceId) throw new Error('expo-siri-ai-kit: the SiriAIKit package reference is missing');
+  const referenceId = syrupAIKitReferenceId(project);
+  if (!referenceId) throw new Error('expo-syrup-ai-kit: the SyrupAIKit package reference is missing');
 
   const productId = add(
     project,
@@ -312,7 +312,7 @@ type ModPaths = { projectRoot: string; platformProjectRoot: string };
 /** Adds the evals target from `options.sourceDir` and writes its shared scheme next to the Xcode project. */
 export function addSiriAIEvals(project: XcodeProject, options: EvalsOptions, paths: ModPaths): void {
   if (typeof options.sourceDir !== 'string' || options.sourceDir.length === 0) {
-    throw new Error('expo-siri-ai-kit: evals.sourceDir must name a folder of Swift evaluation tests');
+    throw new Error('expo-syrup-ai-kit: evals.sourceDir must name a folder of Swift evaluation tests');
   }
   const sourceDir = path.resolve(paths.projectRoot, options.sourceDir);
   const [, appTarget] = appTargetEntry(project);

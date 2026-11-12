@@ -1,7 +1,7 @@
 {
-  "name": "expo-siri-ai-kit",
-  "version": "0.2.0",
-  "description": "Make your Expo or React Native app work with Siri AI: an Expo config plugin for SiriAIKit and Apple's Siri AI Developer Preview, with agent skills.",
+  "name": "expo-syrup-ai-kit",
+  "version": "0.3.0",
+  "description": "Make your Expo or React Native app work with Siri AI: the Expo config plugin for Syrup AI Kit and Apple's Siri AI Developer Preview, with agent skills.",
   "main": "app.plugin.js",
   "types": "plugin/build/index.d.ts",
   "files": [
@@ -30,7 +30,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/airowe/siri-ai-kit.git",
+    "url": "git+https://github.com/airowe/syrup-ai-kit.git",
     "directory": "expo-plugin"
   },
   "license": "MIT",

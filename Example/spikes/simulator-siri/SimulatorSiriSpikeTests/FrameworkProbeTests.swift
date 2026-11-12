@@ -11,7 +11,7 @@ import SiriEvaluations
 
 /// Spike: which of Apple's Siri testing frameworks import, link and run on the Simulator.
 final class FrameworkProbeTests: XCTestCase {
-    private let bundleIdentifier = "com.example.siriaikit"
+    private let bundleIdentifier = "com.example.syrupaikit"
 
     func testReportWhatImports() {
         var available: [String] = []

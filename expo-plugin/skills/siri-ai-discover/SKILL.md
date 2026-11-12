@@ -1,6 +1,6 @@
 ---
 name: siri-ai-discover
-description: Use when deciding which Siri AI tools an app should have (Expo, React Native or native iOS), when asked to find an app's primary actions for Siri, when writing or reviewing the tool list in a siri-tools.json declaration for expo-siri-ai-kit's `tools` option, or when drafting Apple App Skills for requests that need several of the app's tools.
+description: Use when deciding which Siri AI tools an app should have (Expo, React Native or native iOS), when asked to find an app's primary actions for Siri, when writing or reviewing the tool list in a siri-tools.json declaration for expo-syrup-ai-kit's `tools` option, or when drafting Apple App Skills for requests that need several of the app's tools.
 license: MIT
 ---
 
@@ -164,7 +164,7 @@ it('says the unread count', async () => {
 - A handler with parameters takes one object: `({ query }: { query: string })`.
 - Don't edit the app's existing code. Extraction is the owners' change.
 
-**Registering the handlers.** Check whether the installed `expo-siri-ai-kit` exports `defineSiriTool`. If it does, also write `src/siri-tools/index.ts`, which calls `defineSiriTool('<handler>', …)` for each handler, and say in the report that the app's entry file must import it at the top level. If it doesn't (true up to 0.2.0), write no `index.ts`: the plugin rejects the `javascript` kind today, and owners answer through a Swift tool in `app-intents/<name>Intent.swift` with the same interface until it ships.
+**Registering the handlers.** Check whether the installed `expo-syrup-ai-kit` exports `defineSiriTool`. If it does, also write `src/siri-tools/index.ts`, which calls `defineSiriTool('<handler>', …)` for each handler, and say in the report that the app's entry file must import it at the top level. If it doesn't (true up to 0.3.0), write no `index.ts`: the plugin rejects the `javascript` kind today, and owners answer through a Swift tool in `app-intents/<name>Intent.swift` with the same interface until it ships.
 
 ### App Skills
 
@@ -269,11 +269,11 @@ If the tests can't run (no test runner, no `node_modules`), say so when you offe
 
 ### C. Write the Swift tool
 
-Offer this only when the app ships on iOS and is on Expo SDK 58 or later (see "Before you start"). Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-siri-ai-kit skill, with:
+Offer this only when the app ships on iOS and is on Expo SDK 58 or later (see "Before you start"). Swift can't call JavaScript until the `javascript` kind ships, so the Swift tool is what answers Siri today. For each tool, write `app-intents/<name>Intent.swift`, following the expo-syrup-ai-kit skill, with:
 
 - the same `title` and `description`, word for word, and one `@Parameter(title:description:)` per declared parameter, with its `title` and `description` word for word;
 - the same answer as the handler: the same sentence for the same data, and failures through `SiriTool`'s `ToolFailure` cases. Where the Swift needs something only the owners can provide, ask them; don't design it;
-- an evaluation for each prompt in the report, following the siri-ai-eval skill, in the folder the plugin's `evals.sourceDir` names. If the app has no `expo-siri-ai-kit` plugin or no `evals` option yet, adding them is an `app.json` change: ask first.
+- an evaluation for each prompt in the report, following the siri-ai-eval skill, in the folder the plugin's `evals.sourceDir` names. If the app has no `expo-syrup-ai-kit` plugin or no `evals` option yet, adding them is an `app.json` change: ask first.
 
 Prebuild and build to check the Swift compiles. Running the evaluations needs the owner's phone, so stop and ask for it.
 

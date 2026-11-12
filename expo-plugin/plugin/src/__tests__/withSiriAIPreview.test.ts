@@ -52,7 +52,7 @@ describe('previewEnabled', () => {
 
 describe('requirementFrom', () => {
   it.each([
-    [{}, { kind: 'version', version: '0.2.0' }],
+    [{}, { kind: 'version', version: '0.3.0' }],
     [{ version: '0.3.1' }, { kind: 'version', version: '0.3.1' }],
     [{ branch: 'main' }, { kind: 'branch', branch: 'main' }],
   ])('props %j give %j', (props, expected) => {
@@ -61,7 +61,7 @@ describe('requirementFrom', () => {
 
   it('rejects a version and a branch together', () => {
     expect(() => requirementFrom({ version: '0.2.0', branch: 'main' })).toThrow(
-      'expo-siri-ai-kit: pass either `version` or `branch`, not both'
+      'expo-syrup-ai-kit: pass either `version` or `branch`, not both'
     );
   });
 });
@@ -87,7 +87,7 @@ describe('siriSkillsOptionsFrom', () => {
 
   it.each([[{ skills: {} }], [{ skills: { sourceDir: '' } }], [{ skills: 'siri-skills' }]])('rejects %j', (props) => {
     expect(() => siriSkillsOptionsFrom(props as any)).toThrow(
-      'expo-siri-ai-kit: skills.sourceDir must name a folder of App Skills'
+      'expo-syrup-ai-kit: skills.sourceDir must name a folder of App Skills'
     );
   });
 });

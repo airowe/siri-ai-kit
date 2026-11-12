@@ -1,14 +1,14 @@
 ---
 name: siri-ai-tool
-description: Use when adding, changing or debugging a Siri AI tool (`@AppIntent(.tool)`) in a native iOS (Swift) app, or when a request says people should ask Siri for live app data such as an order, cart, balance or booking. Also use when Siri answers with stale data or never seems to call the app. In an Expo or React Native app, use expo-siri-ai-kit instead.
+description: Use when adding, changing or debugging a Siri AI tool (`@AppIntent(.tool)`) in a native iOS (Swift) app, or when a request says people should ask Siri for live app data such as an order, cart, balance or booking. Also use when Siri answers with stale data or never seems to call the app. In an Expo or React Native app, use expo-syrup-ai-kit instead.
 license: MIT
 ---
 
-# Siri AI tools with SiriAIKit
+# Siri AI tools with Syrup AI Kit
 
 ## Overview
 
-A Siri AI tool is an App Intent marked `@AppIntent(.tool)` (Siri AI Developer Preview, iOS 27.3 SDK). Siri decides when to call it and waits for it. SiriAIKit (`https://github.com/airowe/siri-ai-kit`) wraps your existing API call so the tool keeps to Siri's time budget, turns errors into sentences Siri can say, and records what each call did.
+A Siri AI tool is an App Intent marked `@AppIntent(.tool)` (Siri AI Developer Preview, iOS 27.3 SDK). Siri decides when to call it and waits for it. SyrupAIKit (`https://github.com/airowe/syrup-ai-kit`) wraps your existing API call so the tool keeps to Siri's time budget, turns errors into sentences Siri can say, and records what each call did.
 
 A plain `AppIntent` plus an `AppShortcutsProvider` is the older Shortcuts path. It is not a Siri AI tool and does not get these guarantees.
 
@@ -26,7 +26,7 @@ Report it even when you can't fix it yet.
 
 ```swift
 import AppIntents
-import SiriAIKit
+import SyrupAIKit
 
 private let tool = SiriTool(appName: "ParcelPal") { error in
     (error as? ShopAPIError) == .serverDown ? .unreachable : nil   // nil: use the default rules

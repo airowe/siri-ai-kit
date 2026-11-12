@@ -1,13 +1,13 @@
-# Generates SiriAIKitExample.xcodeproj: the example app, its Siri evaluations target, and a shared scheme.
+# Generates SyrupAIKitExample.xcodeproj: the example app, its Siri evaluations target, and a shared scheme.
 # The project is committed; run this to regenerate it after adding files.
 require 'xcodeproj'
 
 EXAMPLE_DIR = File.expand_path('..', __dir__)
-PROJECT_PATH = File.join(EXAMPLE_DIR, 'SiriAIKitExample.xcodeproj')
-APP = 'SiriAIKitExample'
-EVALS = 'SiriAIKitExampleEvals'
+PROJECT_PATH = File.join(EXAMPLE_DIR, 'SyrupAIKitExample.xcodeproj')
+APP = 'SyrupAIKitExample'
+EVALS = 'SyrupAIKitExampleEvals'
 DEPLOYMENT_TARGET = '27.3'
-BUNDLE_ID = 'com.example.siriaikit'
+BUNDLE_ID = 'com.example.syrupaikit'
 
 project = Xcodeproj::Project.new(PROJECT_PATH)
 package = project.new(Xcodeproj::Project::Object::XCLocalSwiftPackageReference)
@@ -34,12 +34,12 @@ end
 
 app = project.new_target(:application, APP, :ios, DEPLOYMENT_TARGET)
 add_sources(project, app, APP)
-link_product(project, app, package, 'SiriAIKit')
+link_product(project, app, package, 'SyrupAIKit')
 
 evals = project.new_target(:ui_test_bundle, EVALS, :ios, DEPLOYMENT_TARGET)
 evals.add_dependency(app)
 add_sources(project, evals, EVALS)
-link_product(project, evals, package, 'SiriAIEvalKit')
+link_product(project, evals, package, 'SyrupAIEvalKit')
 # Code both targets need to agree on, such as the switches the evaluations launch the app with.
 add_sources(project, [app, evals], 'Shared')
 
@@ -54,7 +54,7 @@ app.build_configurations.each do |config|
   config.build_settings.merge!(shared).merge!(
     'PRODUCT_NAME' => '$(TARGET_NAME)',
     'PRODUCT_BUNDLE_IDENTIFIER' => BUNDLE_ID,
-    'INFOPLIST_KEY_CFBundleDisplayName' => 'SiriAIKit Example',
+    'INFOPLIST_KEY_CFBundleDisplayName' => 'SyrupAIKit Example',
     'INFOPLIST_KEY_UILaunchScreen_Generation' => 'YES',
     'INFOPLIST_KEY_UIApplicationSceneManifest_Generation' => 'YES',
     'MARKETING_VERSION' => '1.0',

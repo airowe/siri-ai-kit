@@ -248,7 +248,7 @@ describe('parseSiriTools', () => {
       tool.reply = '';
     });
     expect(() => parseSiriTools(declaration, SOURCE)).toThrow(
-      'expo-siri-ai-kit: siri-tools.json has problems:\n' +
+      'expo-syrup-ai-kit: siri-tools.json has problems:\n' +
         '  - tools[0].title: must be a non-empty string\n' +
         '  - tools[0].reply: must be a non-empty string'
     );

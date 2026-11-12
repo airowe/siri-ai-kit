@@ -1,6 +1,6 @@
 # Spike: can the Expo plugin add an App Skills bundle?
 
-**Question.** Apple's App Skills live in one `Skills.skillsbundle` per app target. If the expo-siri-ai-kit config plugin adds that bundle to the Xcode project at prebuild, does Xcode validate and compile it the same way it does a bundle made from its "Skills Bundle" template?
+**Question.** Apple's App Skills live in one `Skills.skillsbundle` per app target. If the expo-syrup-ai-kit config plugin adds that bundle to the Xcode project at prebuild, does Xcode validate and compile it the same way it does a bundle made from its "Skills Bundle" template?
 
 **Answer: yes.** The bundle needs to be a file reference of type `wrapper.skillsbundle` in the app target's Copy Bundle Resources phase.
 

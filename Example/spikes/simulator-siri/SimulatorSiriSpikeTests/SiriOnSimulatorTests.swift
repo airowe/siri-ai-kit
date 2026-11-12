@@ -1,10 +1,10 @@
-import SiriAIKit
+import SyrupAIKit
 import XCTest
 
 /// Spike: can Siri trigger the example app's tool on the Simulator, and can a test see the result?
 final class SiriOnSimulatorTests: XCTestCase {
-    private let bundleIdentifier = "com.example.siriaikit"
-    private let request = "In SiriAIKit Example, what's in my cart?"
+    private let bundleIdentifier = "com.example.syrupaikit"
+    private let request = "In SyrupAIKit Example, what's in my cart?"
     private let readyTimeout: TimeInterval = 60
     private let siriTimeout: TimeInterval = 60
 
