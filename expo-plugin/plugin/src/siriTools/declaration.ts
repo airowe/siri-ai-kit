@@ -11,6 +11,10 @@ export type ToolParameter =
 
 export type ToolRequest = { method: HttpMethod; url: string; body: string[] };
 
+/** `dialog`: Siri speaks the reply and ends the turn. `value`: Siri gets the reply to use, so it can chain tools. */
+const RETURNS = ['dialog', 'value'] as const;
+export type ToolReturns = (typeof RETURNS)[number];
+
 export type ToolDeclaration = {
   name: string;
   title: string;
@@ -18,6 +22,7 @@ export type ToolDeclaration = {
   parameters: ToolParameter[];
   request: ToolRequest;
   reply: string;
+  returns: ToolReturns;
 };
 
 export type SiriToolsDeclaration = { appName?: string; tools: ToolDeclaration[] };
@@ -37,7 +42,7 @@ const RESERVED = new Set(
   ).split(' ')
 );
 
-const TOOL_FIELDS = ['name', 'title', 'description', 'parameters', 'request', 'reply'];
+const TOOL_FIELDS = ['name', 'title', 'description', 'parameters', 'request', 'reply', 'returns'];
 const PARAMETER_FIELDS = ['name', 'type', 'title', 'description', 'cases'];
 const REQUEST_FIELDS = ['method', 'url', 'body'];
 
@@ -188,6 +193,9 @@ function toolProblems(tool: unknown, path: string): string[] {
     ...requestProblems(tool.request, names.filter((name): name is string => typeof name === 'string'), `${path}.request`),
     ...unusedParameterProblems(tool, parameters, path),
     ...replyProblems(tool.reply, `${path}.reply`),
+    ...(tool.returns === undefined || (RETURNS as readonly unknown[]).includes(tool.returns)
+      ? []
+      : [`${path}.returns: must be "dialog" or "value"`]),
   ];
 }
 
@@ -221,6 +229,7 @@ function withDefaults(tool: Json): ToolDeclaration {
       body: (request.body ?? []) as string[],
     },
     reply: tool.reply as string,
+    returns: (tool.returns ?? 'dialog') as ToolReturns,
   };
 }
 
