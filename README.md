@@ -33,10 +33,10 @@ Step-by-step setup for the Mac, the iPhone, native and Expo apps, and the agent 
 Add `https://github.com/airowe/syrup-ai-kit` in Xcode (File > Add Package Dependencies), or in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/airowe/syrup-ai-kit", from: "0.3.0")
+.package(url: "https://github.com/airowe/syrup-ai-kit", from: "0.3.1")
 ```
 
-Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are still in beta. Pin with `.upToNextMinor(from: "0.3.0")` if you need stability.
+Until 1.0, minor versions may change the API, since Apple's Siri AI APIs are still in beta. Pin with `.upToNextMinor(from: "0.3.1")` if you need stability.
 
 ### Who can use your tools today
 

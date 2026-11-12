@@ -49,7 +49,7 @@ SIRI_AI_PREVIEW=1 CP_CACHE_DIR="$PWD/.cp-cache" LANG=en_US.UTF-8 npx expo prebui
 ## Options
 
 ```json
-["expo-syrup-ai-kit", { "version": "0.3.0", "preview": true }]
+["expo-syrup-ai-kit", { "version": "0.3.1", "preview": true }]
 ```
 
 | Option | Default | What it does |

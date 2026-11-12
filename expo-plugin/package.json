@@ -1,6 +1,6 @@
 {
   "name": "expo-syrup-ai-kit",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Make your Expo or React Native app work with Siri AI: the Expo config plugin for Syrup AI Kit and Apple's Siri AI Developer Preview, with agent skills.",
   "main": "app.plugin.js",
   "types": "plugin/build/index.d.ts",
