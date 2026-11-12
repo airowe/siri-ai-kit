@@ -229,7 +229,7 @@ The `siri-ai-discover` skill writes each tool's interface to `siri-tools.json`, 
 
 ## Showing the tool's outcome in your app
 
-Siri Evaluations read the last outcome from the screen. Expose it from your `AppIntentsSetup` inline module, the one `npx expo-app-intents init` created:
+Siri Evaluations read the tool calls from the screen: every call since the evaluation launched the app, oldest first. Expose it from your `AppIntentsSetup` inline module, the one `npx expo-app-intents init` created:
 
 ```swift
 // app-intents/AppIntentsSetup.swift
@@ -242,7 +242,7 @@ final class AppIntentsSetup: Module {
     Name("AppIntentsSetup")
 
     Function("siriToolOutcome") { () -> String in
-      ToolOutcomeLog.standard.last
+      ToolOutcomeLog.standard.summary
     }
   }
 }

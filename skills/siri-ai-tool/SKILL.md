@@ -52,6 +52,8 @@ struct GetOrderStatusIntent: AppIntent {
 - Siri speaks the reply, so keep it to a sentence or two. With several records, say the most relevant one and how many others there are.
 - The `description` is what Siri reads to choose the tool. Say what it returns, in the user's words.
 - Give each parameter a description: `@Parameter(title: "Product", description: "The product to add, as the person names it, like \"oat milk\".")`. Siri reads it to fill the value from what the person said. Say what the person gives, with an example.
+- A tool that changes something (adds, posts, buys) confirms first: `try await requestConfirmation(actionName: .add, dialog: "Add 2 of these to your cart?")`, before `tool.answer`. After a "No" the change never runs, and the wait doesn't eat the timeout. Test it with a two-turn evaluation that says "Yes", and a control that says "No" and expects the result never to be said.
+- Keep tools' descriptions, and enum case titles, from overlapping. If a case is titled "Phones", "search for phones" can pick that tool instead of a search tool.
 - Put the intent in the app target, where your API client already lives.
 
 ## Show each call's outcome
@@ -63,7 +65,7 @@ ToolOutcomeView()
 #endif
 ```
 
-From your API code, `ToolOutcomeLog.standard.note("served from cache")` adds detail to the recorded outcome.
+From your API code, `ToolOutcomeLog.standard.note("served from cache")` adds detail to the recorded outcome. The view lists every call since the evaluation launched the app, so chained tools each show their own outcome.
 
 ## Common mistakes
 

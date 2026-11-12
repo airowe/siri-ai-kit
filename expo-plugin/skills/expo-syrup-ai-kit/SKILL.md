@@ -97,7 +97,7 @@ import SyrupAIKit
 final class AppIntentsSetup: Module {
   public func definition() -> ExpoModulesCore.ModuleDefinition {
     Name("AppIntentsSetup")
-    Function("siriToolOutcome") { () -> String in ToolOutcomeLog.standard.last }
+    Function("siriToolOutcome") { () -> String in ToolOutcomeLog.standard.summary }
   }
 }
 ```
@@ -117,7 +117,7 @@ export function SiriToolOutcome() {
 }
 ```
 
-Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri-ai-tool-outcome` is what SyrupAIEvalKit reads. Don't hide it behind `__DEV__`: evaluations run a Release build, so the outcome would never show. If the module already exists, add the `Function` to it rather than creating a second one. Import `SyrupAIKit` the same way in every file in `app-intents/`: plain `import SyrupAIKit` here and in the tools.
+Render `<SiriToolOutcome />` on a screen that's always visible. The testID `siri-ai-tool-outcome` is what SyrupAIEvalKit reads. Use `summary`, not `last`: `last` is only the newest call, so a run where Siri chains tools would hide an earlier failure. Don't hide it behind `__DEV__`: evaluations run a Release build, so the outcome would never show. If the module already exists, add the `Function` to it rather than creating a second one. Import `SyrupAIKit` the same way in every file in `app-intents/`: plain `import SyrupAIKit` here and in the tools.
 
 ## Prebuild and build traps
 

@@ -111,7 +111,9 @@ Siri then words the reply itself and can call another tool first. On a phone, Si
 
 `SiriTool` records each call's outcome: "succeeded", "timed out", "unreachable" or "failed". Add details from your own code with `ToolOutcomeLog.standard.note("served from cache")`. They appear with the outcome, as in "succeeded (served from cache)". A note belongs to the `SiriTool` call whose code made it. Notes made outside a call, or after a call has timed out, are dropped.
 
-Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read it. If you build your own view, show `ToolOutcomeLog.label()` with the accessibility identifier `ToolOutcomeLog.accessibilityIdentifier`.
+The log keeps every call since it was last cleared, oldest first, so a run where Siri chains tools shows each one: "failed (productId 99999) at 3:01:40 PM; succeeded at 3:01:50 PM". SyrupAIEvalKit launches the app with `ToolOutcomeLog.clearArgument` before every run, which empties the log, so each run shows only its own calls. Outside evaluations the log keeps the newest 20 calls and says how many older ones it dropped.
+
+Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read it. If you build your own view, show `ToolOutcomeLog.label()` with the accessibility identifier `ToolOutcomeLog.accessibilityIdentifier`. To show the calls some other way, use `ToolOutcomeLog.standard.summary`; `last` holds only the newest call, so a run that chains tools would report only its final call.
 
 ## Tools that need the person to be signed in
 
@@ -264,6 +266,16 @@ Run on Nov 12, 2026 on an iPhone 16 Pro on iOS 27.3 beta, with Xcode 27.3 beta (
 Later the same day, a two-turn run answered the prompt with "Yes". Siri called `GetCartIntent`, and in the next four runs it answered the unnamed question from the tool without asking. That yes is why the last row passes ([#27](https://github.com/airowe/syrup-ai-kit/issues/27)).
 
 The 0.2.0 example passed the cart evaluation 5 of 5 on the same phone on Nov 11.
+
+The same day, a fresh Expo app on `expo-syrup-ai-kit@0.3.1` tried tools that return only a value, an enum parameter and a write action with confirmation. Details are in [docs/spikes/tool-codegen.md](docs/spikes/tool-codegen.md#device-run-2-value-only-tools-an-enum-a-failure-and-a-write-action).
+
+| Evaluation | Runs | Real pass rate | What Siri did |
+|---|---|---|---|
+| Two generated value-only tools, chained | 5 | 60% (3 of 5) | Chained them in 3. In 2 it picked a third tool whose enum case "Phones" matched the request. |
+| One generated value-only tool | 5 | 100% (5 of 5) | Worded the answer itself |
+| Generated tool with an enum parameter | 5 | 100% (5 of 5) | Filled `laptops` from "what laptops do you sell?" |
+| Write tool with confirmation, answered "Yes" | 5 | 100% (5 of 5) | Asked to confirm, then added to the cart and said the new total |
+| The same, answered "No" (negative control) | 2 | Passed: the total was never said | "OK. I won't add that to your cart." |
 
 ## Upgrading from SiriAIKit 0.2.0
 

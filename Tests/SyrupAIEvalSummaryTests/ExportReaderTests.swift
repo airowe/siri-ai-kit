@@ -84,4 +84,20 @@ struct ExportReaderTests {
         #expect(text.contains("reply check: pass | outcome: served from cache at 11:31:00 AM"))
         #expect(text.contains("outcome: served from cache at 11:32:00 AM | incomplete"))
     }
+
+    @Test func runWithChainedCallsKeepsEveryCall() throws {
+        let chained = "failed (productId 99999) at 3:01:40 PM; succeeded at 3:01:50 PM"
+        let outcomes = [chained] + Self.outcomes.dropFirst()
+        var folder = try ExportFolder()
+        defer { folder.remove() }
+        for (index, outcome) in outcomes.enumerated() {
+            try folder.addOutcome(outcome, at: Double(100 + index))
+        }
+        try folder.add(.cartWithIncomplete, at: 200)
+        try folder.writeManifest()
+
+        let reports = try ExportReader.reports(in: folder.url)
+        #expect(reports[0].runs.map(\.outcome) == outcomes)
+        #expect(SummaryFormatter.text(reports).contains("outcome: \(chained)"))
+    }
 }

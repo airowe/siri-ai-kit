@@ -128,7 +128,7 @@ Until it ships, the plugin rejects an entry with `javascript` as an unknown fiel
 - **Answer in one spoken sentence.** For a list, give the count and at most three names. Keep it under about 200 characters, and leave out raw dates, HTML and ids.
 - **Save tokens a locked phone can read.** Siri can run the tool while the phone is locked, so a tool that needs sign-in saves its tokens with `AfterFirstUnlock` or `AfterFirstUnlockThisDeviceOnly`. See [tools that need the person to be signed in](../README.md#tools-that-need-the-person-to-be-signed-in).
 - **Fail in words.** Unreachable, timed out and failed each have a sentence (`ToolFailure` in Swift or JS).
-- **Confirm before acting.** Siri must confirm any tool that changes something (posting, marking watched, buying) before it acts.
+- **Confirm before acting.** Siri must confirm any tool that changes something (posting, marking watched, buying) before it acts. In Swift, call `try await requestConfirmation(actionName: .add, dialog: "…")` before `tool.answer`, so a "No" never reaches your API and the wait doesn't count against the timeout. On a phone this passed 5 of 5 after "Yes", and after "No" the request never ran.
 - **Finish within the timeout.** Siri stops waiting after 10 seconds. Work that must finish, like saving to a cache, can carry on after Siri stops waiting.
 - **Keep the answer out of Spotlight.** If the app indexes the answer the tool gives, Siri answers from the index and never calls the tool. Index what identifies a record, not its live state.
 - **Record the outcome.** Show `siri-ai-tool-outcome` in debug builds (see the plugin README), so evaluations can see what each call did.
