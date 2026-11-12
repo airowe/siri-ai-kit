@@ -7,6 +7,7 @@ enum Fixture: String, CaseIterable {
     case cartWithIncomplete = "cart-with-incomplete"
     case orderOneIncomplete = "order-one-incomplete"
     case noToolExpected = "no-tool-expected"
+    case cartAfterSayingYes = "cart-after-saying-yes"
 
     var url: URL {
         Bundle.module.url(forResource: rawValue, withExtension: "xcevalresult", subdirectory: "Fixtures")!

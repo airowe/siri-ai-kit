@@ -48,6 +48,43 @@ struct EvalResultParserTests {
         #expect(run.reply == "Which package? The trail running shoes, the brass desk lamp, or the Ethiopian coffee beans?")
     }
 
+    @Test func laterTurnsContributeToolCalls() throws {
+        let runs = try Fixture.cartAfterSayingYes.report().runs
+        #expect(runs.map(\.toolCalls) == Array(repeating: ["GetCartIntent": false], count: runs.count))
+    }
+
+    @Test func replyIsTheLastTurns() throws {
+        let runs = try Fixture.cartAfterSayingYes.report().runs
+        #expect(runs[1...].allSatisfy { $0.reply == "What can I help you with?" })
+    }
+
+    @Test func runEndingInALaterTurnIsIncomplete() throws {
+        let runs = try Fixture.cartAfterSayingYes.report().runs
+        #expect(runs.map(\.incomplete) == [true, false, false, false, false])
+    }
+
+    @Test(arguments: [
+        ("No — not called", "Yes", true),
+        ("Yes", "No — not called", true),
+        ("No — not called", "No — not called", false),
+    ])
+    func intentIsCalledWhenAnyTurnCallsIt(firstTurn: String, secondTurn: String, called: Bool) throws {
+        let turns = [
+            "Turn 2": ["2 · Intent Call": ["· GetCartIntent": secondTurn], "4 · Siri Response": "\"Done.\""],
+            "Turn 1": ["2 · Intent Call": ["· GetCartIntent": firstTurn], "3 · Siri Response": "\"Is that OK?\""],
+        ]
+        let run = try parseSingleRun(response: turns)
+        #expect(run.toolCalls == ["GetCartIntent": called])
+        #expect(run.reply == "Done.")
+    }
+
+    @Test func turnsAreOrderedNumerically() throws {
+        let turns = (1...10).reduce(into: [String: [String: String]]()) { turns, number in
+            turns["Turn \(number)"] = ["2 · Siri Response": "\"Reply \(number)\""]
+        }
+        #expect(try parseSingleRun(response: turns).reply == "Reply 10")
+    }
+
     @Test func realPassRateIsNilWhenEveryRunIsIncomplete() {
         let report = EvalReport(name: "x", runs: [EvalRun(toolCalls: [:], reply: nil, intentsPassed: false, replyPassed: false, incomplete: true)])
         #expect(report.realPassRate == nil)
@@ -80,4 +117,17 @@ struct EvalResultParserTests {
         let names = try EvalResultParser.parseDirectory(directory).map(\.name).sorted()
         #expect(names == ["Cart answer with incomplete runs, repeated", "Cart contents from the demo API, repeated"])
     }
+}
+
+private func parseSingleRun(response: [String: Any]) throws -> EvalRun {
+    let responseText = String(decoding: try JSONSerialization.data(withJSONObject: response), as: UTF8.self)
+    let file: [String: Any] = [
+        "evaluationID": "Multi-turn",
+        "results": [["Intents": ["kind": "pass"], "Siri Response": ["kind": "pass"], "Response": ["value": responseText]]],
+    ]
+    let directory = try makeTemporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let url = directory.appending(path: "multi-turn.xcevalresult")
+    try JSONSerialization.data(withJSONObject: file).write(to: url)
+    return try #require(try EvalResultParser.parse(contentsOf: url).runs.first)
 }
