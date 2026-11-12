@@ -1,15 +1,15 @@
 # Spike: `@DeferredProperty` and the indexing rule
 
-**Status:** SDK reading and a Simulator index probe are done. The Siri half needs one device run (the command is at the end).
-**Probe:** `Example/SyrupAIKitExample/OrderProbe.swift`, `Example/SyrupAIKitExampleEvals/OrderProbeEvaluationTests.swift`. Throwaway code: don't merge it into the example's pattern.
+**Status:** done. SDK reading, a Simulator index probe, and a device run on Nov 12, 2026 (section 4).
+**Probe:** `OrderProbe.swift` and `OrderProbeEvaluationTests.swift`, removed from the example after the device run because the probe's getter wrote to the example's outcome log (issue #26). They're in git history before that removal.
 
 SyrupAIKit's rule is to index what identifies a record (id, name, synonyms) and never the answer the tool exists to give. If the answer is indexed, Siri answers from Spotlight and never calls the tool. The question here is whether an App Intents entity with an identity-only index and an async `@DeferredProperty` for the answer lets Siri answer live without a tool, and whether giving that property an `indexingKey` brings the stale answer back.
 
 ## Short answers
 
-1. **Forms and availability:** confirmed from the iOS 27.3 SDK (below). The getter is an `async throws` accessor that the system calls on demand, in the app's process. Whether Siri AI calls it *during a turn*, rather than using a value fetched earlier, is the open question for the device run.
+1. **Forms and availability:** confirmed from the iOS 27.3 SDK (below). The getter is an `async throws` accessor that the system calls on demand, in the app's process. On the device, Siri never answered from a deferred property that wasn't indexed (section 4).
 2. **Does `indexingKey` index the deferred value?** **Yes.** On the Simulator, `indexAppEntities` ran the getter and Spotlight then held the live value. A deferred property with an `indexingKey` is indexed like a stored one, so it brings back the stale answer. Indexing also ran the getter of the deferred property *without* a key, but didn't store that value in Spotlight.
-3. **Better pattern or complement?** Draft recommendation: **a complement.** Use the entity for lookup and a tool for the answer, unless the device run shows Siri reads deferred properties live and reliably (see the recommendation draft).
+3. **Better pattern or complement?** **A complement.** Use the entity for lookup and a tool for the answer. A deferred property doesn't replace a tool.
 
 ## 1. What the 27.3 SDK declares
 
@@ -70,16 +70,32 @@ Spotlight matches: fish=0 charger=1 zebra=1. Order contentDescription: nil
 
 Also note whether Siri ever calls `GetCartIntent` for these questions. It reads cart 1, so it can't supply either marker. And `syrup-ai-eval summarize` can't flag "answered without the tool" for these runs, because the scenarios expect no intent. Read the outcomes it prints instead.
 
-## Recommendation (draft, pending the device run)
+## 4. Device run
 
-- **Extend the rule now, whatever the device shows:** never put an `indexingKey` (or `customIndexingKey`) on a property that holds the answer, and that includes `@DeferredProperty`. Indexing fetches the value and stores it, so the answer goes stale.
-- **Default pattern: the entity is a complement, not a replacement.** An `IndexedEntity` with an identity-only index (id, title, synonyms) lets Siri resolve "order 3" or "my order". A `@AppIntent(.tool)` that takes the entity as a parameter gives the answer through `SiriTool`, which provides the timeout, signed-out reply and outcome log, and which Siri Evaluations can assert with `Calls`.
-- **If the device run shows live reads:** a `@DeferredProperty` can carry read-only facts about an entity without a separate tool. Wrap the getter in `SiriTool.answer` (the probe does this) so failures become replies and outcomes get logged. Remember that `indexAppEntities` will call the getter for every entity it indexes, so keep the getter cheap or index rarely. And Siri Evaluations can only assert the result through `Finds` plus reply text, not `Calls`.
-- **Consider for SyrupAIKit 0.3 after the run:** a lint or `summarize` check that warns when an entity property with `"capabilities": 2` also has a `spotlightAttributeKey` in `extract.actionsdata`.
+Nov 12, 2026, iPhone 16 Pro on iOS 27.3 beta, Xcode 27.3 beta (27C5020n), example app at 0.3.0. Five runs each. Two of the ten runs ended before all their results arrived, and aren't counted.
 
-## Device command (not yet run)
+| Evaluation | Complete runs | Reply check | Siri's reply |
+|---|---|---|---|
+| Order 3: deferred property, not indexed (marker "fish") | 4 | 0 of 4 | Cart 1's contents, in `GetCartIntent`'s words: "Your cart has 4 products, $13,037.88: Blue Frock, …" |
+| Shipment 2: deferred property with `indexingKey` (marker "charger") | 3 | 3 of 3 | "Shipment 2 contains a Man Short Sleeve Shirt and an Apple iPhone Charger." |
 
-The iPhone is shared with other sessions, so this spike didn't run anything on it. Keep the phone unlocked, on power and quiet.
+The `foundEntities` check failed in both evaluations.
+
+What it shows:
+
+- **Siri didn't read the deferred property that wasn't indexed.** Asked about order 3, it gave cart 1's contents in every complete run. The reply text and the recorded outcome (a plain "succeeded", with no getter note) match `GetCartIntent`. `summarize` listed no tool calls for these runs, so that match is inferred, not asserted. Either way, the only source of "fish" was never used.
+- **Siri did answer from the indexed one.** The getter runs when the app indexes at launch, so the outcome's time can't separate a live read from the Spotlight copy. Since Siri never read the unindexed property, the Spotlight copy is the likely source. That's the stale answer the rule warns about.
+
+## Recommendation
+
+- **Never put an `indexingKey` (or `customIndexingKey`) on a property that holds the answer, including `@DeferredProperty`.** Indexing fetches the value and stores it, so the answer goes stale, and the device run shows Siri uses it.
+- **The entity is a complement, not a replacement.** An `IndexedEntity` with an identity-only index (id, title, synonyms) lets Siri resolve "order 3" or "my order". A `@AppIntent(.tool)` that takes the entity as a parameter gives the answer through `SiriTool`, which provides the timeout, the failure replies and the outcome log, and which Siri Evaluations can assert with `Calls`.
+- **Don't rely on a `@DeferredProperty` for answers.** Siri didn't read one live in this run.
+- **Worth adding:** a lint or `summarize` check that warns when an entity property with `"capabilities": 2` also has a `spotlightAttributeKey` in `extract.actionsdata`.
+
+## Device command
+
+This needs the probe files from git history. Keep the phone unlocked, on power and quiet.
 
 ```bash
 xcodebuild test -project Example/SyrupAIKitExample.xcodeproj -scheme SyrupAIKitExampleEvals \
