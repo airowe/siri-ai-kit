@@ -15,6 +15,7 @@ Not affiliated with or endorsed by Apple.
 - **Adds SyrupAIKit** as a Swift package and links it to your app target. That's where [`expo-app-intents`](https://docs.expo.dev/versions/latest/sdk/app-intents) compiles the Swift in `app-intents/`, so your tools can `import SyrupAIKit`.
 - **With the preview on, it also:**
   - adds the `SIRI_AI_PREVIEW` Swift compilation condition, so `#if SIRI_AI_PREVIEW` code builds only with the 27.3 SDK;
+  - lets `xcodebuild` add the `SIRI_AI_EVAL_SWITCHES` condition when you pass `SIRI_AI_EVAL_SWITCHES=YES`, for [negative controls](#negative-controls-in-an-expo-app);
   - sets the app target's deployment target to iOS 27.3, which `@Property(title:description:)` requires. Pods keep their own targets.
 - **With `evals` set, adds a UI test target for Siri Evaluations** (see [Evaluation target](#evaluation-target)), so it survives `prebuild --clean`.
 - **With `skills` set, checks your Apple App Skills and adds them to the app as `Skills.skillsbundle`** (see [App Skills](#app-skills)).
@@ -88,6 +89,29 @@ xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -configurati
 Use Release so the JavaScript is in the app. A Debug build loads it from the dev server, so it only starts while `npx expo start` is running.
 
 Prebuild fails with a clear message if `sourceDir` doesn't exist or has no `.swift` files. The file list is read at prebuild, so prebuild again after adding or removing a test file.
+
+### Negative controls in an Expo app
+
+A negative control launches the app with an `EvalSwitch` that breaks the tool, and checks that the reply check fails (see the [SyrupAIKit README](https://github.com/airowe/syrup-ai-kit#prove-the-checks-can-fail-and-measure-without-the-apps-name)). The usual `#if DEBUG` guard around the switch doesn't work here: the evaluations run a Release build, which compiles that code out, so the tool never breaks and the control fails.
+
+With the preview on, the plugin lets you add a `SIRI_AI_EVAL_SWITCHES` condition to one `xcodebuild` run. Guard the switch with it:
+
+```swift
+#if DEBUG || SIRI_AI_EVAL_SWITCHES
+if EvalSwitch.badHost.isOn() { return URL(string: "https://unreachable.invalid")! }
+#endif
+```
+
+and pass `SIRI_AI_EVAL_SWITCHES=YES` when you run the evaluations:
+
+```bash
+xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -configuration Release \
+  -destination 'platform=iOS,name=My iPhone' -resultBundlePath evals.xcresult SIRI_AI_EVAL_SWITCHES=YES
+```
+
+Only a build given `SIRI_AI_EVAL_SWITCHES=YES` compiles the check. `eas build`, an Xcode archive and any other build leave it out, so no copy of the app a person installs can be broken by a launch argument. Forgetting the setting is safe too: the switch does nothing, and the negative control fails, which tells you.
+
+Tools from the [`tools` option](#generating-tools-from-a-declaration-experimental) honour the switch named `bad-host`: with it on, every generated tool calls `https://siri-ai-eval-bad-host.invalid`, which never resolves, and Siri says it couldn't reach the app. Define `static let badHost: EvalSwitch = "bad-host"` in your evaluation tests and use it in `ToolEvaluation.negativeControl(turningOn: .badHost, …)` with the same scenario as the tool's required evaluation.
 
 ## App Skills
 
@@ -193,7 +217,7 @@ A tool's optional `returns` says what Siri gets back:
 - `"dialog"` (the default): Siri says the reply word for word and ends its turn.
 - `"value"`: Siri gets the reply to use, words the answer itself, and can call another tool first. Use it for tools an [App Skill](#app-skills) names, or any tool Siri should combine with others.
 
-At prebuild the plugin writes one Swift tool per entry, plus a shared `SiriToolsGenerated.swift`, to `ios/<App>/SiriTools/` and compiles that folder into the app target. A bad declaration stops prebuild with every problem listed. The format, what it supports and what's still open are in [docs/spikes/tool-codegen.md](../docs/spikes/tool-codegen.md).
+At prebuild the plugin writes one Swift tool per entry, plus a shared `SiriToolsGenerated.swift`, to `ios/<App>/SiriTools/` and compiles that folder into the app target. A bad declaration stops prebuild with every problem listed. Each generated tool breaks when an evaluation turns on the `bad-host` switch, for a [negative control](#negative-controls-in-an-expo-app). The format, what it supports and what's still open are in [docs/spikes/tool-codegen.md](../docs/spikes/tool-codegen.md).
 
 ## Implementing the tools discovery proposes
 

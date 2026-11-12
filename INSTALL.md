@@ -132,7 +132,7 @@ swift run --package-path <syrup-ai-kit checkout> syrup-ai-eval summarize evals.x
 
 Find the UDID with `xcrun devicectl list devices`.
 
-For an Expo app, build the evaluations in Release. A Debug build loads its JavaScript from the dev server, so the evaluation can only launch the app while `npx expo start` is running.
+For an Expo app, build the evaluations in Release. A Debug build loads its JavaScript from the dev server, so the evaluation can only launch the app while `npx expo start` is running. To run a negative control, also pass `SIRI_AI_EVAL_SWITCHES=YES` and guard the switch with `#if DEBUG || SIRI_AI_EVAL_SWITCHES` (see the plugin README's "Negative controls in an Expo app").
 
 **If prebuild or the build fails:** the `expo-syrup-ai-kit` skill's "Prebuild and build traps" table lists the known causes. For example, CocoaPods failing on a non-UTF-8 `LANG` or a broken cache, `No such module 'SyrupAIKit'`, "ambiguous implicit access level", and an evaluation target that disappeared.
 

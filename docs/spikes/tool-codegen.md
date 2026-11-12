@@ -199,6 +199,34 @@ run, although Siri called the tool each time. Check the marker with `curl` again
 
 This ran the Expo path (step 5 below), not the native Example steps. The negative control in step 4 hasn't been run.
 
+## Negative control
+
+A generated tool's URL is fixed in the declaration, so in 0.3.1 no `EvalSwitch` could break it, and an Expo app
+couldn't run a negative control for any tool: its evaluations run in Release, and the documented `#if DEBUG` guard
+compiled the switch out.
+
+Now `SiriToolsGenerated.Request` sends every request to `https://siri-ai-eval-bad-host.invalid` when the app is
+launched with the `bad-host` switch, and reads the switch only inside `#if DEBUG || SIRI_AI_EVAL_SWITCHES`. With the
+preview on, the plugin sets two build settings on the app target:
+
+```
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SIRI_AI_PREVIEW $(SIRI_AI_EVAL_SWITCHES_CONDITION_$(SIRI_AI_EVAL_SWITCHES))"
+SIRI_AI_EVAL_SWITCHES_CONDITION_YES = SIRI_AI_EVAL_SWITCHES
+```
+
+`SIRI_AI_EVAL_SWITCHES` is set by no one but the person running `xcodebuild test ... SIRI_AI_EVAL_SWITCHES=YES`, so
+the condition is on in that build alone. An unset or other value expands to nothing.
+
+**Why not a condition on in every Release build:** a person can't pass launch arguments to an App Store build today,
+but that's iOS policy, not something this code controls. A check that isn't compiled in can't be reached at all, and
+keeping it out costs one extra `xcodebuild` setting. If that's wrong in the other direction, and someone passes the
+setting to an archive, that archive reads the switch, which only ever points the app at a host that doesn't resolve.
+If the setting doesn't reach the compiler, the switch does nothing and the negative control fails, so the mistake
+shows up rather than passing silently.
+
+**Not yet on a phone:** that nested `$(…)` setting resolves as above in a real Expo Release build, and that the
+control fails 5/5 while the required evaluation still passes.
+
 ## Running a device evaluation of a generated tool
 
 Target: 5/5 runs where Siri calls the tool and says something only the API knows. Use `SearchProducts` from the
@@ -227,9 +255,11 @@ query "phones", which returns "Beats Flex Wireless Earphones" today. Check with
      -only-testing:'SyrupAIKitExampleEvals/callsSearchProductsToolEveryTime()' -resultBundlePath search.xcresult
    swift run syrup-ai-eval summarize search.xcresult --fail-on real
    ```
-4. Negative control: change the sample's `SearchProducts` reply to `"Found {total} products."`, rerun
-   `generate-siri-tools.js` and the test. Siri should still call the
-   tool, but the "beats" response check must fail 5/5. If it passes, the check isn't reading the tool's answer.
+4. Negative control: add a second `@Test` with `ToolEvaluation.negativeControl(turningOn: .badHost, …)` and the same
+   scenario, asserting `expectAllFail(.siriResponse)`. With `bad-host` on, the generated request goes to
+   `https://siri-ai-eval-bad-host.invalid`, so Siri should say it couldn't reach the app and the "beats" check must
+   fail in every run. The Example builds in Debug, which reads the switch; an Expo app needs `SIRI_AI_EVAL_SWITCHES=YES`
+   (see "Negative control" below).
 5. To test the Expo path end to end instead, use a copy of the siri-ai-expo app with
    `["expo-syrup-ai-kit", { "tools": "./siri-tools.json", "preview": true }]` pointing at this branch's plugin, then
    `SIRI_AI_PREVIEW=1 npx expo prebuild -p ios --clean` and `npx expo run:ios --device`. This also covers the untested
