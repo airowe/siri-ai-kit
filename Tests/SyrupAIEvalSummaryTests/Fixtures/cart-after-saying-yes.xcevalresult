@@ -1,0 +1,324 @@
+{
+  "durationInMilliseconds" : 64746,
+  "endTime" : "2026-11-12T18:18:38.258Z",
+  "evaluationID" : "Cart contents without the app's name, saying yes to the prompt",
+  "evaluationInfo" : {
+
+  },
+  "reportMetadata" : {
+    "ColumnOrdering" : [
+      "Input",
+      "Response",
+      "Expected",
+      "Correct Intents",
+      "Intents",
+      "Correct Found Entities",
+      "Found Entities",
+      "Correct Onscreen Entities",
+      "Onscreen Entities",
+      "Correct Siri Responses",
+      "Siri Response",
+      "Skills Loaded"
+    ],
+    "MetricDescriptions" : {
+      "Found Entities" : "Share of scenarios where every `Finds` expectation held.",
+      "Intents" : "Share of scenarios where every intent `Calls` expectation held (ordered, unordered and disallowed).",
+      "Onscreen Entities" : "Share of scenarios where every `OnScreen` expectation held.",
+      "Siri Response" : "Share of scenarios where every `SiriResponse` expectation held.",
+      "Skills Loaded" : "Share of scenarios where every `Loads(.required)` expectation held."
+    },
+    "SummaryColumnOrdering" : [
+      "Mean of Intents",
+      "Mean of Siri Response"
+    ]
+  },
+  "resultID" : "00000000-0000-0000-0000-000000000001",
+  "results" : [
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 2 checks held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)from now on'\"\n    }\n  },\n  \"Turn 2\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"What's in my cart?\\\"  →  \\\"Yes\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)from now on\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000002\",\n      \"utterance\" : \"What's in my cart?\"\n    },\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.syrupaikit\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000003\",\n      \"utterance\" : \"Yes\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.syrupaikit\" : \"3 App Entities\\nOrderEntity × 1 · ReceiptEntity × 1 · ShipmentEntity × 1\"\n    },\n    \"Turns\" : \"0 of 2 turns completed · the run ended before all of its results arrived; run the scenario again\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"What's in my cart?\\\"\",\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"—\"\n    },\n    \"3 · Siri Response\" : \"\\\"I can help you with requests like that in SyrupAIKit Example from now on. Is that OK?\\\"\"\n  },\n  \"Turn 2\" : {\n    \"1 · User Utterance\" : \"\\\"Yes\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — the run ended before all of its results arrived\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"—\"\n    },\n    \"4 · Siri Response\" : \"Unknown — the run ended before all of its results arrived\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 2 checks held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 2 checks held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)from now on'\"\n    }\n  },\n  \"Turn 2\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"What's in my cart?\\\"  →  \\\"Yes\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)from now on\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000004\",\n      \"utterance\" : \"What's in my cart?\"\n    },\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.syrupaikit\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000005\",\n      \"utterance\" : \"Yes\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.syrupaikit\" : \"3 App Entities\\nOrderEntity × 1 · ReceiptEntity × 1 · ShipmentEntity × 1\"\n    },\n    \"Turns\" : \"2 of 2 turns completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"What's in my cart?\\\"\",\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n    },\n    \"3 · Siri Response\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  },\n  \"Turn 2\" : {\n    \"1 · User Utterance\" : \"\\\"Yes\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — not called\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"\\\"What can I help you with?\\\"\"\n    },\n    \"4 · Siri Response\" : \"\\\"What can I help you with?\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 2 checks held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 2 checks held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)from now on'\"\n    }\n  },\n  \"Turn 2\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"What's in my cart?\\\"  →  \\\"Yes\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)from now on\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000006\",\n      \"utterance\" : \"What's in my cart?\"\n    },\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.syrupaikit\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000007\",\n      \"utterance\" : \"Yes\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.syrupaikit\" : \"3 App Entities\\nOrderEntity × 1 · ReceiptEntity × 1 · ShipmentEntity × 1\"\n    },\n    \"Turns\" : \"2 of 2 turns completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"What's in my cart?\\\"\",\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n    },\n    \"3 · Siri Response\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  },\n  \"Turn 2\" : {\n    \"1 · User Utterance\" : \"\\\"Yes\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — not called\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"\\\"What can I help you with?\\\"\"\n    },\n    \"4 · Siri Response\" : \"\\\"What can I help you with?\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 2 checks held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 2 checks held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)from now on'\"\n    }\n  },\n  \"Turn 2\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"What's in my cart?\\\"  →  \\\"Yes\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)from now on\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000008\",\n      \"utterance\" : \"What's in my cart?\"\n    },\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.syrupaikit\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000009\",\n      \"utterance\" : \"Yes\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.syrupaikit\" : \"3 App Entities\\nOrderEntity × 1 · ReceiptEntity × 1 · ShipmentEntity × 1\"\n    },\n    \"Turns\" : \"2 of 2 turns completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"What's in my cart?\\\"\",\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n    },\n    \"3 · Siri Response\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  },\n  \"Turn 2\" : {\n    \"1 · User Utterance\" : \"\\\"Yes\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — not called\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"\\\"What can I help you with?\\\"\"\n    },\n    \"4 · Siri Response\" : \"\\\"What can I help you with?\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 2 checks held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    },
+    {
+      "Correct Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Intents" : {
+        "kind" : "score",
+        "rationale" : "0 of 1 check held",
+        "value" : 0
+      },
+      "Correct Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Correct Siri Responses" : {
+        "kind" : "score",
+        "rationale" : "0 of 2 checks held",
+        "value" : 0
+      },
+      "Expected" : "{\n  \"Turn 1\" : {\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)from now on'\"\n    }\n  },\n  \"Turn 2\" : {\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"Yes\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"Contains pattern '(?i)motorcycle'\"\n    }\n  }\n}",
+      "Found Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Input" : "{\n  \"input\" : \"\\\"What's in my cart?\\\"  →  \\\"Yes\\\"\",\n  \"scenarioExpectations\" : [\n\n  ],\n  \"turns\" : [\n    {\n      \"expectations\" : [\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)from now on\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000010\",\n      \"utterance\" : \"What's in my cart?\"\n    },\n    {\n      \"expectations\" : [\n        {\n          \"calls\" : {\n            \"_0\" : {\n              \"intents\" : [\n                {\n                  \"definition\" : {\n                    \"bundleIdentifier\" : \"com.example.syrupaikit\",\n                    \"identifier\" : \"GetCartIntent\"\n                  },\n                  \"parameterMatchers\" : {\n\n                  },\n                  \"requirement\" : \"All parameters match expectations.\"\n                }\n              ],\n              \"ordering\" : \"ordered\"\n            }\n          }\n        },\n        {\n          \"siriResponse\" : {\n            \"_0\" : {\n              \"matchers\" : [\n                {\n                  \"matcherType\" : {\n                    \"string\" : {\n                      \"_0\" : {\n                        \"operation\" : {\n                          \"matchesRegex\" : {\n                            \"_0\" : \"(?i)motorcycle\"\n                          }\n                        }\n                      }\n                    }\n                  }\n                }\n              ]\n            }\n          }\n        }\n      ],\n      \"id\" : \"00000000-0000-0000-0000-000000000011\",\n      \"utterance\" : \"Yes\"\n    }\n  ]\n}",
+      "Intents" : {
+        "kind" : "fail",
+        "rationale" : "0 of 1 check held",
+        "value" : false
+      },
+      "Onscreen Entities" : {
+        "kind" : "ignore",
+        "rationale" : "no expectations of this kind",
+        "value" : null
+      },
+      "Response" : {
+        "typeName" : "ScenarioReport",
+        "value" : "{\n  \"Diagnostics\" : {\n    \"Spotlight Index\" : {\n      \"com.example.syrupaikit\" : \"3 App Entities\\nOrderEntity × 1 · ReceiptEntity × 1 · ShipmentEntity × 1\"\n    },\n    \"Turns\" : \"2 of 2 turns completed\"\n  },\n  \"Turn 1\" : {\n    \"1 · User Utterance\" : \"\\\"What's in my cart?\\\"\",\n    \"2 · Response Check\" : {\n      \"· Reply\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n    },\n    \"3 · Siri Response\" : \"\\\"From SyrupAIKit Example: Your cart has 4 products, $13,037.88: Blue Frock, Generic Motorcycle, iPhone 6, Baseball Ball.\\\"\"\n  },\n  \"Turn 2\" : {\n    \"1 · User Utterance\" : \"\\\"Yes\\\"\",\n    \"2 · Intent Call\" : {\n      \"· GetCartIntent\" : \"No — not called\"\n    },\n    \"3 · Response Check\" : {\n      \"· Reply\" : \"\\\"What can I help you with?\\\"\"\n    },\n    \"4 · Siri Response\" : \"\\\"What can I help you with?\\\"\"\n  }\n}"
+      },
+      "Siri Response" : {
+        "kind" : "fail",
+        "rationale" : "0 of 2 checks held",
+        "value" : false
+      },
+      "Skills Loaded" : {
+        "kind" : "ignore",
+        "rationale" : "no Loads(.required) expectations",
+        "value" : null
+      }
+    }
+  ],
+  "startTime" : "2026-11-12T18:17:33.512Z",
+  "summary" : [
+    {
+      "Mean of Intents" : {
+        "group" : "Overview",
+        "operation" : {
+          "metric" : "Intents",
+          "type" : "mean"
+        },
+        "value" : 0
+      },
+      "Mean of Siri Response" : {
+        "group" : "Siri Response",
+        "operation" : {
+          "metric" : "Siri Response",
+          "type" : "mean"
+        },
+        "value" : 0
+      }
+    }
+  ]
+}
