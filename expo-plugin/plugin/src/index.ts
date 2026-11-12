@@ -9,7 +9,7 @@ import { type SiriToolsOptions, addSiriToolsGroup, siriToolsFolder, withSiriTool
 const pkg = require('../../package.json');
 
 /** The SyrupAIKit release this plugin version was tested with. */
-const DEFAULT_VERSION = '0.3.1';
+const DEFAULT_VERSION = '0.4.0';
 
 export type SyrupAIKitPluginProps = {
   /** SyrupAIKit version to use, up to the next minor. Defaults to the release this plugin was tested with. */

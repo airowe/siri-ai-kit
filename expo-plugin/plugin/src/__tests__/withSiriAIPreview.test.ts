@@ -91,8 +91,8 @@ describe('previewEnabled', () => {
 
 describe('requirementFrom', () => {
   it.each([
-    [{}, { kind: 'version', version: '0.3.1' }],
-    [{ version: '0.3.1' }, { kind: 'version', version: '0.3.1' }],
+    [{}, { kind: 'version', version: '0.4.0' }],
+    [{ version: '0.4.0' }, { kind: 'version', version: '0.4.0' }],
     [{ branch: 'main' }, { kind: 'branch', branch: 'main' }],
   ])('props %j give %j', (props, expected) => {
     expect(requirementFrom(props)).toEqual(expected);
