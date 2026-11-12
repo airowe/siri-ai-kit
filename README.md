@@ -2,9 +2,64 @@
 
 [![npm: expo-syrup-ai-kit](https://img.shields.io/npm/v/expo-syrup-ai-kit?label=expo-syrup-ai-kit)](https://www.npmjs.com/package/expo-syrup-ai-kit)
 
-Syrup AI Kit: Siri AI tools for iOS, Expo and React Native apps. Formerly SiriAIKit.
+Let Siri AI call your app's API, and prove on a real iPhone that it does.
 
-Make your iOS, Expo or React Native app work with Siri AI, Apple's Siri AI Developer Preview (iOS 27.3 beta): people ask Siri about their orders, bookings or balances, or ask it to act, and Siri calls your app's tools.
+Apple's Siri AI Developer Preview (iOS 27.3 beta) lets people ask Siri about their orders, bookings or balances, or ask it to act, and Siri calls your app's tools. Syrup AI Kit is for iOS, Expo and React Native apps. It turns your existing API calls into Siri tools, and it tests them with Siri Evaluations on a device, telling real failures apart from runs that were cut short.
+
+Syrup AI Kit is not affiliated with or endorsed by Apple. Formerly SiriAIKit.
+
+## Expo in three steps
+
+1. Install the plugins:
+   ```bash
+   npx expo install expo-syrup-ai-kit expo-app-intents
+   npx expo-app-intents init --examples minimal
+   ```
+2. Describe a tool that calls your API in `siri-tools.json`, and add `["expo-syrup-ai-kit", { "tools": "./siri-tools.json" }]` after `"expo-app-intents"` in your `app.json` plugins:
+   ```json
+   {
+     "tools": [
+       {
+         "name": "GetProductDetails",
+         "title": "Get Product Details",
+         "description": "Says one product's name, price in dollars and how many are in stock, by its product id.",
+         "parameters": [
+           { "name": "productId", "type": "int", "title": "Product ID", "description": "The product id number, like 101." }
+         ],
+         "request": { "method": "GET", "url": "https://dummyjson.com/products/{productId}" },
+         "reply": "{title} costs {price} dollars, with {stock} in stock."
+       }
+     ]
+   }
+   ```
+3. Prebuild with the preview on, and run on a phone set up for Siri AI ([INSTALL.md](INSTALL.md)):
+   ```bash
+   SIRI_AI_PREVIEW=1 CP_CACHE_DIR="$PWD/.cp-cache" LANG=en_US.UTF-8 npx expo prebuild -p ios
+   npx expo run:ios --device
+   ```
+
+Then ask Siri "In Sample App, how much is product 1?". Generating tools from JSON is experimental; Swift tools work in Expo apps too. Everything else is in the [plugin's README](expo-plugin/).
+
+## Measured on a phone
+
+Each evaluation asks Siri the same thing several times on an iPhone 16 Pro, and checks both the tool Siri called and what it said:
+
+| Evaluation | Result |
+|---|---|
+| A tool that reads a live API | 5 of 5 |
+| A tool with an enum parameter, filled from "what laptops do you sell?" | 5 of 5 |
+| A write action that asks to confirm, answered "Yes" | 5 of 5 |
+| The same tool pointed at a host that doesn't resolve (a negative control, which must fail) | Failed every complete run, as it should |
+
+The full tables, including what didn't work, are under [Verified on a device](#verified-on-a-device).
+
+## Swift apps and coding agents
+
+Keep your own networking. Syrup AI Kit adds what Siri needs on top:
+
+- **`SyrupAIKit`:** wraps the API code you already have in a Siri tool. It keeps to Siri's time budget, turns failures into sentences Siri can say, and records what each call did.
+- **`SyrupAIEvalKit`:** less setup for Siri Evaluations tests. It launches your app, waits until it's ready, runs a scenario several times, and records what your tool did in each run.
+- **`siri-ai-eval`:** a command-line tool that summarizes evaluation results and separates runs that were cut short from real failures.
 
 Using a coding agent? Install the skills and ask it to "make my app work with Siri AI":
 
@@ -13,15 +68,7 @@ Using a coding agent? Install the skills and ask it to "make my app work with Si
 /plugin install syrup-ai-kit@syrup-ai-kit
 ```
 
-Other agents: `npx skills add airowe/syrup-ai-kit`. Expo apps also use the [`expo-syrup-ai-kit`](expo-plugin/) config plugin.
-
-Keep your own networking. Syrup AI Kit adds what Siri needs on top:
-
-- **`SyrupAIKit`:** wraps the API code you already have in a Siri tool. It keeps to Siri's time budget, turns failures into sentences Siri can say, and records what each call did.
-- **`SyrupAIEvalKit`:** less setup for Siri Evaluations tests. It launches your app, waits until it's ready, runs a scenario several times, and records what your tool did in each run.
-- **`siri-ai-eval`:** a command-line tool that summarizes evaluation results and separates runs that were cut short from real failures.
-
-Syrup AI Kit is not affiliated with or endorsed by Apple.
+Other agents: `npx skills add airowe/syrup-ai-kit`.
 
 ## Requirements
 
@@ -313,6 +360,8 @@ In Claude Code:
 For other agents, copy the folders in [`skills/`](skills/) and [`expo-plugin/skills/`](expo-plugin/skills/) into the agent's skills directory. From the release after 0.2.0, the `expo-syrup-ai-kit` npm package also includes the Expo skills, under `node_modules/expo-syrup-ai-kit/skills/`. 0.2.0 doesn't.
 
 ## Development
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to send a change.
 
 ```bash
 swift test                     # SyrupAIKit, SyrupAIEvalKit and summary tests, on the Mac
