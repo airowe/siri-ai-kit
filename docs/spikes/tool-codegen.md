@@ -199,6 +199,46 @@ run, although Siri called the tool each time. Check the marker with `curl` again
 
 This ran the Expo path (step 5 below), not the native Example steps. The negative control in step 4 hasn't been run.
 
+## Device run 2: value-only tools, an enum, a failure and a write action
+
+Nov 12, 2026, same phone and Xcode. A fresh Expo 58 app named "Sample App" had `expo-syrup-ai-kit@0.3.1` from npm and
+three generated tools against DummyJSON:
+
+- `SearchProducts`, `"returns": "value"`: replies with the first three titles and their product ids, but not prices.
+- `GetProductDetails`, `"returns": "value"`: takes an `int` product id and replies with the title, price and stock.
+- `ListCategoryProducts`, the default dialog: takes an `enum` category with cases `smartphones` ("Phones"),
+  `laptops` and `tablets`.
+
+It also had one hand-written Swift tool, `AddToCart`, that calls `requestConfirmation(actionName: .add, dialog:)`
+before `SiriTool.answer` POSTs to `/carts/add`. Release build, summarized with `syrup-ai-eval summarize --fail-on real`.
+
+| Evaluation | Runs | Real pass rate | What Siri did |
+|---|---|---|---|
+| "Search for phones and tell me the price of the first one": search, then details | 5 | 60% (3 of 5) | In 3 runs it called `SearchProducts`, then `GetProductDetails` with the first id, and said "$549.99". In 2 it called neither: it picked `ListCategoryProducts`, because "phones" matched that tool's "Phones" case, and listed phones from that category. |
+| "How much is product 1?" (one value-only tool) | 5 | 100% (5 of 5) | Called `GetProductDetails` and worded the answer itself: "Product 1, Essence Mascara Lash Princess, costs $9.99." |
+| "What laptops do you sell?" (enum parameter) | 5 | 100% (5 of 5) | Called `ListCategoryProducts` with `laptops` and read the reply word for word. |
+| "How much is product 99999?" (the API returns 404) | 4 (3 complete) | Reported, not asserted | The tool failed: its outcome was "failed (productId 99999)". Siri said, for example, "Sample App couldn't find product 99999 or return a price for it." It never made up a price. |
+| "Add 2 of product 1 to my cart", then "Yes" | 5 | 100% (5 of 5) | Asked to confirm, then called `AddToCart` and said "Added. Your cart total is now 19.98 dollars." |
+| The same, then "No" (negative control) | 2 | Passed: the total was never said | "OK. I won't add that to your cart." The tool's request never ran. |
+
+What it showed:
+
+- **A generated value-only tool can be chained and works on its own.** Siri words the answer, so check for the
+  value (the price), not a sentence.
+- **Tools whose words overlap compete.** An enum case title counts: "phones" picked the "Phones" case over a search.
+  Keep tool descriptions and case titles apart, or expect Siri to choose either.
+- **Confirmation works with two turns.** `requestConfirmation` before `SiriTool.answer` means a "No" never reaches
+  the API, and the confirmation wait doesn't count against the tool's timeout.
+- **The outcome log keeps only the last call.** Generated tools share one `SiriTool`, so when Siri calls a second
+  tool after a failure, its "succeeded" replaces the failure. The product id note above is what showed which call
+  failed. It was added to the generated Swift for this run only.
+- **Value-only runs took about a minute each in the harness,** against about 11 seconds for dialog tools. The cause
+  wasn't measured, and nothing here shows how long the person waits.
+- **A generated tool still has no negative control.** Its URL is fixed, so an `EvalSwitch` can't break it.
+
+The first attempt at the first three evaluations failed before any Siri request with "Timed out while enabling
+automation mode"; they passed this table's numbers on a rerun.
+
 ## Running a device evaluation of a generated tool
 
 Target: 5/5 runs where Siri calls the tool and says something only the API knows. Use `SearchProducts` from the
