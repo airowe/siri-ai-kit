@@ -219,13 +219,15 @@ The [example app](Example/) shows all of this working against a real API.
 
 ## Verified on a device
 
-Run on Nov 11, 2026 on an iPhone 16 Pro on iOS 27.3 beta, with Xcode 27.3 beta (27C5020n), using the example app at 0.2.0:
+Run on Nov 12, 2026 on an iPhone 16 Pro on iOS 27.3 beta, with Xcode 27.3 beta (27C5020n), using the example app at 0.3.0 against DummyJSON's public cart:
 
-| Evaluation | Runs | Apple pass rate | Real pass rate | Recorded outcomes |
+| Evaluation | Runs | Apple pass rate | Real pass rate | What Siri did |
 |---|---|---|---|---|
-| Cart from the demo API | 5 | 100% | 100% (5 of 5) | "succeeded" in all 5 |
+| Cart from the demo API | 5 | 100% | 100% (5 of 5) | Called `GetCartIntent` and read the cart in all 5 |
+| Cart with a bad host (negative control) | 2 (1 complete) | 0% | Passed: the reply check failed, as expected | Called `GetCartIntent` and said "Couldn't reach SyrupAIKit Example right now." Outcome: "unreachable" |
+| Cart without the app's name (informational) | 5 | 0% | 0% (0 of 5) | Asked to handle such requests in the app from now on, and waited for a yes |
 
-The example has since moved to DummyJSON's public cart, with a `bad-host` negative control. Those evaluations haven't been rerun on a device yet.
+The 0.2.0 example passed the cart evaluation 5 of 5 on the same phone on Nov 11.
 
 ## Upgrading from SiriAIKit 0.2.0
 
