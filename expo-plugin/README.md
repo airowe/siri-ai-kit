@@ -25,7 +25,10 @@ The full setup, including the Mac, the iPhone and a checklist for coding agents,
 
 ```bash
 npx expo install expo-syrup-ai-kit expo-app-intents
+npx expo-app-intents init --examples minimal
 ```
+
+`init` creates `app-intents/AppIntentsSetup.swift`, the inline module used in [Showing the tool's outcome](#showing-the-tools-outcome-in-your-app), and turns on inline modules in `app.json`. `npx expo install` adds both plugins; list them in this order:
 
 ```json
 {
@@ -38,8 +41,10 @@ npx expo install expo-syrup-ai-kit expo-app-intents
 Then prebuild with the preview on:
 
 ```bash
-SIRI_AI_PREVIEW=1 npx expo prebuild -p ios
+SIRI_AI_PREVIEW=1 CP_CACHE_DIR="$PWD/.cp-cache" LANG=en_US.UTF-8 npx expo prebuild -p ios
 ```
+
+`CP_CACHE_DIR` gives CocoaPods a cache of its own, which avoids a missing-`Info.plist` failure from a broken shared cache. `LANG` avoids a CocoaPods encoding error.
 
 ## Options
 
@@ -74,8 +79,11 @@ On every prebuild the plugin adds a `<AppName>Evals` UI test target that:
 Run the evaluations on an iPhone on iOS 27.3 with Siri AI on:
 
 ```bash
-xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -destination 'platform=iOS,name=My iPhone'
+xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -configuration Release \
+  -destination 'platform=iOS,name=My iPhone' -resultBundlePath evals.xcresult
 ```
+
+Use Release so the JavaScript is in the app. A Debug build loads it from the dev server, so it only starts while `npx expo start` is running.
 
 Prebuild fails with a clear message if `sourceDir` doesn't exist or has no `.swift` files. The file list is read at prebuild, so prebuild again after adding or removing a test file.
 
@@ -188,15 +196,45 @@ The `siri-ai-discover` skill writes each tool's interface to `siri-tools.json`, 
 
 ## Showing the tool's outcome in your app
 
-Siri Evaluations read the last outcome from the screen. Expose it from your `AppIntentsSetup` inline module:
+Siri Evaluations read the last outcome from the screen. Expose it from your `AppIntentsSetup` inline module, the one `npx expo-app-intents init` created:
 
 ```swift
-Function("siriToolOutcome") { () -> String in
-  ToolOutcomeLog.standard.last
+// app-intents/AppIntentsSetup.swift
+internal import ExpoAppIntents
+internal import ExpoModulesCore
+import SyrupAIKit
+
+final class AppIntentsSetup: Module {
+  public func definition() -> ExpoModulesCore.ModuleDefinition {
+    Name("AppIntentsSetup")
+
+    Function("siriToolOutcome") { () -> String in
+      ToolOutcomeLog.standard.last
+    }
+  }
 }
 ```
 
-Then render it from JavaScript with `testID="siri-ai-tool-outcome"`.
+Import `SyrupAIKit` the same way in every file in `app-intents/`. Here it's a plain `import`, as in [A first tool](#a-first-tool). If one file says `internal import SyrupAIKit` and another `import SyrupAIKit`, the build fails with "ambiguous implicit access level".
+
+Then show it on a screen that's always visible, with `testID="siri-ai-tool-outcome"`:
+
+```tsx
+import { requireNativeModule } from 'expo';
+import { useEffect, useState } from 'react';
+import { Text } from 'react-native';
+
+const Setup = requireNativeModule<{ siriToolOutcome(): string }>('AppIntentsSetup');
+
+export function SiriToolOutcome() {
+  const [outcome, setOutcome] = useState(Setup.siriToolOutcome());
+  useEffect(() => {
+    const poll = setInterval(() => setOutcome(Setup.siriToolOutcome()), 1000);
+    return () => clearInterval(poll);
+  }, []);
+  return <Text testID="siri-ai-tool-outcome">{outcome}</Text>;
+}
+```
 
 ## Agent skills
 

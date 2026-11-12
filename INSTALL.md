@@ -46,9 +46,12 @@ You need Expo SDK 58 or later and a development build. Expo Go can't load the na
 
 ```bash
 npx expo install expo-syrup-ai-kit expo-app-intents
+npx expo-app-intents init --examples minimal
 ```
 
-Add both plugins to `app.json` (or `app.config.*`):
+`init` creates `app-intents/AppIntentsSetup.swift`, the inline module that your Swift in `app-intents/` and the outcome readout use, and turns on inline modules in `app.json`. Keep the class name.
+
+`npx expo install` adds both plugins by name only. Replace them in `app.json` (or `app.config.*`) with:
 
 ```json
 {
@@ -68,9 +71,13 @@ Add both plugins to `app.json` (or `app.config.*`):
 Generate the native project and build to the phone:
 
 ```bash
-npx expo prebuild -p ios
+CP_CACHE_DIR="$PWD/.cp-cache" LANG=en_US.UTF-8 npx expo prebuild -p ios
 npx expo run:ios --device
 ```
+
+`CP_CACHE_DIR` gives CocoaPods a cache of its own. A shared cache that's been left broken makes `pod install` fail with a missing `Info.plist` in a React Native or Hermes framework. Add `.cp-cache` to `.gitignore`.
+
+Import `SyrupAIKit` the same way in every file in `app-intents/`. `init` writes `internal import` for its own modules. If one file says `internal import SyrupAIKit` and another plain `import SyrupAIKit`, the build stops with "ambiguous implicit access level". The examples in these docs use plain `import SyrupAIKit`.
 
 Never edit `ios/` by hand. Prebuild regenerates it, so change `app.json` or the plugin options instead. Your tools go in `app-intents/` as Swift files, and `expo-app-intents` compiles them into the app target. See the [plugin README](expo-plugin/README.md) for every option, and [docs/implementing-tools.md](docs/implementing-tools.md) for writing tools.
 
@@ -118,13 +125,16 @@ ls ios/*.xcodeproj/xcshareddata/xcschemes/                # <App>Evals.xcscheme,
 **Evaluations:**
 
 ```bash
-xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -destination 'id=<device UDID>' -allowProvisioningUpdates
-swift run --package-path <syrup-ai-kit checkout> syrup-ai-eval summarize <result>.xcresult --fail-on real
+xcodebuild test -workspace ios/MyApp.xcworkspace -scheme MyAppEvals -configuration Release \
+  -destination 'id=<device UDID>' -allowProvisioningUpdates -resultBundlePath evals.xcresult
+swift run --package-path <syrup-ai-kit checkout> syrup-ai-eval summarize evals.xcresult --fail-on real
 ```
 
 Find the UDID with `xcrun devicectl list devices`.
 
-**If prebuild or the build fails:** the `expo-syrup-ai-kit` skill's "Prebuild and build traps" table lists the known causes. For example, CocoaPods failing on a non-UTF-8 `LANG`, `No such module 'SyrupAIKit'`, and an evaluation target that disappeared.
+For an Expo app, build the evaluations in Release. A Debug build loads its JavaScript from the dev server, so the evaluation can only launch the app while `npx expo start` is running.
+
+**If prebuild or the build fails:** the `expo-syrup-ai-kit` skill's "Prebuild and build traps" table lists the known causes. For example, CocoaPods failing on a non-UTF-8 `LANG` or a broken cache, `No such module 'SyrupAIKit'`, "ambiguous implicit access level", and an evaluation target that disappeared.
 
 ## For coding agents
 
@@ -134,7 +144,7 @@ Follow these steps in order. Stop and ask the person at each **Ask** step, becau
 2. **Identify the project.** It's an Expo app if `package.json` has `expo` and there's an `app.json` or `app.config.*`; check the major version of `expo`. Otherwise it's a native app if there's an `.xcodeproj` or `Package.swift`.
 3. **Install the skills** for yourself if they're missing (section 3), then read the `expo-syrup-ai-kit` skill (Expo) or the `siri-ai-tool` skill (native) before changing anything.
 4. **Install the kit** (section 2a or 2b).
-   - Expo: use `npx expo install`, or `bunx expo install` when `bun.lock` is present, never `npm install`. Add the plugins to the app config, never to `ios/`.
+   - Expo: use `npx expo install`, or `bunx expo install` when `bun.lock` is present, never `npm install`. Run `npx expo-app-intents init --examples minimal` unless `app-intents/AppIntentsSetup.swift` already exists. Add the plugins to the app config, never to `ios/`.
    - Native: add the package in `Package.swift` or the project, and link the targets as described.
 5. **Prebuild and verify** with the commands in section 4, and report each output to the person. A count of 0 means the step failed: say so, don't move on.
 6. **Ask** the person to set up the phone: Siri AI, Developer Mode and Enable UI Automation on, plugged in and unlocked. Its language must be one Siri AI supports, and it must be outside the EU. If Siri never calls the tool, check these before changing code. Also ask for the device and team to build with. Pass the device UDID and team ID on the command line only, and never write them into files that get committed.
