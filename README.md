@@ -111,7 +111,9 @@ Siri then words the reply itself and can call another tool first. On a phone, Si
 
 `SiriTool` records each call's outcome: "succeeded", "timed out", "unreachable" or "failed". Add details from your own code with `ToolOutcomeLog.standard.note("served from cache")`. They appear with the outcome, as in "succeeded (served from cache)". A note belongs to the `SiriTool` call whose code made it. Notes made outside a call, or after a call has timed out, are dropped.
 
-Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read it. If you build your own view, show `ToolOutcomeLog.label()` with the accessibility identifier `ToolOutcomeLog.accessibilityIdentifier`.
+The log keeps every call since it was last cleared, oldest first, so a run where Siri chains tools shows each one: "failed (productId 99999) at 3:01:40 PM; succeeded at 3:01:50 PM". SyrupAIEvalKit launches the app with `ToolOutcomeLog.clearArgument` before every run, which empties the log, so each run shows only its own calls. Outside evaluations the log keeps the newest 20 calls and says how many older ones it dropped.
+
+Add `ToolOutcomeView()` (debug builds only) to your app so evaluations can read it. If you build your own view, show `ToolOutcomeLog.label()` with the accessibility identifier `ToolOutcomeLog.accessibilityIdentifier`. To show the calls some other way, use `ToolOutcomeLog.standard.summary`; `last` holds only the newest call, so a run that chains tools would report only its final call.
 
 ## Tools that need the person to be signed in
 

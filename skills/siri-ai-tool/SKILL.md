@@ -65,7 +65,7 @@ ToolOutcomeView()
 #endif
 ```
 
-From your API code, `ToolOutcomeLog.standard.note("served from cache")` adds detail to the recorded outcome.
+From your API code, `ToolOutcomeLog.standard.note("served from cache")` adds detail to the recorded outcome. The view lists every call since the evaluation launched the app, so chained tools each show their own outcome.
 
 ## Common mistakes
 

@@ -135,7 +135,7 @@ Find the device UDID with `xcrun devicectl list devices`. A result bundle path t
 | "answered without calling the tool" | Reply passed but the tool wasn't called: Siri answered from the Spotlight index. Remove the answer from the index. |
 | "Informational: not counted toward the exit status." | An `appNotNamed` evaluation. Its pass rate is a finding only. |
 | "Negative control: … as expected." | Every complete run's reply check failed, so the checks can fail. "the checks can't be trusted" means the broken app still passed: fix the checks before believing any pass rate. |
-| Outcome "succeeded (served from cache)" | What the tool recorded via `ToolOutcomeLog`. "tool outcome missing" means no `ToolOutcomeView` on screen. |
+| Outcome "succeeded (served from cache)" | What the tool recorded via `ToolOutcomeLog`: every call in that run, oldest first, separated by "; " (the harness clears the log at each launch). "tool outcome missing" means no `ToolOutcomeView` on screen. |
 
 Exit codes: 0 all passed; 1 a required run failed or a negative control's reply check passed (`--fail-on real` ignores cut-short runs); 2 no evaluations or unreadable bundle, which is never a pass; 64 bad usage. Add `--json` for machine-readable output.
 
