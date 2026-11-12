@@ -2,12 +2,12 @@
 
 **Question.** Can an Expo app get Siri AI tools from a small declaration at prebuild, so nobody writes Swift?
 
-**Answer so far: yes, up to the device.** The `expo-syrup-ai-kit` plugin now takes a `tools` option. It reads a JSON
+**Answer: yes, on a phone too, for String and Int parameters.** See [Device run](#device-run) for the evaluation. The `expo-syrup-ai-kit` plugin now takes a `tools` option. It reads a JSON
 declaration, validates it, and writes one Swift tool per entry into the app target at prebuild. The generated Swift
 type-checks against the iOS 27.3 SDK and the real SyrupAIKit sources in Swift 5 and Swift 6 modes. It also builds in a
 full `xcodebuild`, where Xcode's App Intents metadata step records each tool with the same `ToolIntent` system
-protocol as the hand-written `GetCartIntent`, which passes 5/5 on device. **No generated tool has run on a phone
-yet.** The steps for that are at the end.
+protocol as the hand-written `GetCartIntent`, which passes 5/5 on device. A generated tool has now passed
+5/5 on a phone as well.
 
 Code: `expo-plugin/plugin/src/siriTools/` (parser and generator) and `expo-plugin/plugin/src/withSiriTools.ts`
 (prebuild wiring). The sample declaration and its approved Swift are in
@@ -162,28 +162,48 @@ The SDK accepting a type doesn't mean Siri fills it well. That's a device questi
 
 ## Open questions
 
-1. **Does Siri call a generated tool 5/5?** Only the metadata says so. Run the device evaluation below.
-2. **Which parameter types does Siri AI actually fill?** Date (relative dates like "next Friday"), Double and enum
-   are the likeliest to differ from String and Int. Evaluate one tool per type.
+1. **Does Siri call a generated tool 5/5?** **Yes** (see [Device run](#device-run)).
+2. **Which parameter types does Siri AI actually fill?** String and Int: yes, from natural speech. Date (relative
+   dates like "next Friday"), Double and enum are still untested, and the likeliest to differ. Evaluate one tool per
+   type.
 3. **Optional parameters.** Everything is required now, so Siri must ask for any value the person didn't say.
    Optional parameters need a rule for dropping empty query fields from the URL.
-4. **Parameter descriptions.** `@Parameter(description:)` may improve how Siri fills values. Add it only if the
-   evaluation shows a need.
+4. **Parameter descriptions.** The plugin writes `@Parameter(description:)` from a parameter's `description`. In the
+   device run, Siri filled the described parameter correctly. No run left the description out, so it isn't known
+   whether the description helped.
 5. **Token refresh.** The generated request reads a token and treats 401 as signed out. Apps with short-lived tokens
    (like the Example) need refresh, which differs per API. The likely answer is a hook into the app's own Swift rather
    than more JSON.
 6. **Where the shared code lives.** `SiriToolsGenerated.swift` could move into SyrupAIKit as public API (`HTTPTool`?)
    once the shape settles, which would make generated files smaller and testable in Swift.
-7. **Reply wording.** Lists read "A, B, C" with no "and", and numbers have no units or currency. A `format` per
-   placeholder may be needed.
+7. **Reply wording.** Lists read "A, B, C" with no "and", and numbers have no units or currency. Siri reads the
+   list out exactly that way on the phone. A `format` per placeholder may be needed.
 8. **Tool and enum names across apps.** Enums are named `<Tool><Parameter>` at the top level to keep metadata simple.
    Nesting them inside the intent is untested.
+
+## Device run
+
+Nov 12, 2026, iPhone 16 Pro on iOS 27.3 beta, Xcode 27.3 beta (27C5020n). A fresh Expo 58 app had
+`expo-syrup-ai-kit@0.3.0` from npm and `"tools": "./siri-tools.json"` holding the README's `SearchProducts` sample.
+Prebuild wrote `SearchProductsIntent.swift`, with the query's `@Parameter(description:)`. The evaluation was a
+Release build, asking "In Syrup Quotes, search for phones and give me three results" five times.
+
+| Runs | Apple pass rate | Real pass rate | What Siri did |
+|---|---|---|---|
+| 5 | 100% | 100% (5 of 5) | Called `SearchProductsIntent` with query "phones" and limit 3. Replied "Found 4 products. The first ones are Apple AirPods Max Silver, Beats Flex Wireless Earphones, Selfie Stick Monopod." |
+
+Siri passes the words the person says, so the reply check needs a marker from the API's results for those exact
+words. The first attempt used a marker from the results for "phone", and failed its reply check in every complete
+run, although Siri called the tool each time. Check the marker with `curl` against the exact query before a run.
+
+This ran the Expo path (step 5 below), not the native Example steps. The negative control in step 4 hasn't been run.
 
 ## Running a device evaluation of a generated tool
 
 Target: 5/5 runs where Siri calls the tool and says something only the API knows. Use `SearchProducts` from the
-sample, because it calls DummyJSON with no auth, and "phone, three results" returns the "Apple iPhone Charger"
-product today (check with `curl 'https://dummyjson.com/products/search?q=phone&limit=3'`).
+sample, because it calls DummyJSON with no auth. For "search for phones and give me three results", Siri passes the
+query "phones", which returns "Beats Flex Wireless Earphones" today. Check with
+`curl 'https://dummyjson.com/products/search?q=phones&limit=3'`, and use a marker from that exact query.
 
 1. In a checkout of this branch, generate the files and add them to the Example app (the project globs its folder):
    ```bash
@@ -197,7 +217,7 @@ product today (check with `curl 'https://dummyjson.com/products/search?q=phone&l
 2. Add `Example/SyrupAIKitExampleEvals/SearchProductsEvaluationTests.swift`, based on `CartEvaluationTests.swift`:
    `IntentDefinitions(bundleIdentifier:).intents["SearchProductsIntent"]`, the user turn
    "In SyrupAIKit Example, search for phones and give me three results", `Calls { searchProductsIntent }`,
-   `SiriResponse(.contains("charger", caseSensitive: false))`, and `.repeating(times: 5, …)`.
+   `SiriResponse(.contains("beats", caseSensitive: false))`, and `.repeating(times: 5, …)`.
 3. With the phone set up as in `Example/README.md` (Siri AI, Developer Mode and UI Automation on, unlocked, on power):
    ```bash
    xcodebuild test -project Example/SyrupAIKitExample.xcodeproj -scheme SyrupAIKitExampleEvals \
@@ -208,7 +228,7 @@ product today (check with `curl 'https://dummyjson.com/products/search?q=phone&l
    ```
 4. Negative control: change the sample's `SearchProducts` reply to `"Found {total} products."`, rerun
    `generate-siri-tools.js` and the test. Siri should still call the
-   tool, but the "charger" response check must fail 5/5. If it passes, the check isn't reading the tool's answer.
+   tool, but the "beats" response check must fail 5/5. If it passes, the check isn't reading the tool's answer.
 5. To test the Expo path end to end instead, use a copy of the siri-ai-expo app with
    `["expo-syrup-ai-kit", { "tools": "./siri-tools.json", "preview": true }]` pointing at this branch's plugin, then
    `SIRI_AI_PREVIEW=1 npx expo prebuild -p ios --clean` and `npx expo run:ios --device`. This also covers the untested
