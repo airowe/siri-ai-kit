@@ -45,6 +45,10 @@ describe('declarationProblems', () => {
     expect(declarationProblems(declaration)).toEqual([]);
   });
 
+  it.each(['dialog', 'value'])('accepts returns "%s"', (returns) => {
+    expect(declarationProblems(withTool((tool) => (tool.returns = returns)))).toEqual([]);
+  });
+
   it('accepts a parameter description', () => {
     const declaration = withTool((tool) => (tool.parameters[0].description = PARAMETER_DESCRIPTION));
     expect(declarationProblems(declaration)).toEqual([]);
@@ -177,6 +181,11 @@ describe('declarationProblems', () => {
     ],
     ['an empty reply', withTool((tool) => (tool.reply = '')), ['tools[0].reply: must be a non-empty string']],
     [
+      'an unknown returns',
+      withTool((tool) => (tool.returns = 'speech')),
+      ['tools[0].returns: must be "dialog" or "value"']
+    ],
+    [
       'a reply placeholder that is not a field path',
       withTool((tool) => (tool.reply = 'Status: {status code}')),
       ['tools[0].reply: {status code} must be a response field path like {order.status}']
@@ -229,6 +238,11 @@ describe('parseSiriTools', () => {
       url: 'https://api.example.com/orders/{orderNumber}',
       body: [],
     });
+  });
+
+  it('returns a dialog unless the tool says otherwise', () => {
+    expect(parseSiriTools({ tools: [validTool()] }, SOURCE).tools[0].returns).toBe('dialog');
+    expect(parseSiriTools(withTool((tool) => (tool.returns = 'value')), SOURCE).tools[0].returns).toBe('value');
   });
 
   it('treats missing parameters as none', () => {

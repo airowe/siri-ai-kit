@@ -119,7 +119,7 @@ Prebuild stops, listing every problem, if a skill breaks Apple's rules. Xcode it
 - The body is at most 10,000 characters.
 - Each skill folder holds only its `SKILL.md`.
 
-**A skill only helps if Siri can chain your tools, and today it can't chain a tool that returns a dialog.** Such a tool includes `.result(value:dialog:)`, as in [A first tool](#a-first-tool) and every tool the `tools` option generates. On a phone, Siri speaks a dialog and ends the turn. Tools that return only `.result(value:)` let Siri call one after another, and in the same test Siri chained them with or without a skill. The skill changed only how Siri worded the answer. See [docs/spikes/app-skills-bundle.md](https://github.com/airowe/syrup-ai-kit/blob/main/docs/spikes/app-skills-bundle.md#device-runs) and [#31](https://github.com/airowe/syrup-ai-kit/issues/31).
+**A skill only helps if Siri can chain your tools, and today it can't chain a tool that returns a dialog.** Such a tool returns `.result(value:dialog:)`, as in [A first tool](#a-first-tool), and so does every tool the `tools` option generates unless it sets `"returns": "value"`. On a phone, Siri speaks a dialog and ends the turn. Tools that return only `.result(value:)` let Siri call one after another, and in the same test Siri chained them with or without a skill. The skill changed only how Siri worded the answer. So every tool a skill names should return only `.result(value:)`: in Swift, drop `ProvidesDialog` and the `dialog:` argument; in a declaration, set `"returns": "value"`. See [docs/spikes/app-skills-bundle.md](https://github.com/airowe/syrup-ai-kit/blob/main/docs/spikes/app-skills-bundle.md#device-runs) and [#31](https://github.com/airowe/syrup-ai-kit/issues/31).
 
 Skills guide Siri; they don't guarantee it follows the steps in order. Nothing checks that a skill names tools your app has, so test the flow with a Siri evaluation. App Skills are part of the Siri AI Developer Preview, with the same limits on who can use them (see the [SyrupAIKit README](https://github.com/airowe/syrup-ai-kit#readme)).
 
@@ -185,6 +185,11 @@ Instead of writing Swift, list tools that call your HTTP API in a JSON file and 
 ```
 
 A parameter's optional `description` is one line saying what the person gives, with an example. Siri reads it to fill the value.
+
+A tool's optional `returns` says what Siri gets back:
+
+- `"dialog"` (the default): Siri says the reply word for word and ends its turn.
+- `"value"`: Siri gets the reply to use, words the answer itself, and can call another tool first. Use it for tools an [App Skill](#app-skills) names, or any tool Siri should combine with others.
 
 At prebuild the plugin writes one Swift tool per entry, plus a shared `SiriToolsGenerated.swift`, to `ios/<App>/SiriTools/` and compiles that folder into the app target. A bad declaration stops prebuild with every problem listed. The format, what it supports and what's still open are in [docs/spikes/tool-codegen.md](../docs/spikes/tool-codegen.md).
 

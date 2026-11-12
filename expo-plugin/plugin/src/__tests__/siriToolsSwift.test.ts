@@ -18,6 +18,7 @@ const ORDER_STATUS: ToolDeclaration = {
   parameters: [{ name: 'orderNumber', type: 'string', title: 'Order Number' }],
   request: { method: 'GET', url: 'https://api.example.com/orders/{orderNumber}', body: [] },
   reply: 'Order {id} is {status}.',
+  returns: 'dialog',
 };
 
 describe('swiftString', () => {
@@ -64,6 +65,14 @@ struct GetOrderStatusIntent: AppIntent {
 }
 #endif
 `);
+  });
+
+  it('returns only the value, so Siri can chain the tool, when returns is "value"', () => {
+    const swift = toolSwift({ ...ORDER_STATUS, returns: 'value' });
+    expect(swift).toContain('    func perform() async throws -> some IntentResult & ReturnsValue<String> {\n');
+    expect(swift).toContain('        return .result(value: answer)\n');
+    expect(swift).not.toContain('ProvidesDialog');
+    expect(swift).not.toContain('dialog:');
   });
 
   it('passes a parameter description to Siri', () => {

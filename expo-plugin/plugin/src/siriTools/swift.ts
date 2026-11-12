@@ -66,7 +66,10 @@ ${displays.join('')}    ]
 `;
 }
 
-/** One tool intent: Siri fills the parameters, the intent calls the API, and the reply template becomes the answer. */
+/**
+ * One tool intent: Siri fills the parameters, the intent calls the API, and the reply template becomes the answer.
+ * A `dialog` tool has Siri speak the answer and end the turn; a `value` tool hands it to Siri, which can chain tools.
+ */
 export function toolSwift(tool: ToolDeclaration): string {
   const enums = tool.parameters.flatMap((parameter) => (parameter.type === 'enum' ? [enumSwift(tool, parameter)] : []));
   return `${HEADER}
@@ -80,7 +83,7 @@ struct ${intentName(tool)}: AppIntent {
     static let title: LocalizedStringResource = ${swiftString(tool.title)}
     static let description = IntentDescription(${swiftString(tool.description)})
 ${tool.parameters.map((parameter) => parameterSwift(tool, parameter)).join('')}
-    func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
+    func perform() async throws -> some IntentResult & ReturnsValue<String>${tool.returns === 'dialog' ? ' & ProvidesDialog' : ''} {
         let request = SiriToolsGenerated.Request(
             method: ${swiftString(tool.request.method)},
             url: ${swiftString(tool.request.url)},
@@ -90,7 +93,7 @@ ${tool.parameters.map((parameter) => parameterSwift(tool, parameter)).join('')}
         let answer = await SiriToolsGenerated.tool.answer {
             try SiriToolsGenerated.reply(${swiftString(tool.reply)}, from: try await request.send())
         }
-        return .result(value: answer, dialog: "\\(answer)")
+        return .result(value: answer${tool.returns === 'dialog' ? ', dialog: "\\(answer)"' : ''})
     }
 }
 ${enums.join('')}#endif

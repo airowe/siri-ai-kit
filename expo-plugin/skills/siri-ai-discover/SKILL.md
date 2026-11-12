@@ -83,6 +83,8 @@ Propose an App Skill only when all of these hold:
 - **Every step is a tool on the shortlist.** If a step needs a tool the app lacks, or a tool's answer leaves out what the next step needs (a spoken answer that says "and 9 more"), don't draft the skill. List it as a gap with the tool change it would need; that change is the owner's call.
 - **A single tool doesn't already answer it.** One question or one action needs no skill.
 
+Every tool a kept skill names gets `"returns": "value"` in `siri-tools.json`. A tool that returns a spoken dialog ends Siri's turn, so Siri can't chain it.
+
 Draft at most two or three. A skill for every pair of tools is noise Siri has to read.
 
 
@@ -118,6 +120,7 @@ One entry per kept tool, in the owner's order:
 - `name` is PascalCase, unique, and doesn't end in `Intent`. Evaluations use it to check which tool Siri called.
 - `description` says what the tool returns, in the user's own words. Siri reads it to choose the tool.
 - Each parameter has `name`, `type`, `title` and `description`. The type is one of `string`, `int`, `double`, `bool`, `date` or `enum` (with `cases`). The `description` is one line saying what the person gives, with an example value: "The product to add, as the person names it, like 'oat milk'." Siri reads it to fill the parameter from what was said.
+- `returns` is `"value"` for a tool any App Skill names, or that people combine with other tools in one request. Leave it out otherwise: Siri then says the tool's answer word for word.
 - `javascript` is the handler's name and its file name: `name` in kebab-case, dropping a leading `Get` (`GetUnreadNotifications` → `unread-notifications`, `PostMessage` → `post-message`). The handler function is the camelCase of the same words (`unreadNotifications`).
 
 ### One handler file per tool
@@ -225,6 +228,7 @@ These hold at the end of step 4, before you offer step 5.
 - Every parameter appears in the spoken prompt, and nothing the prompt needs is missing.
 - Every parameter has a one-line `description` with an example value.
 - Two descriptions aren't easy to confuse.
+- Every tool an App Skill names has `"returns": "value"`.
 - Every App Skill's steps name only tools in `siri-tools.json`, its `name` matches its folder, and its frontmatter has only `name` and `description`.
 - No existing app file changed, `app.json` included.
 - You ran the new tests with the app's own test command. Each test fails on the stub's "not implemented" error, not on loading the test. If the tests can't run (no `node_modules`, wrong Node version), say so in the report; never install anything to make them run.

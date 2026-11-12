@@ -47,6 +47,7 @@ struct GetOrderStatusIntent: AppIntent {
 - `answer` returns your sentence, or the failure sentence ("Couldn't reach ParcelPal right now." or "ParcelPal couldn't do that right now."). Use `run` when you need the value; it throws `ToolFailure` (`.timedOut`, `.unreachable`, `.failed`) and `failure.reply(appName:)` gives the sentence.
 - `classify` maps your errors. If your networking library wraps `URLError`, unwrap it there, or network failures count as `.failed`.
 - The default timeout is 10 seconds (`timeout:`). The tool stops waiting but your code keeps running, so saves to a cache still finish.
+- `.result(value:dialog:)` makes Siri say the reply word for word and end its turn, so Siri can't chain the tool with another. For a tool Siri should combine with others (any tool an App Skill names), return `some IntentResult & ReturnsValue<String>` and `.result(value: answer)`: Siri then words the answer itself, so evaluations check for the value, not a sentence.
 - Siri speaks the reply, so keep it to a sentence or two. With several records, say the most relevant one and how many others there are.
 - The `description` is what Siri reads to choose the tool. Say what it returns, in the user's words.
 - Give each parameter a description: `@Parameter(title: "Product", description: "The product to add, as the person names it, like \"oat milk\".")`. Siri reads it to fill the value from what the person said. Say what the person gives, with an example.
@@ -68,6 +69,7 @@ From your API code, `ToolOutcomeLog.standard.note("served from cache")` adds det
 | Mistake | Result |
 |---|---|
 | Plain `AppIntent` + `AppShortcutsProvider` instead of `@AppIntent(.tool)` | Not a Siri AI tool; no time budget or outcome record |
+| Returning a dialog from a tool Siri should chain | Siri speaks it and ends the turn; the next tool never runs |
 | Leaving the answer in the Spotlight index | Siri replies from stale indexed data; the tool never runs |
 | No `ToolOutcomeView` | Evaluations can't tell what the tool did |
 
