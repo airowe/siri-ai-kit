@@ -1,6 +1,6 @@
 ---
 name: siri-ai-discover
-description: Use when deciding which Siri AI tools an Expo or React Native app should have, when asked to find an app's primary actions for Siri, or when writing or reviewing the tool list in a siri-tools.json declaration for expo-siri-ai-kit's `tools` option.
+description: Use when deciding which Siri AI tools an Expo or React Native app should have, when asked to find an app's primary actions for Siri, when writing or reviewing the tool list in a siri-tools.json declaration for expo-siri-ai-kit's `tools` option, or when drafting Apple App Skills for requests that need several of the app's tools.
 license: MIT
 ---
 
@@ -15,7 +15,7 @@ How a tool gets its answer is the app owners' decision. Their own code already k
 ## The steps
 
 1. **Find candidates** in the code.
-2. **Draft a shortlist**, and check each candidate can run without a screen.
+2. **Draft a shortlist**, check each candidate can run without a screen, and spot requests that need several tools (App Skills).
 3. **Review it with the owner.** Stop and ask; don't write files yet.
 4. **Write the outputs** for the tools the owner kept.
 5. **Offer to implement them:** the extractions, the handlers, and a Swift tool that answers Siri today.
@@ -73,6 +73,18 @@ Siri can launch the app in the background, where no component renders. The tool'
 
 A candidate whose data is only in memory was already rejected above. `data-layers.md` lists, for each library, what makes a definition callable and what needs extraction.
 
+### Requests that need several tools: App Skills
+
+An Apple App Skill is a short Markdown guide, one `SKILL.md`, that tells Siri how to combine the app's tools for one kind of request: "add oat milk and eggs and check out" is a search, then add to cart for each item, then place the order. Siri reads it as guidance; it doesn't guarantee the order of the steps.
+
+Propose an App Skill only when all of these hold:
+
+- **People ask for it in one breath.** Several tools in a row, for one request.
+- **Every step is a tool on the shortlist.** If a step needs a tool the app lacks, or a tool's answer leaves out what the next step needs (a spoken answer that says "and 9 more"), don't draft the skill. List it as a gap with the tool change it would need; that change is the owner's call.
+- **A single tool doesn't already answer it.** One question or one action needs no skill.
+
+Draft at most two or three. A skill for every pair of tools is noise Siri has to read.
+
 
 ## 3. Review it with the owner
 
@@ -81,6 +93,7 @@ Show the owner the shortlist as one table: tool name, what a person says, what S
 1. **Which of these should Siri have?** They may drop, reorder or rename.
 2. **For each action: is a spoken confirmation enough** before it runs, with the app closed? Drop any action they say no to.
 3. **What do people ask for that isn't on a screen?** Add anything they name that the code supports, with the same checks.
+4. **Which App Skills should Siri have?** Show each proposed skill as the request it covers and the tools it calls, in order, plus the gaps. Drop any skill whose tools they dropped.
 
 You may add questions about what a tool should cover, such as which of the app's modes or accounts it answers for. Every question is about what Siri should do. How the app reaches its server is already in the code the tool calls.
 
@@ -153,6 +166,38 @@ it('says the unread count', async () => {
 
 **Registering the handlers.** Check whether the installed `expo-siri-ai-kit` exports `defineSiriTool`. If it does, also write `src/siri-tools/index.ts`, which calls `defineSiriTool('<handler>', …)` for each handler, and say in the report that the app's entry file must import it at the top level. If it doesn't (true up to 0.2.0), write no `index.ts`: the plugin rejects the `javascript` kind today, and owners answer through a Swift tool in `app-intents/<name>Intent.swift` with the same interface until it ships.
 
+### App Skills
+
+One folder per kept skill, in `siri-skills/` at the project root:
+
+```
+siri-skills/
+  fill-cart/
+    SKILL.md
+```
+
+```markdown
+---
+name: fill-cart
+description: Use when the person asks Basket to add groceries by name or kind, and optionally to check out afterwards.
+---
+1. For each item, call SearchProducts with the item as the person said it. If several match and the person gave no rule ("the cheapest"), say at most three names and ask which one.
+2. Call AddToCart with the chosen product and quantity. It confirms first; skip the item if the person says no.
+3. Call PlaceOrder only if the person asked to check out in this request. It confirms first.
+
+Never add a product SearchProducts didn't return.
+```
+
+The plugin's `skills` option compiles this folder into the app, and stops prebuild if a skill breaks Apple's rules, so write it to pass them:
+
+- The frontmatter has only `name` and `description`. No `version`, `tools` or any other field.
+- `name` is 1 to 64 lowercase letters, digits and single hyphens, and is the folder's name.
+- `description` is one line of at most 1,024 characters, saying which requests the skill is for.
+- The body is at most 10,000 characters. Name tools by their `name` from `siri-tools.json`, give the steps in order, and say where each action confirms and what to do when a step finds nothing.
+- The folder holds only `SKILL.md`. No notes, examples or references.
+
+Turning the option on means adding `"skills": { "sourceDir": "siri-skills" }` to the plugin in `app.json`, an existing file. Don't edit it now: the report says it's needed, and step 5 offers it.
+
 ### `siri-tools-report.md`
 
 These parts, in this order:
@@ -167,7 +212,8 @@ These parts, in this order:
    - Status: callable, or needs extraction with the hook's `file:line` and the function to extract.
    - Found from: `screen`, `data layer` or `both`.
 3. **Rejected.** Every candidate dropped, with its reason, including the owner's drops. Data-layer candidates can be grouped ("12 paged feed queries: too long to speak"), as long as each group names its definitions.
-4. **Evaluations.** For each tool: a prompt that names the app, and what the reply must contain to prove the app answered (a value only the person's own data has, never generic text). The siri-ai-eval skill runs these.
+4. **App Skills.** One row per skill: its folder, the request it covers, and the tools it calls in order. Then the gaps: requests that would need a skill the tools can't support yet, with the tool change each needs. Say that `app.json` needs the `skills` option, or write "none" when no skill was kept.
+5. **Evaluations.** For each tool: a prompt that names the app, and what the reply must contain to prove the app answered (a value only the person's own data has, never generic text). For each App Skill, a prompt for the whole request, and what the reply must contain from the last step (the order total, not just "done"). The siri-ai-eval skill runs these.
 
 ## Check before handing over
 
@@ -178,7 +224,8 @@ These hold at the end of step 4, before you offer step 5.
 - Every `javascript` value matches its file name.
 - Every parameter appears in the spoken prompt, and nothing the prompt needs is missing.
 - Two descriptions aren't easy to confuse.
-- No existing app file changed.
+- Every App Skill's steps name only tools in `siri-tools.json`, its `name` matches its folder, and its frontmatter has only `name` and `description`.
+- No existing app file changed, `app.json` included.
 - You ran the new tests with the app's own test command. Each test fails on the stub's "not implemented" error, not on loading the test. If the tests can't run (no `node_modules`, wrong Node version), say so in the report; never install anything to make them run.
 
 ## Common mistakes
@@ -198,13 +245,16 @@ These hold at the end of step 4, before you offer step 5.
 | Keeping every query and mutation the sweep finds | They go through the same shortlist rules; most are feeds, ids or plumbing |
 | Proposing features the app doesn't have | Every tool needs a function with a `file:line` |
 | A tool that reads out a feed or a long list | The count and at most three names |
+| An App Skill that calls a tool the app doesn't have | Every step is a shortlisted tool; list the rest as gaps for the owner |
+| An App Skill for a request one tool answers | Only requests that need several tools in a row |
+| Extra frontmatter fields or files in a skill folder | Only `name` and `description`, and only `SKILL.md`; prebuild rejects the rest |
 | Descriptions that say what the tool does, not what it returns | "Says how many unread notifications …", not "Handles notifications" |
 
 ## 5. Offer to implement them
 
 Steps 1 to 4 never change the app's code. Step 5 does, so offer each job and wait for the owner's yes. They may take all, some or none, per tool. If no owner can answer, don't offer: the report already lists the work.
 
-Do the jobs in this order, because each builds on the one before.
+Do the jobs in this order, because each builds on the one before. If App Skills were kept, also offer to add the plugin's `skills` option to `app.json`; it needs nothing from the other jobs.
 
 ### A. Extract the functions
 
