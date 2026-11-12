@@ -53,10 +53,11 @@ public struct SiriAppHarness: Sendable {
         )
     }
 
-    /// Relaunches the app, so switches from an earlier evaluation never carry over.
+    /// Relaunches the app with an empty tool outcome log, so switches and tool calls from an earlier run never
+    /// carry over.
     @MainActor public func launchAndWaitUntilReady() throws {
         let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
-        app.launchArguments = switches.map(\.launchArgument)
+        app.launchArguments = switches.map(\.launchArgument) + [ToolOutcomeLog.clearArgument]
         app.launch()
         let element = app.staticTexts[readyWhen.identifier]
         let expectation = XCTNSPredicateExpectation(predicate: readyWhen.predicate, object: element)
@@ -66,7 +67,7 @@ public struct SiriAppHarness: Sendable {
         }
     }
 
-    /// Brings the app forward without relaunching it, so the outcome isn't reset, and reads the outcome label.
+    /// Brings the app forward without relaunching it and reads every tool call since the launch, oldest first.
     @MainActor public func lastToolOutcome() -> String? {
         let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
         app.activate()

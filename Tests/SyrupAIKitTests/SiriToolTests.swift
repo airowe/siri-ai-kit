@@ -35,6 +35,19 @@ struct SiriToolTests {
         #expect(log.last.hasPrefix("succeeded at "))
     }
 
+    @Test func chainedCallsAreAllReportedInOrder() async throws {
+        let shared = tool()
+        await #expect(throws: ToolFailure.failed) {
+            try await shared.run { () async throws -> Int in
+                ToolOutcomeLog.standard.note("productId 99999")
+                throw StubError.any
+            }
+        }
+        #expect(try await shared.run { 7 } == 7)
+        #expect(log.calls.count == 2)
+        #expect(ToolOutcomeLog.label(for: log).wholeMatch(of: /Tool calls: failed \(productId 99999\) at .+; succeeded at .+/) != nil)
+    }
+
     @Test(arguments: [
         (StubError.any as any Error, ToolFailure.failed, "failed"),
         (ToolFailure.unreachable, .unreachable, "unreachable"),
