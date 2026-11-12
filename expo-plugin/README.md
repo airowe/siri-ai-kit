@@ -1,6 +1,8 @@
 # expo-siri-ai-kit
 
-Expo config plugin for [SiriAIKit](https://github.com/airowe/siri-ai-kit). It lets the Swift tools in your Expo app use SiriAIKit, and turns on the Siri AI Developer Preview code (iOS 27.3 beta).
+Make your Expo or React Native app work with Siri AI. This Expo config plugin for [SiriAIKit](https://github.com/airowe/siri-ai-kit) lets the Swift tools in your app use SiriAIKit, and turns on the Siri AI Developer Preview code (iOS 27.3 beta).
+
+Using a coding agent? Install the [agent skills](#agent-skills) and ask it to "make my app work with Siri AI".
 
 Not affiliated with or endorsed by Apple.
 
@@ -201,7 +203,7 @@ This package includes two agent skills:
 - `skills/expo-siri-ai-kit/SKILL.md` covers setup, the outcome bridge and known prebuild problems.
 - `skills/siri-ai-discover/SKILL.md` finds which Siri AI tools an app should have and writes their interfaces (name, description, parameters) to `siri-tools.json`, with an evaluation prompt for each. How each tool gets its answer is left to the app's own code.
 
-Claude Code users can install them with the other SiriAIKit skills: `/plugin marketplace add airowe/siri-ai-kit`, then `/plugin install siri-ai-kit@siri-ai-kit`.
+Install them with the other SiriAIKit skills, including `siri-ai`, the one to start from. In Claude Code: `/plugin marketplace add airowe/siri-ai-kit`, then `/plugin install siri-ai-kit@siri-ai-kit`. In other agents: `npx skills add airowe/siri-ai-kit`.
 
 ## Requirements
 

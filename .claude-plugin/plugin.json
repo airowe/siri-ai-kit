@@ -2,11 +2,25 @@
   "name": "siri-ai-kit",
   "displayName": "SiriAIKit",
   "version": "0.2.0",
-  "description": "Skills for building and testing Siri AI tools (iOS 27.3 Siri AI Developer Preview) with SiriAIKit, in native iOS and Expo apps.",
-  "author": { "name": "Adam Rowe", "url": "https://github.com/airowe" },
+  "description": "Make an iOS, Expo or React Native app work with Siri AI (Apple's iOS 27.3 Siri AI Developer Preview): choose the tools, write them with SiriAIKit, and prove Siri calls them.",
+  "author": {
+    "name": "Adam Rowe",
+    "url": "https://github.com/airowe"
+  },
   "homepage": "https://github.com/airowe/siri-ai-kit",
   "repository": "https://github.com/airowe/siri-ai-kit",
   "license": "MIT",
-  "keywords": ["siri", "app-intents", "ios", "expo", "evaluations"],
-  "skills": ["./expo-plugin/skills/"]
+  "keywords": [
+    "siri",
+    "siri-ai",
+    "apple-intelligence",
+    "app-intents",
+    "ios",
+    "expo",
+    "react-native",
+    "evaluations"
+  ],
+  "skills": [
+    "./expo-plugin/skills/"
+  ]
 }

@@ -1,6 +1,6 @@
 ---
 name: expo-siri-ai-kit
-description: Use when adding a Siri AI tool (`@AppIntent(.tool)`) to an Expo or React Native app, setting up the expo-siri-ai-kit config plugin, or when an Expo prebuild with `SIRI_AI_PREVIEW` fails, `import SiriAIKit` can't be found in `app-intents/`, or the Siri evaluation target disappears after prebuild.
+description: Use when adding a Siri AI tool (`@AppIntent(.tool)`) to an Expo or React Native app, setting up the expo-siri-ai-kit config plugin, or when an Expo prebuild with `SIRI_AI_PREVIEW` fails, `import SiriAIKit` can't be found in `app-intents/`, the Siri evaluation target disappears after prebuild, or a Siri tool in the app answers with stale data or is never called.
 license: MIT
 ---
 
